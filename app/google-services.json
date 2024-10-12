@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "256423153606",
+    "project_id": "techcycle-6778b",
+    "storage_bucket": "techcycle-6778b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:256423153606:android:bbdf655cd8ae7f30a16cc7",
+        "android_client_info": {
+          "package_name": "com.mrlapidus.techcycle"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvcxMo-Lzps8FQwvwPVEizGulOP1ywqQY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

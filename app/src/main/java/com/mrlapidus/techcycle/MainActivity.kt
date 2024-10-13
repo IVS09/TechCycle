@@ -1,10 +1,7 @@
 package com.mrlapidus.techcycle
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.mrlapidus.techcycle.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

@@ -2,6 +2,7 @@ package com.mrlapidus.techcycle
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.mrlapidus.techcycle.databinding.ActivitySplashBinding
@@ -19,9 +20,13 @@ class SplashActivity : AppCompatActivity() {
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Iniciar el splash con un retardo usando coroutines
+        // Aplicar la animación al logotipo antes del retardo
+        val logoAnimation = AnimationUtils.loadAnimation(this, R.anim.logo_fade_in)
+        binding.logoImageView.startAnimation(logoAnimation)
+
+        // Inicio el splash con un retardo usando coroutines
         lifecycleScope.launch {
-            delay(3000) // 3 segundos de retardo (ajústalo según lo necesites)
+            delay(3000) // 3 segundos de retardo (ajústar según lo necesite)
             navigateToOnboarding()
         }
     }

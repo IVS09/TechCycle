@@ -2,4 +2,7 @@
     <string name="app_name">TechCycle</string>
     <string name="splash_logo_description">TechCycle app logo</string>
     <string name="splash_subtitle">Connect. Exchange. Reduce</string>
+    <string name="continue_with_email">Continue with Email</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="register_here">Don\'t have an account? Register</string>
 </resources>

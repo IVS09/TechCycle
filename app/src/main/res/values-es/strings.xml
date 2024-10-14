@@ -2,4 +2,7 @@
     <string name="app_name">TechCycle</string>
     <string name="splash_logo_description">Logo de la aplicación TechCycle</string>
     <string name="splash_subtitle">Conecta. Intercambia. Reduce</string>
+    <string name="continue_with_email">Continuar con Email</string>
+    <string name="continue_with_google">Continuar con Google</string>
+    <string name="register_here">¿No tienes una cuenta? Regístrate</string>
 </resources>

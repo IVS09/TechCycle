@@ -1,20 +1,35 @@
 package com.mrlapidus.techcycle
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import com.mrlapidus.techcycle.databinding.ActivitySplashBinding
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SplashActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivitySplashBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_splash)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        // Configura viewBinding
+        binding = ActivitySplashBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // Iniciar el splash con un retardo usando coroutines
+        lifecycleScope.launch {
+            delay(3000) // 3 segundos de retardo (ajústalo según lo necesites)
+            navigateToOnboarding()
         }
+    }
+
+    private fun navigateToOnboarding() {
+        // Cambia OnboardingActivity a la Activity de destino, o MainActivity
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish() // Cierra la SplashActivity para que no vuelva a aparecer al presionar back
     }
 }

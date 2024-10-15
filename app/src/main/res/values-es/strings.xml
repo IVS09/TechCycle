@@ -5,4 +5,6 @@
     <string name="continue_with_email">Continuar con Email</string>
     <string name="continue_with_google">Continuar con Google</string>
     <string name="register_here">¿No tienes una cuenta? Regístrate</string>
+    <string name="splash_background_description">Imagen de fondo de bienvenida</string>
+    <string name="shape_description">Elemento decorativo, forma de diseño</string>
 </resources>

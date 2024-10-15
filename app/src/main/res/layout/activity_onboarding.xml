@@ -15,52 +15,33 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/techcycle_background" />
+        app:srcCompat="@drawable/techcycle_background"
+        android:contentDescription="@string/splash_background_description"/>
 
     <ImageView
-        android:id="@+id/shapeIV"
+        android:id="@+id/shapeImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/splash_background_description"
+        app:layout_constraintBottom_toBottomOf="@+id/backgroundImageView"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/backgroundImageView"
+        app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/shape_background" />
 
-    <TextView
-        android:id="@+id/titleTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textSize="24sp"
-        android:fontFamily="@font/poppins_semibold"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="@+id/shapeIV"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/shapeIV" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/sloganTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/splash_subtitle"
-        android:textSize="14sp"
-        android:fontFamily="@font/poppins_regular"
-        android:textColor="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/buttonEmailLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        android:background="@drawable/greyline_button_style"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sloganTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

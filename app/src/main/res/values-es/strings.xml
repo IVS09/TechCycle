@@ -7,4 +7,7 @@
     <string name="register_here">¿No tienes una cuenta? Regístrate</string>
     <string name="splash_background_description">Imagen de fondo de bienvenida</string>
     <string name="shape_description">Elemento decorativo, forma de diseño</string>
+    <string name="buttonEmailLogin">Continuar con Email</string>
+    <string name="buttonGmailLogin">Continuar con Google</string>
+    <string name="registerTextView">No tienes una cuenta? Regístrate</string>
 </resources>

@@ -33,7 +33,7 @@ class SplashActivity : AppCompatActivity() {
 
     private fun navigateToOnboarding() {
         // Cambia OnboardingActivity a la Activity de destino, o MainActivity
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, Onboarding::class.java)
         startActivity(intent)
         finish() // Cierra la SplashActivity para que no vuelva a aparecer al presionar back
     }

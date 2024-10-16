@@ -71,19 +71,30 @@
 
     <Button
         android:id="@+id/buttonGmailLogin"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/greyline_button_style"
+        android:drawableLeft="@drawable/ic_google"
+        android:drawablePadding="8dp"
+        android:gravity="center"
+        android:paddingStart="16dp"
         android:text="@string/buttonGmailLogin"
+        android:textColor="@color/white"
+        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonEmailLogin" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonEmailLogin"
+        tools:ignore="RtlCompat" />
+
 
     <TextView
         android:id="@+id/textRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/registerTextView"
         android:textSize="14sp"
         android:textColor="@color/gray"

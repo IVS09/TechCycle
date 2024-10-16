@@ -1,19 +1,12 @@
-<resources>
-    <style name="CustomButton" parent="Widget.MaterialComponents.Button">
-        <!-- Borde redondeado -->
-        <item name="shapeAppearance">@style/CustomButtonShape</item>
-        <!-- Fondo blanco -->
-        <item name="backgroundTint">@color/white</item>
-        <!-- Color de texto -->
-        <item name="android:textColor">@color/black</item>
-        <!-- Borde gris -->
-        <item name="android:strokeColor">@color/gray</item>
-        <!-- Padding para que se vea mejor -->
-        <item name="android:padding">8dp</item>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.TechCycle" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/primaryColor</item>
+
+
     </style>
 
-    <!-- Definir la forma de los bordes redondeados -->
-    <style name="CustomButtonShape" parent="ShapeAppearance.MaterialComponents.SmallComponent">
-        <item name="cornerSize">12dp</item>
-    </style>
+    <style name="Theme.TechCycle" parent="Base.Theme.TechCycle" />
 </resources>

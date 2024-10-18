@@ -59,37 +59,39 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonEmailLogin"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="100dp"
-        android:background="@drawable/greyline_button_style"
+        android:background="@drawable/green_button"
         android:paddingStart="16dp"
         android:text="@string/buttonEmailLogin"
-        android:textColor="@color/white"
-        app:icon="@drawable/ic_mail"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:drawableStart="@drawable/ic_mail"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sloganTextView" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonGmailLogin"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="100dp"
-        android:background="@drawable/greyline_button_style"
-        android:drawablePadding="8dp"
+        android:background="@drawable/green_button"
+        android:drawablePadding="0dp"
         android:gravity="center"
         android:paddingStart="16dp"
         android:text="@string/buttonGmailLogin"
+        android:textAllCaps="false"
         android:textAlignment="center"
-        android:textColor="@color/white"
-        app:icon="@drawable/ic_google"
+        android:textColor="@color/black"
+        android:drawableStart="@drawable/ic_google"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonEmailLogin"

@@ -9,5 +9,5 @@
     <string name="shape_description">Elemento decorativo, forma de diseño</string>
     <string name="buttonEmailLogin">Continuar con Email</string>
     <string name="buttonGmailLogin">Continuar con Google</string>
-    <string name="registerTextView">No tienes una cuenta? Regístrate</string>
+    <string name="registerTextView">No tienes una cuenta? <font color="#6CCDC2">Regístrate</font></string>
 </resources>

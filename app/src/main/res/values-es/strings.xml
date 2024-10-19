@@ -18,6 +18,6 @@
     <string name="forgot_password">¿Has olvidado la contraseña? <font color="#6CCDC2">Recuperar</font></string>
     <string name="recover_password">Recuperar</string>
     <string name="login_button_text">Login</string>
-    <string name="google_login">Continue with Google</string>
+    <string name="google_login">Continua con Google</string>
     <string name="splash_background_description2">Login screen background</string>
 </resources>

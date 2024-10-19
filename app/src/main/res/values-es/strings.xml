@@ -10,4 +10,16 @@
     <string name="buttonEmailLogin">Continuar con Email</string>
     <string name="buttonGmailLogin">Continuar con Google</string>
     <string name="registerTextView">No tienes una cuenta? <font color="#6CCDC2">Regístrate</font></string>
+
+    <string name="login_prompt_title">Por favor ingresa para continuar</string>
+    <string name="login_prompt_subtitle">Bienvenido! Por favor introduce tus datos.</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Contraseña</string>
+    <string name="forgot_password">¿Has olvidado la contraseña?</string>
+    <string name="recover_password">Recuperar</string>
+    <string name="register_here2">No tienes una cuenta? Regístrate</string>
+    <string name="login_button_text">Login</string>
+    <string name="google_login">Continue with Google</string>
+    <string name="splash_logo_description2">TechCycle logo</string>
+    <string name="splash_background_description2">Login screen background</string>
 </resources>

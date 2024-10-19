@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primaryColor">#6CCDC2</color>
-    <color name="secondaryColor">#698085</color>
+    <color name="secondaryColor">#3f4d50</color>
     <color name="gray">#838383</color>
     <color name="line">#EDEDED</color>
     <color name="black">#202226</color>

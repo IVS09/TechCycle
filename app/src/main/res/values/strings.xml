@@ -26,4 +26,8 @@
     <string name="confirm_password_hint">Confirm password</string>
     <string name="terms_and_conditions">I agree to the terms and conditions</string>
     <string name="register_button_text">Register</string>
+
+    <string name="recover_prompt_title">Forgot your password?</string>
+    <string name="recover_prompt_subtitle">Enter your email address. We will send you recovery instructions.</string>
+    <string name="recover_button_text">Send</string>
 </resources>

@@ -26,4 +26,8 @@
     <string name="confirm_password_hint">Confirmar contraseña</string>
     <string name="terms_and_conditions">Estoy de acuerdo con los términos y condiciones</string>
     <string name="register_button_text">Registrar</string>
+
+    <string name="recover_prompt_title">Olvidaste tu contraseña?</string>
+    <string name="recover_prompt_subtitle">Ingrese su correo electrónico. Le enviaremos las instrucciones de recuperación.</string>
+    <string name="recover_button_text">Enviar</string>
 </resources>

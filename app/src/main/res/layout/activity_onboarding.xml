@@ -63,52 +63,49 @@
         android:id="@+id/buttonEmailLogin"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="100dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="100dp"
+        android:layout_marginEnd="32dp"
         android:background="@drawable/green_button"
-        android:drawableStart="@drawable/ic_mail"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:maxWidth="320dp"
         android:text="@string/buttonEmailLogin"
         android:textAllCaps="false"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sloganTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/sloganTextView"
+        tools:ignore="VisualLintButtonSize" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonGmailLogin"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="100dp"
-        android:background="@drawable/green_button"
-        android:drawablePadding="0dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/secondary_button"
+        android:maxWidth="320dp"
         android:text="@string/buttonGmailLogin"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:drawableStart="@drawable/ic_google"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonEmailLogin"
-        tools:ignore="RtlCompat" />
+        tools:ignore="RtlCompat,VisualLintButtonSize" />
 
 
     <TextView
         android:id="@+id/textRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:text="@string/registerTextView"
         android:textSize="14sp"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonGmailLogin" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonGmailLogin"
+        tools:ignore="VisualLintBounds" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

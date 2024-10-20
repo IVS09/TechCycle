@@ -20,4 +20,5 @@
     <string name="login_button_text">Login</string>
     <string name="google_login">Continue with Google</string>
     <string name="splash_background_description2">Login screen background</string>
+    <string name="separator_text">Or</string>
 </resources>

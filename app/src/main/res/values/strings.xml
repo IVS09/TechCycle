@@ -21,4 +21,9 @@
     <string name="google_login">Continue with Google</string>
     <string name="splash_background_description2">Login screen background</string>
     <string name="separator_text">Or</string>
+
+    <string name="register_prompt_title">Register a new account</string>
+    <string name="confirm_password_hint">Confirm password</string>
+    <string name="terms_and_conditions">I agree to the terms and conditions</string>
+    <string name="register_button_text">Register</string>
 </resources>

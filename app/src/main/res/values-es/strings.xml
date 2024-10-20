@@ -21,4 +21,9 @@
     <string name="google_login">Continua con Google</string>
     <string name="splash_background_description2">Login screen background</string>
     <string name="separator_text">O</string>
+
+    <string name="register_prompt_title">Registra una nueva cuenta</string>
+    <string name="confirm_password_hint">Confirmar contraseña</string>
+    <string name="terms_and_conditions">Estoy de acuerdo con los términos y condiciones</string>
+    <string name="register_button_text">Registrar</string>
 </resources>

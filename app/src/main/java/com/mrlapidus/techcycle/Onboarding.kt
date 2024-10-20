@@ -30,5 +30,10 @@ class Onboarding : AppCompatActivity() {
             startActivity(intent)
         }
 
+        binding.textRegister.setOnClickListener {
+            val intent = Intent(this@Onboarding, Registro::class.java)
+            startActivity(intent)
+        }
+
     }
 }

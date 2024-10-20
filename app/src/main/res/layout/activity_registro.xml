@@ -68,7 +68,7 @@
             android:inputType="textEmailAddress"
             android:textColor="@color/black"
             android:textColorHint="#546E7A"
-            tools:ignore="TextContrastCheck" />
+            tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Campo de contraseña -->
@@ -92,7 +92,7 @@
             android:inputType="textPassword"
             android:textColor="@color/black"
             android:textColorHint="#546E7A"
-            tools:ignore="TextContrastCheck" />
+            tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Confirmación de contraseña -->
@@ -116,7 +116,7 @@
             android:inputType="textPassword"
             android:textColor="@color/black"
             android:textColorHint="#546E7A"
-            tools:ignore="TextContrastCheck" />
+            tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Checkbox para aceptar términos y condiciones -->
@@ -146,7 +146,8 @@
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/termsCheckBox" />
+        app:layout_constraintTop_toBottomOf="@id/termsCheckBox"
+        tools:ignore="VisualLintButtonSize" />
 
     <LinearLayout
         android:id="@+id/separatorLinearLayout"
@@ -206,6 +207,7 @@
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/separatorLinearLayout" />
+        app:layout_constraintTop_toBottomOf="@id/separatorLinearLayout"
+        tools:ignore="VisualLintButtonSize" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

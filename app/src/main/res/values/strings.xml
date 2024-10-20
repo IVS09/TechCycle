@@ -4,18 +4,18 @@
     <string name="splash_subtitle">Connect. Exchange. Reduce</string>
     <string name="continue_with_email">Continue with Email</string>
     <string name="continue_with_google">Continue with Google</string>
-    <string name="register_here">Don\'t have an account? <font color="#6CCDC2">Register</font></string>
+    <string name="register_here">Don\'t have an account? <font color="#127d70">Register</font></string>
     <string name="splash_background_description">Welcome background image</string>
     <string name="shape_description">Decorative element, design shape</string>
     <string name="buttonEmailLogin">Continue with Email</string>
     <string name="buttonGmailLogin">Continue with Google</string>
-    <string name="registerTextView">Don´t you have an account? <font color="#6CCDC2">Register</font></string>
+    <string name="registerTextView">Don´t you have an account? <font color="#127d70">Register</font></string>
 
     <string name="login_prompt_title">Please login to continue</string>
     <string name="login_prompt_subtitle">Welcome! Please enter your details.</string>
     <string name="email_hint">Email</string>
     <string name="password_hint">Password</string>
-    <string name="forgot_password">Forgot your password? <font color="#6CCDC2">Recover</font></string>
+    <string name="forgot_password">Forgot your password? <font color="#127d70">Recover</font></string>
     <string name="recover_password">Recover</string>
     <string name="login_button_text">Login</string>
     <string name="google_login">Continue with Google</string>

@@ -30,4 +30,11 @@
     <string name="recover_prompt_title">Olvidaste tu contraseña?</string>
     <string name="recover_prompt_subtitle">Ingrese su correo electrónico. Le enviaremos las instrucciones de recuperación.</string>
     <string name="recover_button_text">Enviar</string>
+
+    <!-- Menú en el ButtonNavigationView -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_chat">Chat</string>
+    <string name="nav_shop">Tienda</string>
+    <string name="nav_ads">Anuncios</string>
+    <string name="nav_profile">Perfil</string>
 </resources>

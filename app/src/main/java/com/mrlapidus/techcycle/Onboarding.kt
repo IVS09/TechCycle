@@ -30,6 +30,12 @@ class Onboarding : AppCompatActivity() {
             startActivity(intent)
         }
 
+        //provisional para cargar mainActivity
+        binding.buttonGmailLogin.setOnClickListener {
+            val intent = Intent(this@Onboarding, MainActivity::class.java)
+            startActivity(intent)
+        }
+
         binding.textRegister.setOnClickListener {
             val intent = Intent(this@Onboarding, Registro::class.java)
             startActivity(intent)

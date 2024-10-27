@@ -38,5 +38,12 @@
     <string name="nav_ads">Ads</string>
     <string name="nav_profile">Profile</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+
+    <!-- Text Fragments -->
+    <string name="fragment_home">HOME</string>
+    <string name="fragment_ads">ADS</string>
+    <string name="fragment_chat">CHAT</string>
+    <string name="fragment_profile">PROFILE</string>
+    <string name="fragment_shop">SHOP</string>
 </resources>

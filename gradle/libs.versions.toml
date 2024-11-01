@@ -1,5 +1,7 @@
 [versions]
 agp = "8.7.0"
+firebaseAuth = "23.1.0"
+firebaseDatabase = "21.0.0"
 firebaseBom = "33.4.0"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
@@ -14,6 +16,8 @@ googleServicesVersion = "4.4.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
+firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

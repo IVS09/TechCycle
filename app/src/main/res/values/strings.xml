@@ -46,4 +46,7 @@
     <string name="fragment_chat">CHAT</string>
     <string name="fragment_profile">PROFILE</string>
     <string name="fragment_shop">SHOP</string>
+
+    <!-- Texto Progress Dialog -->
+    <string name="progress_loading">Loading, please wait...</string>
 </resources>

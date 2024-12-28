@@ -49,4 +49,7 @@
 
     <!-- Texto Progress Dialog -->
     <string name="progress_loading">Loading, please wait...</string>
+
+    <!-- Texto para btn Fragment_profile Cerrar Sesión -->
+    <string name="logout">Close Session</string>
 </resources>

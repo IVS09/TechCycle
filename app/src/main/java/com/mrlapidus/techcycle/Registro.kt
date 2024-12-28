@@ -83,6 +83,9 @@ class Registro : AppCompatActivity() {
                 binding.confirmPasswordEditText.error = "Las contraseñas no coinciden"
                 binding.confirmPasswordEditText.requestFocus()
             }
+            !binding.termsCheckBox.isChecked -> {
+                Toast.makeText(this, "Debe aceptar los términos y condiciones", Toast.LENGTH_SHORT).show()
+            }
             else -> {
                 createAccount()
             }

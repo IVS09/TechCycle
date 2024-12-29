@@ -106,33 +106,57 @@ class Login : AppCompatActivity() {
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    saveUserInfoToDatabase(account)
+                    checkAndSaveUserInfo(account)
                 } else {
                     Toast.makeText(this, "Error de autenticación: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
     }
 
-    private fun saveUserInfoToDatabase(account: GoogleSignInAccount?) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+    private fun checkAndSaveUserInfo(account: GoogleSignInAccount?) {
+        val userId = firebaseAuth.currentUser?.uid ?: return
         val databaseRef = FirebaseDatabase.getInstance().getReference("Usuarios")
 
+        databaseRef.child(userId).get().addOnSuccessListener { snapshot ->
+            if (snapshot.exists()) {
+                // El usuario ya existe
+                Toast.makeText(this, "Bienvenido de nuevo, ${account?.displayName ?: "Usuario"}", Toast.LENGTH_SHORT).show()
+                navigateToMainActivity()
+            } else {
+                // El usuario no existe, guardar los datos
+                saveUserInfoToDatabase(account)
+            }
+        }.addOnFailureListener {
+            Toast.makeText(this, "Error al verificar los datos del usuario: ${it.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun saveUserInfoToDatabase(account: GoogleSignInAccount?) {
+        val userId = firebaseAuth.currentUser?.uid ?: return
+        val currentTime = System.currentTimeMillis()
+
         val userMap = hashMapOf(
-            "nombres" to (account?.displayName ?: "Usuario Desconocido"),
-            "correo" to (account?.email ?: "Correo no disponible"),
-            "proveedor" to "Google",
-            "uid" to userId,
-            "fechaDeRegistro" to System.currentTimeMillis()
+            "nombreCompleto" to (account?.displayName ?: "Usuario Desconocido"),
+            "codigoPais" to "",
+            "telefono" to "",
+            "urlAvatar" to "",
+            "métodoDeRegistro" to "Google",
+            "estadoUsuario" to "activo",
+            "correo" to (account?.email ?: ""),
+            "idUsuario" to userId,
+            "fechaDeRegistro" to currentTime,
+            "escribiendo" to "",
+            "tiempo" to currentTime,
+            "fecha_nac" to ""
         )
 
+        val databaseRef = FirebaseDatabase.getInstance().getReference("Usuarios")
         databaseRef.child(userId).setValue(userMap)
             .addOnSuccessListener {
-                // Usuario guardado con éxito
                 Toast.makeText(this, "Usuario guardado exitosamente en la base de datos.", Toast.LENGTH_SHORT).show()
                 navigateToMainActivity()
             }
             .addOnFailureListener { e ->
-                // Error al guardar los datos
                 Toast.makeText(this, "Error al guardar datos en la base de datos: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }

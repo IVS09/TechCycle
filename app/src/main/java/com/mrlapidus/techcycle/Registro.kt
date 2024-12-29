@@ -123,11 +123,11 @@ class Registro : AppCompatActivity() {
             "métodoDeRegistro" to "Email",
             "estadoUsuario" to "activo",
             "correo" to email,
-            "idUsuario" to userId,
-            "fechaDeRegistro" to currentTime,
-            "escribiendo" to "",
-            "tiempo" to currentTime,  // Puedes reemplazar currentTime por una función similar a `Constantes.obtenerTiempoDis()`
-            "fecha_nac" to ""  // Campo para la fecha de nacimiento
+            "idUsuario" to userId, // UID del usuario
+            "fechaDeRegistro" to currentTime, // Fecha de registro
+            "escribiendo" to "", // Para el chat
+            "tiempo" to currentTime,  // Para ordenar los mensajes
+            "fecha_nac" to ""
         )
 
         val databaseRef = FirebaseDatabase.getInstance().getReference("Usuarios")

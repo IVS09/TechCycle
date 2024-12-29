@@ -16,6 +16,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.FirebaseDatabase
 import com.mrlapidus.techcycle.databinding.ActivityLoginBinding
 
 class Login : AppCompatActivity() {
@@ -105,14 +106,42 @@ class Login : AppCompatActivity() {
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    val intent = Intent(this@Login, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                    finish()
+                    saveUserInfoToDatabase(account)
                 } else {
                     Toast.makeText(this, "Error de autenticación: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
+    }
+
+    private fun saveUserInfoToDatabase(account: GoogleSignInAccount?) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val databaseRef = FirebaseDatabase.getInstance().getReference("Usuarios")
+
+        val userMap = hashMapOf(
+            "nombres" to (account?.displayName ?: "Usuario Desconocido"),
+            "correo" to (account?.email ?: "Correo no disponible"),
+            "proveedor" to "Google",
+            "uid" to userId,
+            "fechaDeRegistro" to System.currentTimeMillis()
+        )
+
+        databaseRef.child(userId).setValue(userMap)
+            .addOnSuccessListener {
+                // Usuario guardado con éxito
+                Toast.makeText(this, "Usuario guardado exitosamente en la base de datos.", Toast.LENGTH_SHORT).show()
+                navigateToMainActivity()
+            }
+            .addOnFailureListener { e ->
+                // Error al guardar los datos
+                Toast.makeText(this, "Error al guardar datos en la base de datos: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun navigateToMainActivity() {
+        val intent = Intent(this@Login, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 
     private fun validarInfo() {
@@ -141,10 +170,7 @@ class Login : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 progressDialog.dismiss()
                 if (task.isSuccessful) {
-                    val intent = Intent(this@Login, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                    finish()
+                    navigateToMainActivity()
                 } else {
                     Toast.makeText(this, "Error de autenticación: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }

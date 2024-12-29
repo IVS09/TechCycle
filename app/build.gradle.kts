@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.mrlapidus.techcycle"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.mrlapidus.techcycle"
@@ -35,14 +35,13 @@ android {
         jvmTarget = "1.8"
     }
 
-    //Habilitamos viewBinding
+    // Habilitamos viewBinding
     buildFeatures {
         viewBinding = true
     }
 }
 
 dependencies {
-
     implementation(platform(libs.firebase.bom))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -51,6 +50,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
+    implementation(libs.google.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

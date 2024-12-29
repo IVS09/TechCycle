@@ -1,8 +1,9 @@
 {
   "project_info": {
     "project_number": "256423153606",
+    "firebase_url": "https://techcycle-6778b-default-rtdb.firebaseio.com",
     "project_id": "techcycle-6778b",
-    "storage_bucket": "techcycle-6778b.appspot.com"
+    "storage_bucket": "techcycle-6778b.firebasestorage.app"
   },
   "client": [
     {
@@ -12,7 +13,20 @@
           "package_name": "com.mrlapidus.techcycle"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "256423153606-3p0aenaa58c066pekqcc02snujbtn2ok.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mrlapidus.techcycle",
+            "certificate_hash": "4b97015270bf8aeb7383f5822ebff7863aefa108"
+          }
+        },
+        {
+          "client_id": "256423153606-n1761dggljrv1ij0ulrn4vjdklh8mk5n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCvcxMo-Lzps8FQwvwPVEizGulOP1ywqQY"
@@ -20,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "256423153606-n1761dggljrv1ij0ulrn4vjdklh8mk5n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

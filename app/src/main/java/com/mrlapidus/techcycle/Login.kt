@@ -5,15 +5,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.auth.api.identity.BeginSignInRequest
+import com.google.android.gms.auth.api.identity.Identity
+import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.FirebaseDatabase
@@ -24,14 +23,11 @@ class Login : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var progressDialog: AlertDialog
-    private lateinit var googleSignInClient: GoogleSignInClient
-
-    private val RC_SIGN_IN = 1001 // Código para identificar la actividad de Google Sign-In
+    private lateinit var oneTapClient: SignInClient
+    private lateinit var signInRequest: BeginSignInRequest
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -50,7 +46,6 @@ class Login : AppCompatActivity() {
             insets
         }
 
-        // Configurar Google Sign-In
         setupGoogleSignIn()
 
         binding.registerTextView.setOnClickListener {
@@ -68,81 +63,93 @@ class Login : AppCompatActivity() {
         }
 
         binding.googleLoginButton.setOnClickListener {
-            signInWithGoogle()
+            initiateGoogleSignIn()
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun setupGoogleSignIn() {
-        // Configuración de Google Sign-In con ID de cliente obtenido del archivo `google-services.json`
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id)) // ID del cliente de Google
-            .requestEmail()
+        oneTapClient = Identity.getSignInClient(this)
+        signInRequest = BeginSignInRequest.builder()
+            .setGoogleIdTokenRequestOptions(
+                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
+                    .setSupported(true)
+                    .setServerClientId(getString(R.string.default_web_client_id))
+                    .setFilterByAuthorizedAccounts(false)
+                    .build()
+            )
             .build()
-
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
     }
 
-    private fun signInWithGoogle() {
-        val signInIntent = googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
+    private fun initiateGoogleSignIn() {
+        oneTapClient.beginSignIn(signInRequest)
+            .addOnSuccessListener { result ->
+                val intent = IntentSenderRequest.Builder(result.pendingIntent).build()
+                googleSignInLauncher.launch(intent)
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Error al iniciar sesión: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+    private val googleSignInLauncher = registerForActivityResult(
+        ActivityResultContracts.StartIntentSenderForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
             try {
-                val account = task.getResult(ApiException::class.java)
-                firebaseAuthWithGoogle(account)
-            } catch (e: ApiException) {
-                Toast.makeText(this, "Error de autenticación con Google: ${e.message}", Toast.LENGTH_SHORT).show()
+                val credential = oneTapClient.getSignInCredentialFromIntent(result.data)
+                val idToken = credential.googleIdToken
+                if (idToken != null) {
+                    firebaseAuthWithGoogle(idToken)
+                } else {
+                    Toast.makeText(this, "No se pudo obtener el token de Google", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this, "Error en la autenticación: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun firebaseAuthWithGoogle(account: GoogleSignInAccount?) {
-        val credential = GoogleAuthProvider.getCredential(account?.idToken, null)
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    checkAndSaveUserInfo(account)
+                    checkAndSaveUserInfo()
                 } else {
                     Toast.makeText(this, "Error de autenticación: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
     }
 
-    private fun checkAndSaveUserInfo(account: GoogleSignInAccount?) {
+    private fun checkAndSaveUserInfo() {
         val userId = firebaseAuth.currentUser?.uid ?: return
         val databaseRef = FirebaseDatabase.getInstance().getReference("Usuarios")
 
         databaseRef.child(userId).get().addOnSuccessListener { snapshot ->
             if (snapshot.exists()) {
-                // El usuario ya existe
-                Toast.makeText(this, "Bienvenido de nuevo, ${account?.displayName ?: "Usuario"}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Bienvenido de nuevo, ${firebaseAuth.currentUser?.displayName ?: "Usuario"}", Toast.LENGTH_SHORT).show()
                 navigateToMainActivity()
             } else {
-                // El usuario no existe, guardar los datos
-                saveUserInfoToDatabase(account)
+                saveUserInfoToDatabase()
             }
         }.addOnFailureListener {
             Toast.makeText(this, "Error al verificar los datos del usuario: ${it.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun saveUserInfoToDatabase(account: GoogleSignInAccount?) {
+    private fun saveUserInfoToDatabase() {
         val userId = firebaseAuth.currentUser?.uid ?: return
         val currentTime = System.currentTimeMillis()
 
         val userMap = hashMapOf(
-            "nombreCompleto" to (account?.displayName ?: "Usuario Desconocido"),
+            "nombreCompleto" to (firebaseAuth.currentUser?.displayName ?: "Usuario Desconocido"),
             "codigoPais" to "",
             "telefono" to "",
             "urlAvatar" to "",
             "métodoDeRegistro" to "Google",
             "estadoUsuario" to "activo",
-            "correo" to (account?.email ?: ""),
+            "correo" to (firebaseAuth.currentUser?.email ?: ""),
             "idUsuario" to userId,
             "fechaDeRegistro" to currentTime,
             "escribiendo" to "",

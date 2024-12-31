@@ -38,7 +38,6 @@
     <string name="nav_shop">Shop</string>
     <string name="nav_ads">Ads</string>
     <string name="nav_profile">Profile</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
 
     <!-- Text Fragments -->
@@ -65,4 +64,9 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="change_password">Change Password</string>
     <string name="delete_ads">Delete Ads</string>
+
+    <string name="profile_name_value">Miguel Rodriguez</string>
+    <string name="profile_email_value">miguelro@gmail.com</string>
+    <string name="profile_member_since_value">01/01/2022</string>
+    <string name="profile_account_status_value">non verified</string>
 </resources>

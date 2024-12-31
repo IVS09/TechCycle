@@ -55,6 +55,7 @@
     <!-- Texto Fragment Profile -->
     <string name="profile_title">Perfil de usuario</string>
     <string name="profile_image_description">Imagen de perfil del usuario</string>
+    <string name="information_label">Información</string>
     <string name="name_label">Nombre:</string>
     <string name="email_label">Email:</string>
     <string name="member_since_label">Miembro desde:</string>

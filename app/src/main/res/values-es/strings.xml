@@ -51,4 +51,15 @@
 
     <!-- Texto para btn Fragment_profile Cerrar Sesión -->
     <string name="logout">Cerrar Sesión</string>
+
+    <!-- Texto Fragment Profile -->
+    <string name="profile_title">Perfil de usuario</string>
+    <string name="profile_image_description">Imagen de perfil del usuario</string>
+    <string name="name_label">Nombre:</string>
+    <string name="email_label">Email:</string>
+    <string name="member_since_label">Miembro desde:</string>
+    <string name="account_status_label">Estado de la cuenta:</string>
+    <string name="edit_profile">Editar Perfil</string>
+    <string name="change_password">Cambiar contraseña</string>
+    <string name="delete_ads">Eliminar anuncios</string>
 </resources>

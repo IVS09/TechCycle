@@ -5,6 +5,7 @@ import java.util.*
 
 object Utilities {
     // Devuelve el tiempo actual en formato timestamp
+    @Suppress("unused")
     fun getCurrentTimestamp(): Long {
         return System.currentTimeMillis()
     }

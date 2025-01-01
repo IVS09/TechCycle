@@ -51,7 +51,7 @@ class ProfileFragment : Fragment() {
                     val email = snapshot.child("correo").value as? String ?: "N/A"
                     val profileImage = snapshot.child("urlAvatar").value as? String ?: ""
                     val registrationDate = snapshot.child("fechaDeRegistro").value as? Long ?: 0L
-                    val provider = snapshot.child("métodoDeRegistro").value as? String ?: "N/A" // Método de registro
+                    val provider = snapshot.child("métodoDeRegistro").value as? String ?: "N/A"
 
                     // Actualizar la interfaz con datos del usuario
                     binding.nameValueTextView.text = name
@@ -68,7 +68,7 @@ class ProfileFragment : Fragment() {
                     // Ocultar el ProgressBar después de cargar los datos
                     binding.progressBar.visibility = View.GONE
 
-                    // Verificar estado de la cuenta según el método de registro
+                    // Verificar estado de la cuenta
                     if (provider == getString(R.string.login_provider_email)) {
                         val isVerified = firebaseAuth.currentUser?.isEmailVerified ?: false
                         if (isVerified) {

@@ -1,41 +1,108 @@
 package com.mrlapidus.techcycle.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
-import com.mrlapidus.techcycle.Login
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.mrlapidus.techcycle.R
+import com.mrlapidus.techcycle.Utilities
 import com.mrlapidus.techcycle.databinding.FragmentProfileBinding
 
 class ProfileFragment : Fragment() {
 
-    private var _binding: FragmentProfileBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentProfileBinding
+    private lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentProfileBinding.inflate(inflater, container, false)
-        val view = binding.root
-
-        // Configurar el botón de cerrar sesión
-        binding.logoutButton.setOnClickListener {
-            FirebaseAuth.getInstance().signOut()
-            val intent = Intent(activity, Login::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-        }
-
-        return view
+        binding = FragmentProfileBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        firebaseAuth = FirebaseAuth.getInstance()
+
+        // Mostrar barra de carga y cargar información del usuario
+        binding.progressBar.visibility = View.VISIBLE
+        loadUserInfo()
+    }
+
+    private fun loadUserInfo() {
+        // Mostrar el ProgressBar al inicio de la carga
+        binding.progressBar.visibility = View.VISIBLE
+
+        val ref = FirebaseDatabase.getInstance().getReference("Usuarios")
+        ref.child(firebaseAuth.uid ?: return)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val name = snapshot.child("nombreCompleto").value as? String ?: "N/A"
+                    val email = snapshot.child("correo").value as? String ?: "N/A"
+                    val profileImage = snapshot.child("urlAvatar").value as? String ?: ""
+                    val registrationDate = snapshot.child("fechaDeRegistro").value as? Long ?: 0L
+                    val provider = snapshot.child("métodoDeRegistro").value as? String ?: "N/A" // Método de registro
+
+                    // Actualizar la interfaz con datos del usuario
+                    binding.nameValueTextView.text = name
+                    binding.emailValueTextView.text = email
+                    binding.memberSinceValueTextView.text =
+                        Utilities.formatTimestampToDate(registrationDate)
+
+                    // Cargar imagen de perfil
+                    Glide.with(requireContext())
+                        .load(profileImage)
+                        .placeholder(R.drawable.avatar_profile)
+                        .into(binding.profileImageView)
+
+                    // Ocultar el ProgressBar después de cargar los datos
+                    binding.progressBar.visibility = View.GONE
+
+                    // Verificar estado de la cuenta según el método de registro
+                    if (provider == getString(R.string.login_provider_email)) {
+                        val isVerified = firebaseAuth.currentUser?.isEmailVerified ?: false
+                        if (isVerified) {
+                            // Usuario verificado
+                            binding.accountStatusValueTextView.text = getString(R.string.account_verified)
+                            binding.accountStatusValueTextView.setTextColor(
+                                requireContext().getColor(R.color.primaryColor)
+                            )
+                        } else {
+                            // Usuario no verificado
+                            binding.accountStatusValueTextView.text = getString(R.string.account_not_verified)
+                            binding.accountStatusValueTextView.setTextColor(
+                                requireContext().getColor(R.color.red)
+                            )
+                        }
+                    } else if (provider == getString(R.string.login_provider_google)) {
+                        // Usuario con cuenta de Google siempre está verificado
+                        binding.accountStatusValueTextView.text = getString(R.string.account_verified)
+                        binding.accountStatusValueTextView.setTextColor(
+                            requireContext().getColor(R.color.primaryColor)
+                        )
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.error_loading_data, error.message),
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    // También ocultar el ProgressBar en caso de error
+                    binding.progressBar.visibility = View.GONE
+                }
+            })
     }
 }
-

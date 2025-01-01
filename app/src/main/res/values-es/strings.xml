@@ -68,4 +68,11 @@
     <string name="profile_email_value">miguelro@gmail.com</string>
     <string name="profile_member_since_value">01/01/2022</string>
     <string name="profile_account_status_value">no verificado</string>
+
+    <!-- Text Fragment Profile lógico -->
+    <string name="account_verified">Verificado</string>
+    <string name="account_not_verified">No verificado</string>
+    <string name="login_provider_google">Google</string>
+    <string name="login_provider_email">Email</string>
+    <string name="error_loading_data">Error al cargar datos: %1$s</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.mrlapidus.techcycle.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import com.google.firebase.database.ValueEventListener
 import com.mrlapidus.techcycle.R
 import com.mrlapidus.techcycle.Utilities
 import com.mrlapidus.techcycle.databinding.FragmentProfileBinding
+import com.mrlapidus.techcycle.EditProfile
 
 class ProfileFragment : Fragment() {
 
@@ -37,6 +39,13 @@ class ProfileFragment : Fragment() {
         // Mostrar barra de carga y cargar información del usuario
         binding.progressBar.visibility = View.VISIBLE
         loadUserInfo()
+
+        // Lógica del botón para editar el perfil
+        binding.editProfileButton.setOnClickListener {
+            // Navegar a la actividad EditProfile
+            val intent = Intent(requireContext(), EditProfile::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun loadUserInfo() {

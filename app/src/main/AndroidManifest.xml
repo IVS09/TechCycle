@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
-    <!-- permiso uso de internet-->
+    <!-- permiso uso de internet -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -15,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TechCycle"
         tools:targetApi="31">
+        <activity
+            android:name=".EditProfile"
+            android:exported="false" />
         <activity
             android:name=".Recuperacion"
             android:exported="false" />

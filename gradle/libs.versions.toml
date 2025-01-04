@@ -17,6 +17,7 @@ googlePlayServicesAuth = "21.3.0"
 glideVersion = "4.16.0"
 countryCodePickerVersion = "2.7.0"
 firebaseStorageVersion = "21.0.1"
+circleImageView = "3.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -34,6 +35,7 @@ google-auth = { group = "com.google.android.gms", name = "play-services-auth", v
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glideVersion" }
 countryCodePicker = { group = "com.hbb20", name = "ccp", version.ref = "countryCodePickerVersion" }
 firebaseStorage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorageVersion" }
+circleImageView = { group = "de.hdodenhof", name = "circleimageview", version.ref = "circleImageView" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

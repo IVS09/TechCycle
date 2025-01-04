@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.glide)
     implementation(libs.countryCodePicker)
     implementation(libs.firebaseStorage)
+    implementation(libs.circleImageView)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.google.auth)
     implementation(libs.glide)
     implementation(libs.countryCodePicker)
+    implementation(libs.firebaseStorage)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

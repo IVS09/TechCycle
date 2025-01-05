@@ -15,6 +15,9 @@ constraintlayout = "2.2.0"
 googleServicesVersion = "4.4.2"
 googlePlayServicesAuth = "21.3.0"
 glideVersion = "4.16.0"
+countryCodePickerVersion = "2.7.0"
+firebaseStorageVersion = "21.0.1"
+circleImageView = "3.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -30,6 +33,9 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 google-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "googlePlayServicesAuth" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glideVersion" }
+countryCodePicker = { group = "com.hbb20", name = "ccp", version.ref = "countryCodePickerVersion" }
+firebaseStorage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorageVersion" }
+circleImageView = { group = "de.hdodenhof", name = "circleimageview", version.ref = "circleImageView" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

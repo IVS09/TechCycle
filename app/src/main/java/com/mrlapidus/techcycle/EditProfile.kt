@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -26,19 +25,69 @@ class EditProfile : AppCompatActivity() {
     private lateinit var binding: ActivityEditProfileBinding
     private var imageUri: Uri? = null
 
+    // Solicitar permisos en tiempo de ejecución
+    private val requestPermissionsLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val cameraGranted = permissions[android.Manifest.permission.CAMERA] ?: false
+        val storageGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions[android.Manifest.permission.READ_MEDIA_IMAGES] ?: false
+        } else {
+            permissions[android.Manifest.permission.READ_EXTERNAL_STORAGE] ?: false
+        }
+
+        if (cameraGranted && storageGranted) {
+            Toast.makeText(this, "Permisos concedidos", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Permisos denegados. No se podrá acceder a la cámara o galería", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Registrar el resultado de PhotoPicker para Android 14+
+    private val photoPickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            imageUri = result.data?.data
+            updateProfileImage()
+        } else {
+            Toast.makeText(this, "No se seleccionó ninguna imagen", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Registrar el resultado para la galería (versiones anteriores)
+    private val galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            imageUri = result.data?.data
+            updateProfileImage()
+        } else {
+            Toast.makeText(this, "No se seleccionó ninguna imagen", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Registrar el resultado de la cámara
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            updateProfileImage()
+        } else {
+            Toast.makeText(this, "No se capturó ninguna imagen", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEditProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Manejo de márgenes del sistema
+        // Verificar y solicitar permisos
+        requestPermissions()
+
+        // Manejo de los márgenes del sistema
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        // Cargar datos del usuario al abrir la pantalla
+        // Cargar los datos del usuario al abrir la pantalla
         loadUserData()
 
         // Configurar el botón flotante para mostrar el menú
@@ -52,12 +101,27 @@ class EditProfile : AppCompatActivity() {
         }
     }
 
+    private fun requestPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionsLauncher.launch(
+                arrayOf(
+                    android.Manifest.permission.CAMERA,
+                    android.Manifest.permission.READ_MEDIA_IMAGES
+                )
+            )
+        } else {
+            requestPermissionsLauncher.launch(
+                arrayOf(
+                    android.Manifest.permission.CAMERA,
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE
+                )
+            )
+        }
+    }
+
     private fun loadUserData() {
         val userId = FirebaseAuth.getInstance().uid ?: return
         val databaseRef = FirebaseDatabase.getInstance().getReference("Usuarios").child(userId)
-
-        // Mostrar el ProgressBar
-        binding.progressBar.visibility = View.VISIBLE
 
         databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -76,13 +140,9 @@ class EditProfile : AppCompatActivity() {
                     .load(imageUrl.ifEmpty { R.drawable.avatar_profile }) // Placeholder si no hay imagen
                     .circleCrop()
                     .into(binding.editProfileImageView)
-
-                // Ocultar el ProgressBar
-                binding.progressBar.visibility = View.GONE
             }
 
             override fun onCancelled(error: DatabaseError) {
-                binding.progressBar.visibility = View.GONE
                 Toast.makeText(this@EditProfile, "Error al cargar datos: ${error.message}", Toast.LENGTH_SHORT).show()
             }
         })
@@ -99,9 +159,6 @@ class EditProfile : AppCompatActivity() {
             return
         }
 
-        // Mostrar el ProgressBar
-        binding.progressBar.visibility = View.VISIBLE
-
         val databaseRef = FirebaseDatabase.getInstance().getReference("Usuarios").child(userId)
         val updates = mapOf(
             "nombreCompleto" to nombre,
@@ -109,9 +166,6 @@ class EditProfile : AppCompatActivity() {
         )
 
         databaseRef.updateChildren(updates).addOnCompleteListener { task ->
-            // Ocultar el ProgressBar
-            binding.progressBar.visibility = View.GONE
-
             if (task.isSuccessful) {
                 Toast.makeText(this, "Datos actualizados correctamente", Toast.LENGTH_SHORT).show()
             } else {
@@ -126,15 +180,15 @@ class EditProfile : AppCompatActivity() {
         builder.setTitle("Seleccionar una opción")
         builder.setItems(options) { _, which ->
             when (which) {
-                0 -> launchCamera() // Cámara
-                1 -> handleImageSelection() // Galería
+                0 -> launchCamera()
+                1 -> handleImageSelection()
             }
         }
         builder.show()
     }
 
     private fun handleImageSelection() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 14+
             val intent = Intent(MediaStore.ACTION_PICK_IMAGES).apply {
                 putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX, 1)
             }
@@ -153,8 +207,7 @@ class EditProfile : AppCompatActivity() {
                 .load(imageUri)
                 .circleCrop()
                 .into(binding.editProfileImageView)
-
-            uploadProfileImage() // Subir la imagen seleccionada
+            uploadProfileImage()
         } else {
             Toast.makeText(this, "Error al cargar la imagen", Toast.LENGTH_SHORT).show()
         }
@@ -166,19 +219,13 @@ class EditProfile : AppCompatActivity() {
         val userId = FirebaseAuth.getInstance().uid ?: return
         val storageRef = FirebaseStorage.getInstance().getReference("imagenesPerfil/$userId.jpg")
 
-        // Mostrar el ProgressBar
-        binding.progressBar.visibility = View.VISIBLE
-
         storageRef.putFile(imageUri!!)
             .addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { uri ->
                     saveImageUrlToDatabase(uri.toString())
-                    binding.progressBar.visibility = View.GONE
-                    Toast.makeText(this, "Imagen subida correctamente", Toast.LENGTH_SHORT).show()
                 }
             }
             .addOnFailureListener {
-                binding.progressBar.visibility = View.GONE
                 Toast.makeText(this, "Error al subir imagen: ${it.message}", Toast.LENGTH_SHORT).show()
             }
     }
@@ -206,24 +253,5 @@ class EditProfile : AppCompatActivity() {
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
         cameraLauncher.launch(cameraIntent)
     }
-
-    private val photoPickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            imageUri = result.data?.data
-            updateProfileImage()
-        }
-    }
-
-    private val galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            imageUri = result.data?.data
-            updateProfileImage()
-        }
-    }
-
-    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            updateProfileImage()
-        }
-    }
 }
+

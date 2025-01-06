@@ -164,5 +164,15 @@
         app:layout_constraintTop_toBottomOf="@id/phoneContainer"
         tools:ignore="VisualLintButtonSize" />
 
+    <!-- ProgressBar para indicar el estado de carga -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/updateButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

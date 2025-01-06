@@ -37,15 +37,14 @@
     <!-- Botón para cambiar la imagen -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/changeImageButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginEnd="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="-10dp"
         android:layout_marginBottom="4dp"
-        android:src="@drawable/ic_edit_image"
+        android:src="@drawable/add_photo_white"
         android:backgroundTint="@color/primaryColor"
         app:tint="@android:color/white"
-        app:fabSize="mini"
-        app:maxImageSize="24dp"
+        app:fabCustomSize="45dp"
         app:layout_constraintEnd_toEndOf="@id/editProfileImageView"
         app:layout_constraintBottom_toBottomOf="@id/editProfileImageView"
         android:contentDescription="@string/edit_profile_change_image_button_description" />

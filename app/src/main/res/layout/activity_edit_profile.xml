@@ -34,6 +34,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Botón para cambiar la imagen -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/changeImageButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
+        android:src="@drawable/ic_edit_image"
+        android:backgroundTint="@color/primaryColor"
+        app:tint="@android:color/white"
+        app:fabSize="mini"
+        app:maxImageSize="24dp"
+        app:layout_constraintEnd_toEndOf="@id/editProfileImageView"
+        app:layout_constraintBottom_toBottomOf="@id/editProfileImageView"
+        android:contentDescription="@string/edit_profile_change_image_button_description" />
+
+
     <!-- Contenedor de Nombre completo -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/fullNameInputLayout"
@@ -129,20 +146,24 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Botón para actualizar -->
+
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/updateButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="26dp"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="26dp"
         android:layout_marginEnd="32dp"
         android:background="@drawable/green_button"
+        android:maxWidth="320dp"
         android:text="@string/edit_profile_update_button"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/phoneContainer"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/phoneContainer"
+        tools:ignore="VisualLintButtonSize" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

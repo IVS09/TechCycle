@@ -78,6 +78,7 @@
     <string name="error_loading_data">Error loading data: %1$s</string>
 
     <!-- Text EditProfile -->
+    <string name="edit_profile_test">PROFILE</string>
     <string name="edit_profile_title">Edit Profile</string>
     <string name="edit_profile_full_name">Full Name</string>
     <string name="edit_profile_email">Email</string>

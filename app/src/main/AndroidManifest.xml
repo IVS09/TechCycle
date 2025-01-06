@@ -1,8 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <!-- permiso uso de internet -->
+
+    <!-- Declarar que la app usa PhotoPicker en Android 14+ -->
+    <queries>
+        <intent>
+            <action android:name="android.provider.action.PICK_IMAGES" />
+        </intent>
+    </queries>
+
+    <!-- Características del dispositivo -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <!-- Permisos generales -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
+
+    <!-- Opcional: soporte hacia atrás para Android 9 y anteriores -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+
 
     <application
         android:allowBackup="true"
@@ -13,34 +33,32 @@
         android:roundIcon="@mipmap/ic_techcyclev2_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TechCycle"
-        tools:targetApi="31">
-        <activity
-            android:name=".EditProfile"
-            android:exported="false" />
-        <activity
-            android:name=".Recuperacion"
-            android:exported="false" />
-        <activity
-            android:name=".Registro"
-            android:exported="false" />
-        <activity
-            android:name=".Login"
-            android:exported="false" />
-        <activity
-            android:name=".Onboarding"
-            android:exported="false" />
-        <activity
-            android:name=".SplashActivity"
-            android:exported="true">
+        tools:targetApi="33">
+
+        <!-- Configuración del FileProvider -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- Declaración de actividades -->
+        <activity android:name=".EditProfile" android:exported="false" />
+        <activity android:name=".Recuperacion" android:exported="false" />
+        <activity android:name=".Registro" android:exported="false" />
+        <activity android:name=".Login" android:exported="false" />
+        <activity android:name=".Onboarding" android:exported="false" />
+        <activity android:name=".SplashActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
+        <activity android:name=".MainActivity" android:exported="false" />
     </application>
 
 </manifest>

@@ -97,4 +97,8 @@
     <string name="edit_ad_description">Descripción</string>
     <string name="edit_ad_create_ad_button_text">Crear anuncio</string>
 
+    <!-- Text selected_image -->
+    <string name="selected_image">Imagen seleccionada</string>
+    <string name="close_image">Cerrar imagen</string>
+
 </resources>

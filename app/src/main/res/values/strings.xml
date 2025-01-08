@@ -98,4 +98,8 @@
     <string name="edit_ad_description">Description</string>
     <string name="edit_ad_create_ad_button_text">Create Ad</string>
 
+    <!-- Text selected_image -->
+    <string name="selected_image">Selected image</string>
+    <string name="close_image">Close image</string>
+
 </resources>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:cardElevation="0dp"
+    app:cardUseCompatPadding="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Imagen seleccionada -->
+        <ImageView
+            android:id="@+id/selectedImageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/selected_image"
+            android:scaleType="centerCrop"
+            android:src="@drawable/photo_item_icon"
+            app:tint="@color/primaryColor"
+            tools:ignore="ImageContrast,RedundantDescriptionCheck" />
+
+        <!-- Botón de cerrar -->
+        <ImageView
+            android:id="@+id/closeImageView"
+            android:layout_alignParentEnd="true"
+            android:padding="10dp"
+            android:src="@drawable/close_photo_ic"
+            android:contentDescription="@string/close_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:tint="@color/red" />
+
+    </RelativeLayout>
+
+</com.google.android.material.card.MaterialCardView>

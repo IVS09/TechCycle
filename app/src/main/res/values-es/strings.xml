@@ -86,4 +86,13 @@
     <string name="edit_profile_update_button">Actualizar</string>
     <string name="edit_profile_change_image_button_description">Cambiar imagen de perfil</string>
 
+    <!-- Text EditAd -->
+    <string name="add_image">Añadir imagen</string>
+    <string name="ad_title">Título del anuncio</string>
+    <string name="category">Categoría</string>
+    <string name="condition">Condición</string>
+    <string name="price">Precio</string>
+    <string name="description">Descripción</string>
+    <string name="publish_button_text">Publicar</string>
+
 </resources>

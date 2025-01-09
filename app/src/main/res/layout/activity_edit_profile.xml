@@ -146,7 +146,6 @@
 
     <!-- Botón para actualizar -->
 
-
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/updateButton"
         android:layout_width="0dp"

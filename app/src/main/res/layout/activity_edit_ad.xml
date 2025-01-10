@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:padding="16dp">
+        android:layout_marginBottom="2dp">
 
         <ImageView
             android:id="@+id/addImageView"
@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/add_photo_icon"
             android:contentDescription="@string/edit_ad_add_image"
+            android:paddingTop="25dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -37,7 +38,8 @@
         app:layout_constraintTop_toBottomOf="@id/imageContainer"
         app:layout_constraintBottom_toTopOf="@id/publishButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="2dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

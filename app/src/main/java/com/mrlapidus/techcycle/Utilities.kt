@@ -4,6 +4,28 @@ import android.text.format.DateFormat
 import java.util.*
 
 object Utilities {
+    const val STATUS_AVAILABLE = "Disponible"
+    const val STATUS_SOLD = "Vendido"
+
+    val CATEGORIES = listOf(
+        "Todos",
+        "Móviles",
+        "Ordenadores",
+        "Tabletas",
+        "Cámaras",
+        "Televisores",
+        "Wearables",
+        "Drones",
+        "Audio",
+        "Consolas",
+        "Accesorios"
+    )
+
+    val CONDITIONS = listOf(
+        "Nuevo",
+        "Usado",
+        "Reacondicionado"
+    )
     // Devuelve el tiempo actual en formato timestamp
     @Suppress("unused")
     fun getCurrentTimestamp(): Long {

@@ -101,4 +101,27 @@
     <string name="selected_image">Imagen seleccionada</string>
     <string name="close_image">Cerrar imagen</string>
 
+    <!-- Validaciones -->
+    <string name="error_empty_brand">Por favor, ingresa una marca.</string>
+    <string name="error_empty_category">Por favor, selecciona una categoría.</string>
+    <string name="error_empty_condition">Por favor, selecciona una condición.</string>
+    <string name="error_empty_price">Por favor, ingresa un precio.</string>
+    <string name="error_empty_description">Por favor, ingresa una descripción.</string>
+    <string name="error_no_images">Por favor, selecciona al menos una imagen.</string>
+
+    <!-- Opciones del menú emergente -->
+    <string name="option_camera">Cámara</string>
+    <string name="option_gallery">Galería</string>
+
+    <!-- Permisos -->
+    <string name="permission_denied">Permiso denegado.</string>
+
+    <!-- Cámara -->
+    <string name="image_title">Título de la imagen</string>
+    <string name="image_description">Descripción de la imagen</string>
+
+    <string name="loading">Cargando...</string>
+    <string name="publishing_ad">Publicando anuncio...</string>
+    <string name="ad_published">Anuncio publicado con éxito</string>
+
 </resources>

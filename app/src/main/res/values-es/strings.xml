@@ -105,6 +105,7 @@
     <string name="error_empty_brand">Por favor, ingresa una marca.</string>
     <string name="error_empty_category">Por favor, selecciona una categoría.</string>
     <string name="error_empty_condition">Por favor, selecciona una condición.</string>
+    <string name="error_empty_location">Por favor, ingresa una locación.</string>
     <string name="error_empty_price">Por favor, ingresa un precio.</string>
     <string name="error_empty_description">Por favor, ingresa una descripción.</string>
     <string name="error_no_images">Por favor, selecciona al menos una imagen.</string>

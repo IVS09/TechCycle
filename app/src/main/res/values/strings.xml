@@ -106,6 +106,7 @@
     <string name="error_empty_brand">Please enter a brand name.</string>
     <string name="error_empty_category">Please select a category.</string>
     <string name="error_empty_condition">Please select a condition.</string>
+    <string name="error_empty_location">Por favor, ingresa una location.</string>
     <string name="error_empty_price">Please enter a price.</string>
     <string name="error_empty_description">Please enter a description.</string>
     <string name="error_no_images">Please select at least one image.</string>

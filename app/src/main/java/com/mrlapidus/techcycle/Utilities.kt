@@ -7,7 +7,7 @@ object Utilities {
     const val STATUS_AVAILABLE = "Disponible"
     const val STATUS_SOLD = "Vendido"
 
-    val CATEGORIES = listOf(
+    val CATEGORIES = arrayOf(
         "Todos",
         "Móviles",
         "Ordenadores",
@@ -21,7 +21,7 @@ object Utilities {
         "Accesorios"
     )
 
-    val CONDITIONS = listOf(
+    val CONDITIONS = arrayOf(
         "Nuevo",
         "Usado",
         "Reacondicionado"

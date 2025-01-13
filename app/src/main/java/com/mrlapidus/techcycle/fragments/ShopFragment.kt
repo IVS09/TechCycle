@@ -12,7 +12,7 @@ class ShopFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflar el layout activity_edit_ad.xml en este fragmento
-        return inflater.inflate(R.layout.activity_edit_ad, container, false)
+        // Inflar el layout del fragmento shop_fragment.xml (si lo tienes)
+        return inflater.inflate(R.layout.fragment_shop, container, false)
     }
 }

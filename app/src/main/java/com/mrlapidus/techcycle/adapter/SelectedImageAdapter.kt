@@ -18,7 +18,6 @@ class SelectedImageAdapter(
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        // Inflamos el layout usando View Binding
         val binding = ItemSelectedImageBinding.inflate(
             LayoutInflater.from(context), parent, false
         )
@@ -26,23 +25,23 @@ class SelectedImageAdapter(
     }
 
     override fun getItemCount(): Int {
-        // Devuelve el tamaño de la lista de imágenes
         return images.size
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         val imageModel = images[position]
 
-        // Cargar la imagen usando Glide
+        // Glide para cargar la imagen
         Glide.with(context)
-            .load(imageModel.imageUri) // Carga el URI desde el modelo
-            .placeholder(R.drawable.photo_item_icon) // Imagen por defecto
+            .load(imageModel.imageUri)
+            .placeholder(R.drawable.photo_item_icon) // Usar un drawable existente
             .into(holder.binding.selectedImageView)
 
-        // Configurar el botón de cerrar
+        // Configurar el botón de eliminar
         holder.binding.closeImageView.setOnClickListener {
             images.removeAt(position)
             notifyItemRemoved(position)
         }
     }
 }
+

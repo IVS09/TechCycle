@@ -20,7 +20,6 @@
             android:contentDescription="@string/selected_image"
             android:scaleType="centerCrop"
             android:src="@drawable/photo_item_icon"
-            app:tint="@color/primaryColor"
             tools:ignore="ImageContrast,RedundantDescriptionCheck" />
 
         <!-- Botón de cerrar -->

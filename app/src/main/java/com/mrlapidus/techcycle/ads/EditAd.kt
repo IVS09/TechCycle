@@ -6,7 +6,6 @@ import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -47,11 +46,19 @@ class EditAd : AppCompatActivity() {
         binding.selectedImagesRecyclerView.layoutManager = GridLayoutManager(this, 3)
         binding.selectedImagesRecyclerView.adapter = imageAdapter
 
-        // Configurar adaptadores de categorías y condiciones
+        // Configurar dropdowns
         setupDropdowns()
 
-        // Configurar clic en el ImageView para añadir imágenes
+        // Configurar clic en el ImageView para agregar imágenes
         binding.addImageView.setOnClickListener { showImagePickerDialog() }
+
+        // Configurar el botón para publicar el anuncio
+        binding.publishButton.setOnClickListener {
+            if (validateInputs()) {
+                Toast.makeText(this, "Todos los datos son válidos", Toast.LENGTH_SHORT).show()
+                // Proceder con la lógica para guardar el anuncio (se implementará en el siguiente paso)
+            }
+        }
     }
 
     private fun setupDropdowns() {
@@ -100,7 +107,8 @@ class EditAd : AppCompatActivity() {
 
     private fun openCamera() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) !=
-            PackageManager.PERMISSION_GRANTED) {
+            PackageManager.PERMISSION_GRANTED
+        ) {
             requestPermissions(arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE)
         } else {
             val values = ContentValues().apply {
@@ -114,27 +122,77 @@ class EditAd : AppCompatActivity() {
         }
     }
 
-    private fun addImageToRecyclerView(uri: Uri) {
-        if (uri.scheme == "content" || uri.scheme == "file") {
-            val newImage = SelectedImageModel(
-                id = System.currentTimeMillis().toString(),
-                imageUri = uri,
-                imageUrl = null,
-                isFromInternet = false
-            )
-            selectedImages.add(newImage)
-            imageAdapter.notifyItemInserted(selectedImages.size - 1)
-        } else {
-            Toast.makeText(this, "URI inválida: ${uri.toString()}", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     private fun openGallery() {
         galleryLauncher.launch("image/*")
+    }
+
+    private fun addImageToRecyclerView(uri: Uri) {
+        val newImage = SelectedImageModel(
+            id = System.currentTimeMillis().toString(),
+            imageUri = uri,
+            imageUrl = null,
+            isFromInternet = false
+        )
+        selectedImages.add(newImage)
+        imageAdapter.notifyItemInserted(selectedImages.size - 1)
+    }
+
+    private fun validateInputs(): Boolean {
+        val brand = binding.brandEditText.text.toString().trim()
+        val category = binding.categoryAutoCompleteTextView.text.toString().trim()
+        val condition = binding.conditionAutoCompleteTextView.text.toString().trim()
+        val location = binding.locationAutoCompleteTextView.text.toString().trim()
+        val price = binding.priceEditText.text.toString().trim()
+        val description = binding.descriptionEditText.text.toString().trim()
+
+        if (selectedImages.isEmpty()) {
+            Toast.makeText(this, "Debe agregar al menos una imagen", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (brand.isEmpty()) {
+            binding.brandEditText.error = "Por favor, ingrese el nombre de la marca"
+            binding.brandEditText.requestFocus()
+            return false
+        }
+
+        if (category.isEmpty()) {
+            binding.categoryAutoCompleteTextView.error = "Por favor, seleccione una categoría"
+            binding.categoryAutoCompleteTextView.requestFocus()
+            return false
+        }
+
+        if (condition.isEmpty()) {
+            binding.conditionAutoCompleteTextView.error = "Por favor, seleccione una condición"
+            binding.conditionAutoCompleteTextView.requestFocus()
+            return false
+        }
+
+        if (location.isEmpty()) {
+            binding.locationAutoCompleteTextView.error = "Por favor, ingrese una ubicación"
+            binding.locationAutoCompleteTextView.requestFocus()
+            return false
+        }
+
+        if (price.isEmpty()) {
+            binding.priceEditText.error = "Por favor, ingrese un precio"
+            binding.priceEditText.requestFocus()
+            return false
+        }
+
+        if (description.isEmpty()) {
+            binding.descriptionEditText.error = "Por favor, ingrese una descripción"
+            binding.descriptionEditText.requestFocus()
+            return false
+        }
+
+        return true
     }
 
     companion object {
         private const val CAMERA_PERMISSION_CODE = 100
     }
 }
+
+
 

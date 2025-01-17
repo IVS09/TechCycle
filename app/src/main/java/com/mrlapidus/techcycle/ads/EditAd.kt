@@ -2,6 +2,7 @@ package com.mrlapidus.techcycle.ads
 
 import android.Manifest
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -16,6 +17,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import com.mrlapidus.techcycle.R
 import com.mrlapidus.techcycle.Utilities.CATEGORIES
 import com.mrlapidus.techcycle.Utilities.CONDITIONS
@@ -31,6 +35,7 @@ class EditAd : AppCompatActivity() {
 
     private var imageUri: Uri? = null
     private val maxImages = 3
+    private lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +44,7 @@ class EditAd : AppCompatActivity() {
         binding = ActivityEditAdBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        firebaseAuth = FirebaseAuth.getInstance()
         selectedImages = ArrayList()
         imageAdapter = SelectedImageAdapter(this, selectedImages)
 
@@ -55,8 +61,7 @@ class EditAd : AppCompatActivity() {
         // Configurar el botón para publicar el anuncio
         binding.publishButton.setOnClickListener {
             if (validateInputs()) {
-                Toast.makeText(this, "Todos los datos son válidos", Toast.LENGTH_SHORT).show()
-                // Proceder con la lógica para guardar el anuncio (se implementará en el siguiente paso)
+                uploadAdToFirebase()
             }
         }
     }
@@ -98,7 +103,6 @@ class EditAd : AppCompatActivity() {
     private val galleryLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             if (uri != null) {
-                Log.d("EditAd", "URI seleccionada: $uri")
                 addImageToRecyclerView(uri)
             } else {
                 Toast.makeText(this, "No se seleccionó ninguna imagen", Toast.LENGTH_SHORT).show()
@@ -168,11 +172,11 @@ class EditAd : AppCompatActivity() {
             return false
         }
 
-        if (location.isEmpty()) {
+        /*if (location.isEmpty()) {
             binding.locationAutoCompleteTextView.error = "Por favor, ingrese una ubicación"
             binding.locationAutoCompleteTextView.requestFocus()
             return false
-        }
+        }*/
 
         if (price.isEmpty()) {
             binding.priceEditText.error = "Por favor, ingrese un precio"
@@ -189,10 +193,73 @@ class EditAd : AppCompatActivity() {
         return true
     }
 
+    private fun uploadAdToFirebase() {
+        val progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Subiendo anuncio...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+
+        val databaseReference = FirebaseDatabase.getInstance().getReference("Anuncios")
+        val adId = databaseReference.push().key ?: return
+
+        val adData = mapOf(
+            "id" to adId,
+            "brand" to binding.brandEditText.text.toString().trim(),
+            "category" to binding.categoryAutoCompleteTextView.text.toString().trim(),
+            "condition" to binding.conditionAutoCompleteTextView.text.toString().trim(),
+            "location" to binding.locationAutoCompleteTextView.text.toString().trim(),
+            "price" to binding.priceEditText.text.toString().trim(),
+            "description" to binding.descriptionEditText.text.toString().trim(),
+            "userId" to firebaseAuth.uid
+        )
+
+        databaseReference.child(adId).setValue(adData)
+            .addOnSuccessListener {
+                uploadImagesToStorage(adId, progressDialog)
+            }
+            .addOnFailureListener { e ->
+                progressDialog.dismiss()
+                Toast.makeText(this, "Error al subir el anuncio: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun uploadImagesToStorage(adId: String, progressDialog: ProgressDialog) {
+        val storageReference = FirebaseStorage.getInstance().reference.child("AdImages")
+        var uploadedCount = 0
+
+        for (image in selectedImages) {
+            val imageRef = storageReference.child("$adId/${image.id}.jpg")
+            imageRef.putFile(image.imageUri!!)
+                .addOnSuccessListener {
+                    imageRef.downloadUrl.addOnSuccessListener { uri ->
+                        val imageUrl = uri.toString()
+                        val imageData = mapOf("imageUrl" to imageUrl)
+
+                        FirebaseDatabase.getInstance().getReference("Anuncios")
+                            .child(adId).child("images").child(image.id)
+                            .setValue(imageData)
+                            .addOnCompleteListener {
+                                uploadedCount++
+                                if (uploadedCount == selectedImages.size) {
+                                    progressDialog.dismiss()
+                                    Toast.makeText(this, "Anuncio subido exitosamente", Toast.LENGTH_SHORT).show()
+                                    finish()
+                                }
+                            }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    progressDialog.dismiss()
+                    Toast.makeText(this, "Error al subir imágenes: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
     companion object {
         private const val CAMERA_PERMISSION_CODE = 100
     }
 }
+
 
 
 

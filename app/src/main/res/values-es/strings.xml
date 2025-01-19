@@ -122,8 +122,16 @@
     <string name="image_title">Título de la imagen</string>
     <string name="image_description">Descripción de la imagen</string>
 
-    <string name="loading">Cargando...</string>
-    <string name="publishing_ad">Publicando anuncio...</string>
+    <!-- Maps -->
+    <string name="select_location_title">Seleccionar ubicación del producto</string>
+    <string name="select_location_placeholder">Ubicación no seleccionada</string>
+    <string name="confirm_location_button">Confirmar ubicación</string>
+    <string name="select_location_confirm">Confirmar</string>
+    <string name="desc_back">Volver</string>
+    <string name="desc_gps">Centrar en mi ubicación</string>
+
+    <string name="loading">Cargando…</string>
+    <string name="publishing_ad">Publicando anuncio…</string>
     <string name="ad_published">Anuncio publicado con éxito</string>
 
 </resources>

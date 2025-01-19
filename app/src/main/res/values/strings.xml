@@ -123,8 +123,16 @@
     <string name="image_title">Image title</string>
     <string name="image_description">Image description</string>
 
-    <string name="loading">Loading...</string>
-    <string name="publishing_ad">Publishing ad...</string>
+    <!-- Maps -->
+    <string name="select_location_title">Select Product Location</string>
+    <string name="select_location_placeholder">Location not selected</string>
+    <string name="confirm_location_button">Confirm Location</string>
+    <string name="select_location_confirm">Confirm</string>
+    <string name="desc_back">Back</string>
+    <string name="desc_gps">Center on my location</string>
+
+    <string name="loading">Loading…</string>
+    <string name="publishing_ad">Publishing ad…</string>
     <string name="ad_published">Ad successfully published</string>
 
 </resources>

@@ -1,26 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <!-- Declarar que la app usa PhotoPicker en Android 14+ -->
     <queries>
         <intent>
             <action android:name="android.provider.action.PICK_IMAGES" />
         </intent>
-    </queries>
-
-    <!-- Características del dispositivo -->
+    </queries> <!-- Características del dispositivo -->
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="false" />
-
-    <!-- Permisos generales -->
+        android:required="false" /> <!-- Permisos generales -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
-    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
-    <!-- Opcional: soporte hacia atrás para Android 9 y anteriores -->
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" /> <!-- Opcional: soporte hacia atrás para Android 9 y anteriores -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission
@@ -40,7 +35,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TechCycle"
         tools:targetApi="33">
-
+        <activity
+            android:name=".SelectLocationActivity"
+            android:exported="false" />
         <!-- Clave API para Google Maps y Places -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -48,8 +45,7 @@
 
         <activity
             android:name=".ads.EditAd"
-            android:exported="false" />
-        <!-- Configuración del FileProvider -->
+            android:exported="false" /> <!-- Configuración del FileProvider -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -58,8 +54,7 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
-        </provider>
-        <!-- Declaración de actividades -->
+        </provider> <!-- Declaración de actividades -->
         <activity
             android:name=".EditProfile"
             android:exported="false" />
@@ -80,6 +75,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

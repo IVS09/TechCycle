@@ -17,6 +17,8 @@ googlePlayServicesAuth = "21.3.0"
 glideVersion = "4.16.0"
 countryCodePickerVersion = "2.7.0"
 firebaseStorageVersion = "21.0.1"
+play-services-maps = "18.2.0"
+places = "3.2.0"
 
 
 [libraries]
@@ -35,7 +37,8 @@ google-auth = { group = "com.google.android.gms", name = "play-services-auth", v
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glideVersion" }
 countryCodePicker = { group = "com.hbb20", name = "ccp", version.ref = "countryCodePickerVersion" }
 firebaseStorage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorageVersion" }
-
+google-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "play-services-maps" }
+google-places = { module = "com.google.android.libraries.places:places", version.ref = "places" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

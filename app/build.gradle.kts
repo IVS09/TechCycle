@@ -55,6 +55,8 @@ dependencies {
     implementation(libs.glide)
     implementation(libs.countryCodePicker)
     implementation(libs.firebaseStorage)
+    implementation(libs.google.maps)
+    implementation(libs.google.places)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

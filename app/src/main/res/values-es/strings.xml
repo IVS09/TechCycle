@@ -122,8 +122,8 @@
     <string name="image_title">Título de la imagen</string>
     <string name="image_description">Descripción de la imagen</string>
 
-    <string name="loading">Cargando...</string>
-    <string name="publishing_ad">Publicando anuncio...</string>
+    <string name="loading">Cargando…</string>
+    <string name="publishing_ad">Publicando anuncio…</string>
     <string name="ad_published">Anuncio publicado con éxito</string>
 
 </resources>

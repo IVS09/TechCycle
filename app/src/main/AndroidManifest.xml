@@ -36,7 +36,7 @@
         android:theme="@style/Theme.TechCycle"
         tools:targetApi="33">
         <activity
-            android:name=".SelectLocationActivity"
+            android:name=".SelectLocation"
             android:exported="false" />
         <!-- Clave API para Google Maps y Places -->
         <meta-data

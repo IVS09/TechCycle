@@ -20,6 +20,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
+import com.mrlapidus.techcycle.EditProfile
+import com.mrlapidus.techcycle.MainActivity
 import com.mrlapidus.techcycle.R
 import com.mrlapidus.techcycle.Utilities.CATEGORIES
 import com.mrlapidus.techcycle.Utilities.CONDITIONS
@@ -57,6 +59,14 @@ class EditAd : AppCompatActivity() {
 
         // Configurar clic en el ImageView para agregar imágenes
         binding.addImageView.setOnClickListener { showImagePickerDialog() }
+
+        // Configurar evento onClick en el campo de ubicación
+        binding.locationAutoCompleteTextView.setOnClickListener {
+            Log.d("EditAd", "Campo de ubicación clickeado")
+            val intent = Intent()
+            intent.setClassName(this, "com.mrlapidus.techcycle.SelectLocation")
+            startActivity(intent)
+        }
 
         // Configurar el botón para publicar el anuncio
         binding.publishButton.setOnClickListener {

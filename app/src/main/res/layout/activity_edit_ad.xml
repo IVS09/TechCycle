@@ -134,6 +134,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/edit_ad_location"
+                    android:focusable="true"
+                    android:clickable="true"
+                    android:inputType="none"
                     tools:ignore="VisualLintTextFieldSize" />
             </com.google.android.material.textfield.TextInputLayout>
 

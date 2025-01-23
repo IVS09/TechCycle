@@ -8,4 +8,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="green">#4CAF50</color> <!-- Verde -->
     <color name="red">#F44336</color>   <!-- Rojo -->
+    <color name="searchTextColor">#000000</color>
+    <color name="searchHintColor">#616161</color>
 </resources>

@@ -15,11 +15,25 @@ object Utilities {
         "Cámaras",
         "Televisores",
         "Wearables",
-        "Drones",
         "Audio",
         "Consolas",
         "Accesorios"
     )
+
+    val CATEGORY_ICONS = arrayOf(
+        R.drawable.category_all_icon,
+        R.drawable.category_mobile_icon,
+        R.drawable.category_computer_icon,
+        R.drawable.category_tablet_icon,
+        R.drawable.category_camera_icon,
+        R.drawable.category_tv_icon,
+        R.drawable.category_wereable_icon,
+        R.drawable.category_gadget_icon,
+        R.drawable.category_audio_icon,
+        R.drawable.category_game_icon,
+        R.drawable.category_gadget_icon
+    )
+
 
     val CONDITIONS = arrayOf(
         "Nuevo",

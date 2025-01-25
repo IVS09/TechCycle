@@ -140,7 +140,7 @@
     <string name="category_name_placeholder">Category name</string>
 
     <!-- Fragment Home -->
-    <string name="textView_location_home">Location</string>
+    <string name="editText_location_home">Location</string>
     <string name="editText_search_home">Search </string>
     <string name="text_category_home">Categories</string>
     <string name="textView_category_home">Category</string>

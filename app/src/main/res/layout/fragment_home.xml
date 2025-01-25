@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:padding="16dp">
 
     <LinearLayout
@@ -38,9 +39,16 @@
                     android:layout_width="310dp"
                     android:layout_height="48dp"
                     android:layout_marginStart="8dp"
-                    android:text="@string/textView_location_home"
+                    android:hint="@string/editText_location_home"
+                    android:background="@android:color/transparent"
+                    android:imeOptions="actionNone"
+                    android:inputType="text"
                     android:textSize="16sp"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/searchHintColor"
+                    android:importantForAutofill="yes"
+                    android:autofillHints="location"
+                    android:paddingVertical="12dp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

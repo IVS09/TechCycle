@@ -139,7 +139,7 @@
     <string name="category_name_placeholder">Nombre de la categoría</string>
 
     <!-- Fragment Home -->
-    <string name="textView_location_home">Localización</string>
+    <string name="editText_location_home">Localización</string>
     <string name="editText_search_home">Buscar </string>
     <string name="text_category_home">Categorias</string>
     <string name="textView_category_home">Categoría</string>

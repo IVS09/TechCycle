@@ -5,12 +5,68 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Toolbar -->
+    <RelativeLayout
+        android:id="@+id/ToolbarRl"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/primaryColor"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Back button -->
+        <ImageButton
+            android:id="@+id/button_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/back_map_icon"
+            android:background="@null"
+            android:contentDescription="@string/desc_back"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            android:layout_alignParentStart="true" />
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/select_location_title"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:layout_centerInParent="true"
+            android:layout_toEndOf="@id/button_back"
+            android:layout_toStartOf="@id/button_gps" />
+
+        <!-- GPS Button -->
+        <ImageButton
+            android:id="@+id/button_gps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/gps_map_icon"
+            android:background="@null"
+            android:contentDescription="@string/desc_gps"
+            android:padding="10dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true" />
+
+        <!-- Divider -->
+        <View
+            android:id="@+id/toolbar_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#CCCCCC" />
+    </RelativeLayout>
+
     <!-- Autocomplete Fragment -->
     <FrameLayout
         android:id="@+id/autocomplete_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/ToolbarRl" />
 
     <!-- Map Fragment -->
     <FrameLayout
@@ -34,7 +90,7 @@
             android:id="@+id/text_selected_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/confirm_location_button"
+            android:text="@string/location_icon_home"
             android:gravity="center"
             android:padding="8dp" />
 
@@ -45,6 +101,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/select_location_confirm"
+            app:cornerRadius="16dp"
             android:backgroundTint="@color/primaryColor" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>

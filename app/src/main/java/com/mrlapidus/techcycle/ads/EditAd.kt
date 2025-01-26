@@ -20,9 +20,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
-import com.mrlapidus.techcycle.EditProfile
-import com.mrlapidus.techcycle.MainActivity
 import com.mrlapidus.techcycle.R
+import com.mrlapidus.techcycle.SelectLocation
 import com.mrlapidus.techcycle.Utilities.CATEGORIES
 import com.mrlapidus.techcycle.Utilities.CONDITIONS
 import com.mrlapidus.techcycle.adapter.SelectedImageAdapter
@@ -34,10 +33,26 @@ class EditAd : AppCompatActivity() {
     private lateinit var binding: ActivityEditAdBinding
     private lateinit var selectedImages: ArrayList<SelectedImageModel>
     private lateinit var imageAdapter: SelectedImageAdapter
-
+    private lateinit var firebaseAuth: FirebaseAuth
     private var imageUri: Uri? = null
     private val maxImages = 3
-    private lateinit var firebaseAuth: FirebaseAuth
+
+    // Launcher para recibir la ubicación seleccionada
+    private val selectLocationLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val address = result.data?.getStringExtra("address")
+                binding.locationAutoCompleteTextView.setText(address ?: "Ubicación no seleccionada")
+            }
+        }
+
+    // Launcher para solicitar permisos de ubicación
+    private val locationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (!isGranted) {
+                Toast.makeText(this, "Permiso de ubicación denegado", Toast.LENGTH_SHORT).show()
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,18 +72,19 @@ class EditAd : AppCompatActivity() {
         // Configurar dropdowns
         setupDropdowns()
 
+        // Configurar clic en el campo de ubicación
+        binding.locationAutoCompleteTextView.setOnClickListener {
+            val intent = Intent(this, SelectLocation::class.java)
+            selectLocationLauncher.launch(intent)
+        }
+
+        // Verificar permisos de ubicación (opcional si se usa GPS en SelectLocation)
+        checkLocationPermission()
+
         // Configurar clic en el ImageView para agregar imágenes
         binding.addImageView.setOnClickListener { showImagePickerDialog() }
 
-        // Configurar evento onClick en el campo de ubicación
-        binding.locationAutoCompleteTextView.setOnClickListener {
-            Log.d("EditAd", "Campo de ubicación clickeado")
-            val intent = Intent()
-            intent.setClassName(this, "com.mrlapidus.techcycle.SelectLocation")
-            startActivity(intent)
-        }
-
-        // Configurar el botón para publicar el anuncio
+        // Configurar botón de publicar
         binding.publishButton.setOnClickListener {
             if (validateInputs()) {
                 uploadAdToFirebase()
@@ -164,42 +180,12 @@ class EditAd : AppCompatActivity() {
             return false
         }
 
-        if (brand.isEmpty()) {
-            binding.brandEditText.error = "Por favor, ingrese el nombre de la marca"
-            binding.brandEditText.requestFocus()
+        if (brand.isEmpty() || category.isEmpty() || condition.isEmpty() || location.isEmpty() ||
+            price.isEmpty() || description.isEmpty()
+        ) {
+            Toast.makeText(this, "Por favor complete todos los campos", Toast.LENGTH_SHORT).show()
             return false
         }
-
-        if (category.isEmpty()) {
-            binding.categoryAutoCompleteTextView.error = "Por favor, seleccione una categoría"
-            binding.categoryAutoCompleteTextView.requestFocus()
-            return false
-        }
-
-        if (condition.isEmpty()) {
-            binding.conditionAutoCompleteTextView.error = "Por favor, seleccione una condición"
-            binding.conditionAutoCompleteTextView.requestFocus()
-            return false
-        }
-
-        /*if (location.isEmpty()) {
-            binding.locationAutoCompleteTextView.error = "Por favor, ingrese una ubicación"
-            binding.locationAutoCompleteTextView.requestFocus()
-            return false
-        }*/
-
-        if (price.isEmpty()) {
-            binding.priceEditText.error = "Por favor, ingrese un precio"
-            binding.priceEditText.requestFocus()
-            return false
-        }
-
-        if (description.isEmpty()) {
-            binding.descriptionEditText.error = "Por favor, ingrese una descripción"
-            binding.descriptionEditText.requestFocus()
-            return false
-        }
-
         return true
     }
 
@@ -265,10 +251,20 @@ class EditAd : AppCompatActivity() {
         }
     }
 
+    private fun checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
+
     companion object {
         private const val CAMERA_PERMISSION_CODE = 100
     }
 }
+
+
 
 
 

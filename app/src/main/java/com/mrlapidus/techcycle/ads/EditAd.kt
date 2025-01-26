@@ -268,4 +268,3 @@ class EditAd : AppCompatActivity() {
 
 
 
-

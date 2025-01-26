@@ -34,7 +34,7 @@
             android:id="@+id/text_selected_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ubicación seleccionada aparecerá aquí"
+            android:text="@string/confirm_location_button"
             android:gravity="center"
             android:padding="8dp" />
 
@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Confirmar"
+            android:text="@string/select_location_confirm"
             android:backgroundTint="@color/primaryColor" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>

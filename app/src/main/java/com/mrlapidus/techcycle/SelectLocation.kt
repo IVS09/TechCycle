@@ -1,9 +1,17 @@
 package com.mrlapidus.techcycle
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -21,6 +29,7 @@ class SelectLocation : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var binding: ActivitySelectLocationBinding
     private lateinit var googleMap: GoogleMap
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var selectedMarker: Marker? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,9 +44,21 @@ class SelectLocation : AppCompatActivity(), OnMapReadyCallback {
             Places.initialize(applicationContext, getString(R.string.google_maps_api_key))
         }
 
+        // Inicializar cliente para obtener ubicación actual
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
         // Configurar fragmentos dinámicamente
         setupAutocompleteFragment()
         setupMapFragment()
+
+        // Configurar eventos para los botones de la barra superior
+        binding.root.findViewById<ImageButton>(R.id.button_back).setOnClickListener {
+            finish() // Vuelve a la actividad anterior
+        }
+
+        binding.root.findViewById<ImageButton>(R.id.button_gps).setOnClickListener {
+            getCurrentLocation()
+        }
 
         // Configurar el botón de confirmación
         binding.buttonConfirm.setOnClickListener {
@@ -127,4 +148,42 @@ class SelectLocation : AppCompatActivity(), OnMapReadyCallback {
                 .show()
         }
     }
+
+    @SuppressLint("MissingPermission")
+    private fun getCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+            return
+        }
+
+        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+            if (location != null) {
+                val latLng = LatLng(location.latitude, location.longitude)
+                updateMapLocation(latLng, "Ubicación actual")
+            } else {
+                Toast.makeText(this, "No se pudo obtener la ubicación actual", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 101
+    }
 }
+

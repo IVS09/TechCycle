@@ -21,6 +21,9 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.mrlapidus.techcycle.databinding.ActivitySelectLocationBinding
 import java.util.*
 
@@ -47,9 +50,10 @@ class SelectLocation : AppCompatActivity(), OnMapReadyCallback {
 
         // Inicializar cliente de ubicación y mapa
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        initializeMapFragment()
-        setupButtons()
-        initializePermissionLauncher()
+        setupAutocompleteFragment() // Configurar el fragmento de autocompletar
+        initializeMapFragment() // Inicializar el mapa
+        setupButtons() // Configurar botones
+        initializePermissionLauncher() // Inicializar permisos
     }
 
     private fun initializeMapFragment() {
@@ -76,9 +80,44 @@ class SelectLocation : AppCompatActivity(), OnMapReadyCallback {
             }
     }
 
+    private fun setupAutocompleteFragment() {
+        val autocompleteFragment = AutocompleteSupportFragment()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.autocomplete_fragment_container, autocompleteFragment)
+            .commit()
+
+        autocompleteFragment.setPlaceFields(
+            listOf(
+                Place.Field.ID,
+                Place.Field.NAME,
+                Place.Field.LAT_LNG,
+                Place.Field.ADDRESS
+            )
+        )
+
+        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
+            override fun onPlaceSelected(place: Place) {
+                val latLng = place.latLng ?: return
+                val address = place.address ?: "Ubicación seleccionada"
+                updateMapLocation(latLng, address)
+            }
+
+            override fun onError(status: com.google.android.gms.common.api.Status) {
+                Toast.makeText(
+                    this@SelectLocation,
+                    "Error al buscar ubicación: ${status.statusMessage}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        })
+    }
+
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         googleMap.uiSettings.isZoomControlsEnabled = true
+
+        val defaultLocation = LatLng(-34.0, 151.0)
+        updateMapLocation(defaultLocation, "Ubicación inicial")
 
         googleMap.setOnMapClickListener { latLng ->
             val address = geocodeLatLng(latLng)
@@ -154,6 +193,7 @@ class SelectLocation : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 }
+
 
 
 

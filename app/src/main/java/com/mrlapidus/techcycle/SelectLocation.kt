@@ -4,10 +4,12 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Location
+import android.location.Geocoder
+import android.location.LocationManager
 import android.os.Bundle
-import android.widget.ImageButton
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -19,116 +21,120 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.mrlapidus.techcycle.databinding.ActivitySelectLocationBinding
+import java.util.*
 
 class SelectLocation : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var binding: ActivitySelectLocationBinding
     private lateinit var googleMap: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationPermissionLauncher: ActivityResultLauncher<String>
     private var selectedMarker: Marker? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Configuración inicial
         binding = ActivitySelectLocationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Inicializar Places SDK
-        if (!Places.isInitialized()) {
-            Places.initialize(applicationContext, getString(R.string.google_maps_api_key))
+        // Comprobar si Places SDK está inicializado
+        val apiKey = getString(R.string.google_maps_api_key)
+        if (apiKey.isEmpty() || apiKey == "YOUR_API_KEY_HERE") {
+            Toast.makeText(this, "Clave API no configurada correctamente", Toast.LENGTH_LONG).show()
+            finish() // Finaliza la actividad si la clave API es inválida
+            return
         }
 
-        // Inicializar cliente para obtener ubicación actual
+        // Inicializar cliente de ubicación y mapa
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
-        // Configurar fragmentos dinámicamente
-        setupAutocompleteFragment()
-        setupMapFragment()
-
-        // Configurar eventos para los botones de la barra superior
-        binding.root.findViewById<ImageButton>(R.id.button_back).setOnClickListener {
-            finish() // Vuelve a la actividad anterior
-        }
-
-        binding.root.findViewById<ImageButton>(R.id.button_gps).setOnClickListener {
-            getCurrentLocation()
-        }
-
-        // Configurar el botón de confirmación
-        binding.buttonConfirm.setOnClickListener {
-            confirmSelectedLocation()
-        }
+        initializeMapFragment()
+        setupButtons()
+        initializePermissionLauncher()
     }
 
-    private fun setupAutocompleteFragment() {
-        val autocompleteFragment = AutocompleteSupportFragment()
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.autocomplete_fragment_container, autocompleteFragment)
-            .commit()
-
-        autocompleteFragment.setPlaceFields(
-            listOf(
-                Place.Field.ID,
-                Place.Field.NAME,
-                Place.Field.LAT_LNG,
-                Place.Field.ADDRESS
-            )
-        )
-        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
-            override fun onPlaceSelected(place: Place) {
-                val latLng = place.latLng ?: return
-                updateMapLocation(latLng, place.name ?: "Ubicación seleccionada")
-            }
-
-            override fun onError(status: com.google.android.gms.common.api.Status) {
-                Toast.makeText(
-                    this@SelectLocation,
-                    "Error al seleccionar lugar: ${status.statusMessage}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        })
-    }
-
-    private fun setupMapFragment() {
+    private fun initializeMapFragment() {
         val mapFragment = SupportMapFragment()
         supportFragmentManager.beginTransaction()
             .replace(R.id.map_fragment_container, mapFragment)
             .commit()
-
         mapFragment.getMapAsync(this)
+    }
+
+    private fun setupButtons() {
+        binding.buttonConfirm.setOnClickListener { confirmSelectedLocation() }
+        binding.buttonBack.setOnClickListener { finish() }
+        binding.buttonGps.setOnClickListener {
+            checkLocationPermission()
+        }
+    }
+
+    private fun initializePermissionLauncher() {
+        locationPermissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+                if (isGranted) getCurrentLocation()
+                else Toast.makeText(this, "Permiso de ubicación denegado", Toast.LENGTH_SHORT).show()
+            }
     }
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         googleMap.uiSettings.isZoomControlsEnabled = true
 
-        // Agregar marcador al hacer clic en el mapa
         googleMap.setOnMapClickListener { latLng ->
-            updateMapLocation(latLng, "Ubicación seleccionada manualmente")
+            val address = geocodeLatLng(latLng)
+            updateMapLocation(latLng, address ?: "Ubicación seleccionada")
         }
     }
 
-    private fun updateMapLocation(latLng: LatLng, title: String) {
-        // Eliminar marcador anterior si existe
-        selectedMarker?.remove()
+    @SuppressLint("MissingPermission")
+    private fun getCurrentLocation() {
+        if (!isGpsEnabled()) {
+            Toast.makeText(this, "El GPS no está activado", Toast.LENGTH_SHORT).show()
+            return
+        }
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            if (location != null) {
+                val latLng = LatLng(location.latitude, location.longitude)
+                val address = geocodeLatLng(latLng)
+                updateMapLocation(latLng, address ?: "Ubicación actual")
+            } else {
+                Toast.makeText(this, "No se pudo obtener la ubicación actual", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
-        // Agregar nuevo marcador y mover cámara
+    private fun checkLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            getCurrentLocation()
+        } else {
+            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
+
+    private fun isGpsEnabled(): Boolean {
+        val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    }
+
+    private fun updateMapLocation(latLng: LatLng, title: String) {
+        selectedMarker?.remove()
         selectedMarker = googleMap.addMarker(
-            MarkerOptions()
-                .position(latLng)
-                .title(title)
+            MarkerOptions().position(latLng).title(title)
         )
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
-
-        // Actualizar texto de ubicación seleccionada
         binding.textSelectedLocation.text = title
+    }
+
+    private fun geocodeLatLng(latLng: LatLng): String? {
+        val geocoder = Geocoder(this, Locale.getDefault())
+        return try {
+            val addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+            addresses?.get(0)?.getAddressLine(0)
+        } catch (e: Exception) {
+            null
+        }
     }
 
     private fun confirmSelectedLocation() {
@@ -144,46 +150,11 @@ class SelectLocation : AppCompatActivity(), OnMapReadyCallback {
             setResult(RESULT_OK, resultIntent)
             finish()
         } else {
-            Toast.makeText(this, "Seleccione una ubicación antes de confirmar", Toast.LENGTH_SHORT)
-                .show()
+            Toast.makeText(this, "Seleccione una ubicación antes de confirmar", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun getCurrentLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
-                LOCATION_PERMISSION_REQUEST_CODE
-            )
-            return
-        }
-
-        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-            if (location != null) {
-                val latLng = LatLng(location.latitude, location.longitude)
-                updateMapLocation(latLng, "Ubicación actual")
-            } else {
-                Toast.makeText(this, "No se pudo obtener la ubicación actual", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
-    }
-
-    companion object {
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 101
     }
 }
+
+
+
 

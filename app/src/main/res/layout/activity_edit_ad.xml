@@ -176,8 +176,11 @@
                     android:hint="@string/edit_ad_description"
                     android:inputType="textMultiLine"
                     android:minHeight="120dp"
+                    android:gravity="start|top"
+                    android:textAlignment="viewStart"
                     tools:ignore="VisualLintTextFieldSize" />
             </com.google.android.material.textfield.TextInputLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

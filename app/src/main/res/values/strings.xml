@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">TechCycle</string>
     <string name="default_web_client_id">256423153606-n1761dggljrv1ij0ulrn4vjdklh8mk5n.apps.googleusercontent.com</string>
-    <string name="google_maps_api_key">AIzaSyCmq8zL7WMteR5GS9NMDYnPXQpniYmPzQ</string>
+    <string name="google_maps_api_key">AIzaSyDEK0zhaM_lIkARVjQzWO4cjJrOzR-xZWw</string>
     <string name="splash_logo_description">TechCycle app logo</string>
     <string name="splash_subtitle">Connect. Exchange. Reduce</string>
     <string name="continue_with_email">Continue with Email</string>

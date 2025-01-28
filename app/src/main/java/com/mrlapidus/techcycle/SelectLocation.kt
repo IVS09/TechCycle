@@ -21,6 +21,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
@@ -46,6 +47,11 @@ class SelectLocation : AppCompatActivity(), OnMapReadyCallback {
             Toast.makeText(this, "Clave API no configurada correctamente", Toast.LENGTH_LONG).show()
             finish() // Finaliza la actividad si la clave API es inválida
             return
+        }
+
+        // Inicializa el Places SDK
+        if (!Places.isInitialized()) {
+            Places.initialize(applicationContext, getString(R.string.google_maps_api_key))
         }
 
         // Inicializar cliente de ubicación y mapa

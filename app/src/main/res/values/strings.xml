@@ -158,7 +158,7 @@
     <string name="ad_card_description">Brief description</string>
     <string name="ad_card_location">Location</string>
     <string name="ad_card_condition">Product condition</string>
-    <string name="ad_card_price">Price</string>
+    <string name="ad_card_price">%1$.2f€</string>
     <string name="ad_card_post_date">Posted on %1€s</string>
 
     <!-- Favorites -->

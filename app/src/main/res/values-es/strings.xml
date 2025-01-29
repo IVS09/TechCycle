@@ -140,9 +140,9 @@
 
     <!-- Fragment Home - Visualización de Anuncios -->
     <string name="home_location_hint">Selecciona tu ubicación</string>
-    <string name="home_search_hint">Buscar productos...</string>
+    <string name="home_search_hint">Buscar productos…</string>
     <string name="home_no_ads_found">No hay anuncios disponibles cerca de ti</string>
-    <string name="home_loading_ads">Cargando anuncios...</string>
+    <string name="home_loading_ads">Cargando anuncios…</string>
 
     <!-- Elementos en item_ad.xml -->
     <string name="ad_card_title">Título del producto</string>

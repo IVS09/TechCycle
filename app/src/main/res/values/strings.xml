@@ -141,9 +141,9 @@
 
     <!-- Home Fragment - Ads Visualization -->
     <string name="home_location_hint">Select your location</string>
-    <string name="home_search_hint">Search products...</string>
+    <string name="home_search_hint">Search products…</string>
     <string name="home_no_ads_found">No ads available near you</string>
-    <string name="home_loading_ads">Loading ads...</string>
+    <string name="home_loading_ads">Loading ads…</string>
 
     <!-- Elements in item_ad.xml -->
     <string name="ad_card_title">Product title</string>

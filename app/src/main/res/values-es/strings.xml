@@ -138,6 +138,15 @@
     <string name="category_icon">Ícono de la categoría</string>
     <string name="category_name_placeholder">Nombre de la categoría</string>
 
+    <!-- Fragment Home -->
+    <string name="editText_location_home">Localización</string>
+    <string name="editText_search_home">Buscar </string>
+    <string name="text_category_home">Categorías</string>
+    <string name="textView_category_home">Categoría</string>
+    <string name="location_icon_home">Ícono de localización</string>
+    <string name="search_icon_home">Ícono de búsqueda</string>
+
+
     <!-- Fragment Home - Visualización de Anuncios -->
     <string name="home_location_hint">Selecciona tu ubicación</string>
     <string name="home_search_hint">Buscar productos…</string>

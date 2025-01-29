@@ -139,6 +139,14 @@
     <string name="category_icon">Category icon</string>
     <string name="category_name_placeholder">Category name</string>
 
+    <!-- Fragment Home -->
+    <string name="editText_location_home">Localización</string>
+    <string name="editText_search_home">Buscar </string>
+    <string name="text_category_home">Categorías</string>
+    <string name="textView_category_home">Categoría</string>
+    <string name="location_icon_home">Ícono de localización</string>
+    <string name="search_icon_home">Ícono de búsqueda</string>
+
     <!-- Home Fragment - Ads Visualization -->
     <string name="home_location_hint">Select your location</string>
     <string name="home_search_hint">Search products…</string>

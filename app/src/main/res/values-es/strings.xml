@@ -145,4 +145,14 @@
     <string name="textView_category_home">Categoría</string>
     <string name="location_icon_home">Localización icono</string>
     <string name="search_icon_home">Búsqueda icono</string>
+
+    <!-- Fragment Home - Visualización de Anuncios -->
+    <string name="home_location_hint">Ubicación actual</string>
+    <string name="home_search_hint">Buscar anuncios</string>
+    <string name="home_no_ads_found">No se encontraron anuncios cerca de tu ubicación</string>
+    <string name="home_loading_ads">Cargando anuncios...</string>
+
+    <!-- Anuncios -->
+    <string name="ad_price_format">%1$s€</string>
+    <string name="ad_posted_on">Publicado el %1$s</string>
 </resources>

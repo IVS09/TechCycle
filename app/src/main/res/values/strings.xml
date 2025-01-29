@@ -151,10 +151,11 @@
     <string name="ad_card_location">Location</string>
     <string name="ad_card_condition">Product condition</string>
     <string name="ad_card_price">Price</string>
-    <string name="ad_card_post_date">Posted on %1$s</string>
+    <string name="ad_card_post_date">Posted on %1€s</string>
 
     <!-- Favorites -->
     <string name="ad_favorite_add">Add to favorites</string>
+    <string name="ad_card_favorite_button_desc">Add or remove from favorites</string>
     <string name="ad_favorite_remove">Remove from favorites</string>
 
     <!-- Ad statuses -->

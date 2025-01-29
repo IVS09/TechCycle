@@ -1,6 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="10dp"
+    app:cardUseCompatPadding="true"
+    android:padding="8dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Imagen del anuncio -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ad_card_image"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginEnd="10dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ad_image_icon"/>
+
+        <!-- Título del anuncio -->
+        <TextView
+            android:id="@+id/ad_card_title"
+            android:text="@string/ad_card_title"
+            android:layout_marginTop="5dp"
+            android:textStyle="bold"
+            android:layout_toEndOf="@id/ad_card_image"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- Descripción -->
+        <TextView
+            android:id="@+id/ad_card_description"
+            android:text="@string/ad_card_description"
+            android:maxLines="3"
+            android:layout_toEndOf="@id/ad_card_image"
+            android:layout_below="@id/ad_card_title"
+            android:ellipsize="end"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- Ubicación -->
+        <TextView
+            android:id="@+id/ad_card_location"
+            android:text="@string/ad_card_location"
+            android:layout_toEndOf="@id/ad_card_image"
+            android:layout_below="@id/ad_card_description"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- Condición del producto -->
+        <TextView
+            android:id="@+id/ad_card_condition"
+            android:text="@string/ad_card_condition"
+            android:layout_toEndOf="@id/ad_card_image"
+            android:layout_below="@id/ad_card_location"
+            android:textStyle="bold|italic"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:textSize="13sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- Precio -->
+        <TextView
+            android:id="@+id/ad_card_price"
+            android:text="@string/ad_card_price"
+            android:layout_toEndOf="@id/ad_card_condition"
+            android:layout_below="@id/ad_card_location"
+            android:layout_marginTop="5dp"
+            android:textSize="13sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- Fecha de publicación -->
+        <TextView
+            android:id="@+id/ad_card_post_date"
+            android:text="@string/ad_card_post_date"
+            android:layout_marginEnd="5dp"
+            android:textSize="13sp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/ad_card_location"
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- Botón de favoritos -->
+        <ImageButton
+            android:id="@+id/ad_card_favorite_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@android:color/transparent"
+            android:padding="10dp"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/ad_card_favorite_button_desc"
+            android:src="@drawable/ad_no_favorite_icon" />
+    </RelativeLayout>
+
+</com.google.android.material.card.MaterialCardView>

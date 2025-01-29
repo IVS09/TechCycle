@@ -154,6 +154,7 @@
 
     <!-- Favoritos -->
     <string name="ad_favorite_add">Añadir a favoritos</string>
+    <string name="ad_card_favorite_button_desc">Añadir o quitar de favoritos</string>
     <string name="ad_favorite_remove">Eliminar de favoritos</string>
 
     <!-- Estados de anuncios -->

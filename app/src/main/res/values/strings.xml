@@ -139,22 +139,26 @@
     <string name="category_icon">Category icon</string>
     <string name="category_name_placeholder">Category name</string>
 
-    <!-- Fragment Home -->
-    <string name="editText_location_home">Location</string>
-    <string name="editText_search_home">Search </string>
-    <string name="text_category_home">Categories</string>
-    <string name="textView_category_home">Category</string>
-    <string name="location_icon_home">Location icon</string>
-    <string name="search_icon_home">Search icon</string>
-
-    <!-- Fragment Home - Viewing Ads -->
-    <string name="home_location_hint">Current location</string>
-    <string name="home_search_hint">Search ads</string>
-    <string name="home_no_ads_found">No ads found near your location</string>
+    <!-- Home Fragment - Ads Visualization -->
+    <string name="home_location_hint">Select your location</string>
+    <string name="home_search_hint">Search products...</string>
+    <string name="home_no_ads_found">No ads available near you</string>
     <string name="home_loading_ads">Loading ads...</string>
 
-    <!-- Ads -->
-    <string name="ad_price_format">%1$s€</string>
-    <string name="ad_posted_on">Posted on %1$s</string>
+    <!-- Elements in item_ad.xml -->
+    <string name="ad_card_title">Product title</string>
+    <string name="ad_card_description">Brief description</string>
+    <string name="ad_card_location">Location</string>
+    <string name="ad_card_condition">Product condition</string>
+    <string name="ad_card_price">Price</string>
+    <string name="ad_card_post_date">Posted on %1$s</string>
+
+    <!-- Favorites -->
+    <string name="ad_favorite_add">Add to favorites</string>
+    <string name="ad_favorite_remove">Remove from favorites</string>
+
+    <!-- Ad statuses -->
+    <string name="ad_status_available">Available</string>
+    <string name="ad_status_sold">Sold</string>
 
 </resources>

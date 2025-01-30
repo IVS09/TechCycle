@@ -16,8 +16,10 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.mrlapidus.techcycle.OnCategoryClickListener
+import com.google.firebase.database.ValueEventListener
 import com.mrlapidus.techcycle.R
 import com.mrlapidus.techcycle.SelectLocation
 import com.mrlapidus.techcycle.Utilities
@@ -26,26 +28,29 @@ import com.mrlapidus.techcycle.adapter.CategoryAdapter
 import com.mrlapidus.techcycle.databinding.FragmentHomeBinding
 import com.mrlapidus.techcycle.model.AdModel
 import com.mrlapidus.techcycle.model.CategoryModel
+import com.mrlapidus.techcycle.OnCategoryClickListener
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private val db = FirebaseDatabase.getInstance().reference
-    private var adList = mutableListOf<AdModel>()
-    private lateinit var adAdapter: AdAdapter
-
     private lateinit var sharedPrefs: SharedPreferences
     private var userLat: Double = 0.0
     private var userLng: Double = 0.0
     private var userAddress: String = ""
 
+    private lateinit var adAdapter: AdAdapter
+    private var adList = mutableListOf<AdModel>()
+
+    private lateinit var categoryAdapter: CategoryAdapter
+
+    private val firebaseDatabase = FirebaseDatabase.getInstance().getReference("Anuncios")
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         sharedPrefs = requireContext().getSharedPreferences("LOCATION_PREFS", Context.MODE_PRIVATE)
-
         userLat = sharedPrefs.getFloat("LATITUDE", 0.0f).toDouble()
         userLng = sharedPrefs.getFloat("LONGITUDE", 0.0f).toDouble()
         userAddress = sharedPrefs.getString("ADDRESS", "Seleccionar ubicación") ?: "Seleccionar ubicación"
@@ -55,10 +60,10 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupUI() {
-        // Mostrar la ubicación actual
-        binding.locationText.setText(userAddress)
+        // Mostrar ubicación actual
+        binding.locationText.text = Editable.Factory.getInstance().newEditable(userAddress)
 
-        // Configurar la selección de ubicación
+        // Configurar selección de ubicación
         binding.locationText.setOnClickListener {
             val intent = Intent(requireContext(), SelectLocation::class.java)
             locationResultLauncher.launch(intent)
@@ -70,7 +75,7 @@ class HomeFragment : Fragment() {
         // Configurar RecyclerView de anuncios
         setupAdRecyclerView()
 
-        // Configurar búsqueda de anuncios
+        // Configurar búsqueda
         binding.searchBar.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(query: CharSequence?, start: Int, before: Int, count: Int) {
@@ -96,7 +101,7 @@ class HomeFragment : Fragment() {
                     .putString("ADDRESS", userAddress)
                     .apply()
 
-                binding.locationText.setText(userAddress)
+                binding.locationText.text = Editable.Factory.getInstance().newEditable(userAddress)
                 loadAds()
             }
         }
@@ -107,15 +112,14 @@ class HomeFragment : Fragment() {
             CategoryModel(name, Utilities.CATEGORY_ICONS[index])
         }
 
-        val adapter = CategoryAdapter(requireContext(), categories, object : OnCategoryClickListener {
+        categoryAdapter = CategoryAdapter(requireContext(), categories, object : OnCategoryClickListener {
             override fun onCategoryClick(category: CategoryModel) {
                 loadAds(category.name)
             }
         })
 
-        binding.categoryRecyclerView.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        binding.categoryRecyclerView.adapter = adapter
+        binding.categoryRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.categoryRecyclerView.adapter = categoryAdapter
     }
 
     private fun setupAdRecyclerView() {
@@ -126,28 +130,30 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadAds(category: String = "Todos") {
-        db.child("anuncios")
-            .orderByChild("timestamp")
-            .get()
-            .addOnSuccessListener { result ->
+        firebaseDatabase.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
                 adList.clear()
-                for (document in result.children) {
-                    val ad = document.getValue(AdModel::class.java)
-                    if (ad != null) {
-                        val distance = calculateDistance(ad.latitude, ad.longitude)
+                for (ds in snapshot.children) {
+                    try {
+                        val ad = ds.getValue(AdModel::class.java)
+                        val distance = calculateDistance(ad?.latitude ?: 0.0, ad?.longitude ?: 0.0)
 
-                        if (category == "Todos" || ad.category == category) {
+                        if (category == "Todos" || ad?.category == category) {
                             if (distance <= 10.0) { // Mostrar anuncios dentro de 10 km
-                                adList.add(ad)
+                                ad?.let { adList.add(it) }
                             }
                         }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
                 }
-                adAdapter.notifyItemRangeInserted(0, adList.size)
+                adAdapter.notifyDataSetChanged()
             }
-            .addOnFailureListener {
+
+            override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(context, "Error al cargar anuncios", Toast.LENGTH_SHORT).show()
             }
+        })
     }
 
     private fun filterAds(query: String) {
@@ -177,4 +183,5 @@ class HomeFragment : Fragment() {
         _binding = null
     }
 }
+
 

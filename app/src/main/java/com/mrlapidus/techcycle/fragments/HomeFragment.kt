@@ -9,6 +9,7 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -132,6 +133,7 @@ class HomeFragment : Fragment() {
     private fun loadAds(category: String = "Todos") {
         firebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                Log.d("FIREBASE", "Snapshot recibido con ${snapshot.childrenCount} anuncios")
                 adList.clear()
                 for (ds in snapshot.children) {
                     try {
@@ -140,6 +142,8 @@ class HomeFragment : Fragment() {
 
                         if (category == "Todos" || ad?.category == category) {
                             if (distance <= 10.0) { // Mostrar anuncios dentro de 10 km
+                                Log.d("AD_CARGADO", "Añadiendo anuncio: ${ad?.title} en ${ad?.category}")
+                                Log.d("DISTANCIA", "Distancia calculada: $distance km")
                                 ad?.let { adList.add(it) }
                             }
                         }

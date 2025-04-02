@@ -206,7 +206,9 @@ class EditAd : AppCompatActivity() {
             "location" to binding.locationAutoCompleteTextView.text.toString().trim(),
             "price" to binding.priceEditText.text.toString().trim(),
             "description" to binding.descriptionEditText.text.toString().trim(),
-            "userId" to firebaseAuth.uid
+            "userId" to firebaseAuth.uid,
+            "latitude" to 0.0, // Añade aquí la lógica para la latitud si la tienes
+            "longitude" to 0.0 // Añade aquí la lógica para la longitud si la tienes
         )
 
         databaseReference.child(adId).setValue(adData)

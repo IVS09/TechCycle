@@ -36,13 +36,20 @@ class EditAd : AppCompatActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
     private var imageUri: Uri? = null
     private val maxImages = 3
+    private var selectedLatitude: Double = 0.0
+    private var selectedLongitude: Double = 0.0
 
     // Launcher para recibir la ubicación seleccionada
     private val selectLocationLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val address = result.data?.getStringExtra("address")
+                val latitude = result.data?.getDoubleExtra("latitude", 0.0) ?: 0.0
+                val longitude = result.data?.getDoubleExtra("longitude", 0.0) ?: 0.0
                 binding.locationAutoCompleteTextView.setText(address ?: "Ubicación no seleccionada")
+                // Guardar las coordenadas para usarlas al subir el anuncio
+                selectedLatitude = latitude
+                selectedLongitude = longitude
             }
         }
 
@@ -207,8 +214,8 @@ class EditAd : AppCompatActivity() {
             "price" to binding.priceEditText.text.toString().trim(),
             "description" to binding.descriptionEditText.text.toString().trim(),
             "userId" to firebaseAuth.uid,
-            "latitude" to 0.0,
-            "longitude" to 0.0
+            "latitud" to selectedLatitude,
+            "longitud" to selectedLongitude
         )
 
         databaseReference.child(adId).setValue(adData)

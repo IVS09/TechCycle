@@ -24,7 +24,7 @@ class AdAdapter(private val context: Context, private val adList: MutableList<Ad
 
             // Cargar imagen con Glide
             Glide.with(context)
-                .load(ad.imageUrl)
+                .load(ad.imageUrls.firstOrNull() ?: R.drawable.ad_image_icon)
                 .placeholder(R.drawable.ad_image_icon)
                 .into(binding.adCardImage)
 
@@ -55,8 +55,11 @@ class AdAdapter(private val context: Context, private val adList: MutableList<Ad
     }
 
     override fun getItemCount(): Int = adList.size
+
+    // Método para actualizar la lista de anuncios
+    fun updateList(newList: List<AdModel>) {
+        adList.clear()
+        adList.addAll(newList)
+        notifyDataSetChanged()
+    }
 }
-
-
-
-

@@ -137,9 +137,54 @@ class HomeFragment : Fragment() {
                 adList.clear()
                 for (ds in snapshot.children) {
                     try {
-                        val ad = ds.getValue(AdModel::class.java)
+                        // Obtener datos básicos del anuncio
+                        val id = ds.key ?: continue
+                        val userId = ds.child("userId").getValue(String::class.java) ?: ""
+                        val brand = ds.child("brand").getValue(String::class.java) ?: ""
+                        val category = ds.child("category").getValue(String::class.java) ?: ""
+                        val condition = ds.child("condition").getValue(String::class.java) ?: ""
+                        val location = ds.child("location").getValue(String::class.java) ?: ""
+                        val price = ds.child("price").getValue(String::class.java) ?: ""
+                        val title = ds.child("title").getValue(String::class.java) ?: ""
+                        val description = ds.child("description").getValue(String::class.java) ?: ""
+                        val status = ds.child("status").getValue(String::class.java) ?: "Disponible"
+                        val timestamp = ds.child("timestamp").getValue(Long::class.java) ?: 0L
+                        val latitud = ds.child("latitud").getValue(Double::class.java) ?: 0.0
+                        val longitud = ds.child("longitud").getValue(Double::class.java) ?: 0.0
+                        val isFavorite = ds.child("isFavorite").getValue(Boolean::class.java) ?: false
+                        val viewCount = ds.child("viewCount").getValue(Int::class.java) ?: 0
 
-                        if (ad != null && ad.latitud != 0.0 && ad.longitud != 0.0) {
+                        // Obtener URLs de imágenes
+                        val imageUrls = mutableListOf<String>()
+                        val imagesSnapshot = ds.child("images")
+                        for (imageSnapshot in imagesSnapshot.children) {
+                            val imageUrl = imageSnapshot.child("imageUrl").getValue(String::class.java)
+                            if (imageUrl != null) {
+                                imageUrls.add(imageUrl)
+                            }
+                        }
+
+                        // Crear objeto AdModel con los datos obtenidos
+                        val ad = AdModel(
+                            id = id,
+                            userId = userId,
+                            brand = brand,
+                            category = category,
+                            condition = condition,
+                            location = location,
+                            price = price,
+                            title = title,
+                            description = description,
+                            status = status,
+                            timestamp = timestamp,
+                            latitud = latitud,
+                            longitud = longitud,
+                            isFavorite = isFavorite,
+                            viewCount = viewCount,
+                            imageUrls = imageUrls
+                        )
+
+                        if (ad.latitud != 0.0 && ad.longitud != 0.0) {
                             val distance = calculateDistance(ad.latitud, ad.longitud)
 
                             Log.d("DISTANCIA", "Distancia calculada: $distance km")
@@ -166,11 +211,22 @@ class HomeFragment : Fragment() {
     }
 
     private fun filterAds(query: String) {
-        val filteredList = adList.filter {
-            it.title.contains(query, ignoreCase = true) || it.description.contains(query, ignoreCase = true)
+        if (query.isEmpty()) {
+            // Si la consulta está vacía, mostrar todos los anuncios
+            adAdapter = AdAdapter(requireContext(), adList)
+            binding.adRecyclerView.adapter = adAdapter
+            return
         }
-        adAdapter = AdAdapter(requireContext(), filteredList.toMutableList())
-        binding.adRecyclerView.adapter = adAdapter
+
+        val filteredList = adList.filter {
+            it.title.contains(query, ignoreCase = true) ||
+                    it.description.contains(query, ignoreCase = true) ||
+                    it.brand.contains(query, ignoreCase = true) ||
+                    it.category.contains(query, ignoreCase = true)
+        }
+
+        // Actualizar el adaptador existente con la lista filtrada
+        adAdapter.updateList(filteredList)
     }
 
     private fun calculateDistance(lat: Double, lng: Double): Double {
@@ -192,5 +248,4 @@ class HomeFragment : Fragment() {
         _binding = null
     }
 }
-
 

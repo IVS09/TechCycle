@@ -16,5 +16,5 @@ data class AdModel(
     var longitud: Double = 0.0,
     var isFavorite: Boolean = false,
     var viewCount: Int = 0,
-    var imageUrl: String = ""
+    var imageUrls: List<String> = listOf()
 )

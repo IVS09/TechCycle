@@ -138,16 +138,21 @@ class HomeFragment : Fragment() {
                 for (ds in snapshot.children) {
                     try {
                         val ad = ds.getValue(AdModel::class.java)
-                        val distance = calculateDistance(ad?.latitude ?: 0.0, ad?.longitude ?: 0.0)
 
-                        if (category == "Todos" || ad?.category == category) {
-                            if (distance <= 10.0) { // Mostrar anuncios dentro de 10 km
-                                Log.d("AD_CARGADO", "Añadiendo anuncio: ${ad?.title} en ${ad?.category}")
-                                Log.d("DISTANCIA", "Distancia calculada: $distance km")
-                                ad?.let { adList.add(it) }
+                        if (ad != null && ad.latitud != 0.0 && ad.longitud != 0.0) {
+                            val distance = calculateDistance(ad.latitud, ad.longitud)
+
+                            Log.d("DISTANCIA", "Distancia calculada: $distance km")
+                            Log.d("AD_CARGADO", "Añadiendo anuncio: ${ad.title} en ${ad.category}")
+
+                            if (category == "Todos" || ad.category == category) {
+                                if (distance <= 10.0) {
+                                    adList.add(ad)
+                                }
                             }
                         }
                     } catch (e: Exception) {
+                        Log.e("AD_PARSE_ERROR", "Error al parsear el anuncio: ${e.message}")
                         e.printStackTrace()
                     }
                 }
@@ -155,7 +160,7 @@ class HomeFragment : Fragment() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(context, "Error al cargar anuncios", Toast.LENGTH_SHORT).show()
+                Log.e("FIREBASE_ERROR", "Error al cargar anuncios: ${error.message}")
             }
         })
     }

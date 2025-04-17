@@ -18,7 +18,7 @@ class AdAdapter(private val context: Context, private val adList: MutableList<Ad
     inner class AdViewHolder(private val binding: ItemAdBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(ad: AdModel) {
             binding.adCardTitle.text = ad.title
-            binding.adCardPrice.text = context.getString(R.string.ad_card_price, ad.price)
+            binding.adCardPrice.text = context.getString(R.string.ad_card_price, ad.price.toDoubleOrNull() ?: 0.0)
             binding.adCardLocation.text = ad.location
             binding.adCardPostDate.text = android.text.format.DateFormat.format("dd/MM/yyyy", ad.timestamp)
 

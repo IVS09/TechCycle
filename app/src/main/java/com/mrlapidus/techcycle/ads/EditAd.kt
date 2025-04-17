@@ -207,8 +207,8 @@ class EditAd : AppCompatActivity() {
             "price" to binding.priceEditText.text.toString().trim(),
             "description" to binding.descriptionEditText.text.toString().trim(),
             "userId" to firebaseAuth.uid,
-            "latitude" to 0.0, // Añade aquí la lógica para la latitud si la tienes
-            "longitude" to 0.0 // Añade aquí la lógica para la longitud si la tienes
+            "latitude" to 0.0,
+            "longitude" to 0.0
         )
 
         databaseReference.child(adId).setValue(adData)

@@ -1,20 +1,20 @@
 package com.mrlapidus.techcycle.model
 
 data class AdModel(
-    var id: String = "",
-    var userId: String = "",
-    var brand: String = "",
-    var category: String = "",
-    var condition: String = "",
-    var location: String = "",
-    var price: String = "",
-    var title: String = "",
-    var description: String = "",
-    var status: String = "Disponible",
-    var timestamp: Long = 0,
-    var latitud: Double = 0.0,
-    var longitud: Double = 0.0,
-    var isFavorite: Boolean = false,
-    var viewCount: Int = 0,
-    var imageUrls: List<String> = listOf()
+    val id: String = "",
+    val userId: String = "",
+    val brand: String = "",
+    val category: String = "",
+    val condition: String = "",
+    val location: String = "",
+    val price: Double = 0.0,
+    val title: String = "",
+    val description: String = "",
+    val status: String = "Disponible",
+    val timestamp: Long = 0,
+    val latitud: Double = 0.0,
+    val longitud: Double = 0.0,
+    val isFavorite: Boolean = false,
+    val viewCount: Int = 0,
+    val imageUrls: List<String> = emptyList()
 )

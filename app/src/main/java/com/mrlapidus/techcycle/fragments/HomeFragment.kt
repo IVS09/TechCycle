@@ -137,14 +137,13 @@ class HomeFragment : Fragment() {
                 adList.clear()
                 for (ds in snapshot.children) {
                     try {
-                        // Obtener datos básicos del anuncio
                         val id = ds.key ?: continue
                         val userId = ds.child("userId").getValue(String::class.java) ?: ""
                         val brand = ds.child("brand").getValue(String::class.java) ?: ""
-                        val category = ds.child("category").getValue(String::class.java) ?: ""
+                        val categoryValue = ds.child("category").getValue(String::class.java) ?: ""
                         val condition = ds.child("condition").getValue(String::class.java) ?: ""
                         val location = ds.child("location").getValue(String::class.java) ?: ""
-                        val price = ds.child("price").getValue(String::class.java) ?: ""
+                        val price = ds.child("price").getValue(String::class.java)?.toDoubleOrNull() ?: 0.0
                         val title = ds.child("title").getValue(String::class.java) ?: ""
                         val description = ds.child("description").getValue(String::class.java) ?: ""
                         val status = ds.child("status").getValue(String::class.java) ?: "Disponible"
@@ -154,22 +153,19 @@ class HomeFragment : Fragment() {
                         val isFavorite = ds.child("isFavorite").getValue(Boolean::class.java) ?: false
                         val viewCount = ds.child("viewCount").getValue(Int::class.java) ?: 0
 
-                        // Obtener URLs de imágenes
+                        // Obtener lista de imágenes
                         val imageUrls = mutableListOf<String>()
                         val imagesSnapshot = ds.child("images")
-                        for (imageSnapshot in imagesSnapshot.children) {
-                            val imageUrl = imageSnapshot.child("imageUrl").getValue(String::class.java)
-                            if (imageUrl != null) {
-                                imageUrls.add(imageUrl)
-                            }
+                        for (imageNode in imagesSnapshot.children) {
+                            val url = imageNode.child("imageUrl").getValue(String::class.java)
+                            if (!url.isNullOrEmpty()) imageUrls.add(url)
                         }
 
-                        // Crear objeto AdModel con los datos obtenidos
                         val ad = AdModel(
                             id = id,
                             userId = userId,
                             brand = brand,
-                            category = category,
+                            category = categoryValue,
                             condition = condition,
                             location = location,
                             price = price,
@@ -184,28 +180,28 @@ class HomeFragment : Fragment() {
                             imageUrls = imageUrls
                         )
 
-                        if (ad.latitud != 0.0 && ad.longitud != 0.0) {
-                            val distance = calculateDistance(ad.latitud, ad.longitud)
-
+                        if (latitud != 0.0 && longitud != 0.0) {
+                            val distance = calculateDistance(latitud, longitud)
                             Log.d("DISTANCIA", "Distancia calculada: $distance km")
-                            Log.d("AD_CARGADO", "Añadiendo anuncio: ${ad.title} en ${ad.category}")
 
-                            if (category == "Todos" || ad.category == category) {
+                            if (category == "Todos" || category == categoryValue) {
                                 if (distance <= 10.0) {
                                     adList.add(ad)
+                                    Log.d("AD_CARGADO", "Añadido: ${ad.title}")
                                 }
                             }
                         }
+
                     } catch (e: Exception) {
-                        Log.e("AD_PARSE_ERROR", "Error al parsear el anuncio: ${e.message}")
-                        e.printStackTrace()
+                        Log.e("AD_PARSE_ERROR", "Error: ${e.message}")
                     }
                 }
+
                 adAdapter.notifyDataSetChanged()
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("FIREBASE_ERROR", "Error al cargar anuncios: ${error.message}")
+                Log.e("FIREBASE_ERROR", "Error Firebase: ${error.message}")
             }
         })
     }

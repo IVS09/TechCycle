@@ -131,10 +131,15 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadAds(category: String = "Todos") {
+        // Mostrar mensaje de carga al comenzar
+        binding.adLoadingText.text = getString(R.string.home_loading_ads)
+        binding.adLoadingText.visibility = View.VISIBLE
+
         firebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 Log.d("FIREBASE", "Snapshot recibido con ${snapshot.childrenCount} anuncios")
                 adList.clear()
+
                 for (ds in snapshot.children) {
                     try {
                         val id = ds.key ?: continue
@@ -153,7 +158,6 @@ class HomeFragment : Fragment() {
                         val isFavorite = ds.child("isFavorite").getValue(Boolean::class.java) ?: false
                         val viewCount = ds.child("viewCount").getValue(Int::class.java) ?: 0
 
-                        // Obtener lista de imágenes
                         val imageUrls = mutableListOf<String>()
                         val imagesSnapshot = ds.child("images")
                         for (imageNode in imagesSnapshot.children) {
@@ -195,6 +199,14 @@ class HomeFragment : Fragment() {
                     } catch (e: Exception) {
                         Log.e("AD_PARSE_ERROR", "Error: ${e.message}")
                     }
+                }
+
+                // Actualizar mensaje de estado tras cargar
+                if (adList.isEmpty()) {
+                    binding.adLoadingText.text = getString(R.string.home_no_ads_found)
+                    binding.adLoadingText.visibility = View.VISIBLE
+                } else {
+                    binding.adLoadingText.visibility = View.GONE
                 }
 
                 adAdapter.notifyDataSetChanged()

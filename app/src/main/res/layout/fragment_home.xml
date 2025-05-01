@@ -109,12 +109,15 @@
 
         <!-- RecyclerView para Anuncios -->
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/adLoadingText"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/home_loading_ads"
             android:textStyle="bold"
+            android:gravity="center"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"
+            android:visibility="visible" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/adRecyclerView"

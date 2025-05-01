@@ -13,7 +13,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -131,14 +130,14 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadAds(category: String = "Todos") {
-        // Mostrar mensaje de carga al comenzar
         binding.adLoadingText.text = getString(R.string.home_loading_ads)
         binding.adLoadingText.visibility = View.VISIBLE
 
         firebaseDatabase.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 Log.d("FIREBASE", "Snapshot recibido con ${snapshot.childrenCount} anuncios")
-                adList.clear()
+
+                val newAds = mutableListOf<AdModel>()
 
                 for (ds in snapshot.children) {
                     try {
@@ -190,7 +189,7 @@ class HomeFragment : Fragment() {
 
                             if (category == "Todos" || category == categoryValue) {
                                 if (distance <= 10.0) {
-                                    adList.add(ad)
+                                    newAds.add(ad)
                                     Log.d("AD_CARGADO", "Añadido: ${ad.title}")
                                 }
                             }
@@ -201,19 +200,18 @@ class HomeFragment : Fragment() {
                     }
                 }
 
-                // Actualizar mensaje de estado tras cargar
-                if (adList.isEmpty()) {
+                if (newAds.isEmpty()) {
                     binding.adLoadingText.text = getString(R.string.home_no_ads_found)
-                    binding.adLoadingText.visibility = View.VISIBLE
                 } else {
                     binding.adLoadingText.visibility = View.GONE
                 }
 
-                adAdapter.notifyDataSetChanged()
+                adAdapter.updateList(newAds)
             }
 
             override fun onCancelled(error: DatabaseError) {
                 Log.e("FIREBASE_ERROR", "Error Firebase: ${error.message}")
+                binding.adLoadingText.text = getString(R.string.home_no_ads_found)
             }
         })
     }
@@ -256,4 +254,6 @@ class HomeFragment : Fragment() {
         _binding = null
     }
 }
+
+
 

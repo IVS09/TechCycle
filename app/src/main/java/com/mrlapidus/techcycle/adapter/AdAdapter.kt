@@ -3,6 +3,7 @@ package com.mrlapidus.techcycle.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mrlapidus.techcycle.R
@@ -53,8 +54,23 @@ class AdAdapter(private val context: Context, private val adList: MutableList<Ad
     override fun getItemCount(): Int = adList.size
 
     fun updateList(newList: List<AdModel>) {
+        val diffCallback = object : DiffUtil.Callback() {
+            override fun getOldListSize() = adList.size
+            override fun getNewListSize() = newList.size
+
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return adList[oldItemPosition].id == newList[newItemPosition].id
+            }
+
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return adList[oldItemPosition] == newList[newItemPosition]
+            }
+        }
+
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
         adList.clear()
         adList.addAll(newList)
-        notifyDataSetChanged()
+        diffResult.dispatchUpdatesTo(this)
     }
+
 }

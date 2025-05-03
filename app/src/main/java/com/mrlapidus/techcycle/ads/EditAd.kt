@@ -215,7 +215,8 @@ class EditAd : AppCompatActivity() {
             "description" to binding.descriptionEditText.text.toString().trim(),
             "userId" to firebaseAuth.uid,
             "latitud" to selectedLatitude,
-            "longitud" to selectedLongitude
+            "longitud" to selectedLongitude,
+            "timestamp" to System.currentTimeMillis()
         )
 
         databaseReference.child(adId).setValue(adData)
@@ -272,6 +273,11 @@ class EditAd : AppCompatActivity() {
         private const val CAMERA_PERMISSION_CODE = 100
     }
 }
+
+
+
+
+
 
 
 

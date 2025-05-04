@@ -206,6 +206,8 @@ class EditAd : AppCompatActivity() {
         val databaseReference = FirebaseDatabase.getInstance().getReference("Anuncios")
         val adId = databaseReference.push().key ?: return
 
+        val title = binding.titleEditText.text.toString().trim()
+
         val adData = mapOf(
             "id" to adId,
             "brand" to binding.brandEditText.text.toString().trim(),

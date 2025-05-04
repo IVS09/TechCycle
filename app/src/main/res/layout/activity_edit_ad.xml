@@ -71,8 +71,7 @@
                     android:id="@+id/brandEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:contentDescription="@string/edit_ad_brand_name" />
+                    android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Título -->
@@ -90,8 +89,7 @@
                     android:id="@+id/titleEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:contentDescription="@string/edit_ad_title" />
+                    android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Categoría -->
@@ -109,8 +107,7 @@
                 <AutoCompleteTextView
                     android:id="@+id/categoryAutoCompleteTextView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/edit_ad_category" />
+                    android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Condición -->
@@ -128,8 +125,7 @@
                 <AutoCompleteTextView
                     android:id="@+id/conditionAutoCompleteTextView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/edit_ad_condition" />
+                    android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Localización -->
@@ -148,10 +144,9 @@
                     android:id="@+id/locationAutoCompleteTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:focusable="true"
                     android:clickable="true"
-                    android:inputType="none"
-                    android:contentDescription="@string/edit_ad_location" />
+                    android:focusable="true"
+                    android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Precio -->
@@ -169,8 +164,7 @@
                     android:id="@+id/priceEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:contentDescription="@string/edit_ad_price" />
+                    android:inputType="numberDecimal" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Descripción -->
@@ -188,10 +182,9 @@
                     android:id="@+id/descriptionEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="120dp"
                     android:gravity="start|top"
                     android:inputType="textMultiLine"
-                    android:contentDescription="@string/edit_ad_description" />
+                    android:minHeight="120dp" />
             </com.google.android.material.textfield.TextInputLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

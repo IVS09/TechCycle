@@ -181,13 +181,14 @@ class EditAd : AppCompatActivity() {
         val location = binding.locationAutoCompleteTextView.text.toString().trim()
         val price = binding.priceEditText.text.toString().trim()
         val description = binding.descriptionEditText.text.toString().trim()
+        val title = binding.titleEditText.text.toString().trim()
 
         if (selectedImages.isEmpty()) {
             Toast.makeText(this, "Debe agregar al menos una imagen", Toast.LENGTH_SHORT).show()
             return false
         }
 
-        if (brand.isEmpty() || category.isEmpty() || condition.isEmpty() || location.isEmpty() ||
+        if (brand.isEmpty() || title.isEmpty() || category.isEmpty() || condition.isEmpty() || location.isEmpty() ||
             price.isEmpty() || description.isEmpty()
         ) {
             Toast.makeText(this, "Por favor complete todos los campos", Toast.LENGTH_SHORT).show()
@@ -216,6 +217,7 @@ class EditAd : AppCompatActivity() {
             "userId" to firebaseAuth.uid,
             "latitud" to selectedLatitude,
             "longitud" to selectedLongitude,
+            "title" to binding.titleEditText.text.toString().trim(),
             "timestamp" to System.currentTimeMillis()
         )
 

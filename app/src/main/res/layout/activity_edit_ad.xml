@@ -7,15 +7,14 @@
     android:layout_height="match_parent"
     tools:context=".ads.EditAd">
 
-    <!-- Contenedor de imágenes -->
+    <!-- Imagen de cabecera -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/imageContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="2dp">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <ImageView
             android:id="@+id/addImageView"
@@ -29,7 +28,7 @@
             app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- ScrollView para los campos del formulario -->
+    <!-- Formulario -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/formScrollView"
         android:layout_width="0dp"
@@ -38,15 +37,14 @@
         app:layout_constraintTop_toBottomOf="@id/imageContainer"
         app:layout_constraintBottom_toTopOf="@id/publishButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="2dp">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp">
 
-            <!-- RecyclerView para mostrar imágenes seleccionadas -->
+            <!-- RecyclerView -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/selectedImagesRecyclerView"
                 android:layout_width="0dp"
@@ -56,50 +54,66 @@
                 tools:listitem="@layout/item_selected_image"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:padding="8dp" />
+                app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- Campo: Nombre de la marca -->
+            <!-- Marca -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/brandInputLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/white"
                 app:layout_constraintTop_toBottomOf="@id/selectedImagesRecyclerView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="16dp"
+                android:hint="@string/edit_ad_brand_name">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/brandEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/edit_ad_brand_name"
-                    android:inputType="textPersonName"
-                    android:textColor="@color/black"
-                    tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
+                    android:inputType="text"
+                    android:contentDescription="@string/edit_ad_brand_name" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Campo: Categoría -->
+            <!-- Título -->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/categoryInputLayout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:id="@+id/titleInputLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/brandInputLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="16dp"
+                android:hint="@string/edit_ad_title">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/titleEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:contentDescription="@string/edit_ad_title" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Categoría -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/categoryInputLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/titleInputLayout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="16dp"
+                android:hint="@string/edit_ad_category">
 
                 <AutoCompleteTextView
                     android:id="@+id/categoryAutoCompleteTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/edit_ad_category"
-                    tools:ignore="SpeakableTextPresentCheck,VisualLintTextFieldSize" />
+                    android:contentDescription="@string/edit_ad_category" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Campo: Condición -->
+            <!-- Condición -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/conditionInputLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -108,17 +122,17 @@
                 app:layout_constraintTop_toBottomOf="@id/categoryInputLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="16dp"
+                android:hint="@string/edit_ad_condition">
 
                 <AutoCompleteTextView
                     android:id="@+id/conditionAutoCompleteTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/edit_ad_condition"
-                    tools:ignore="SpeakableTextPresentCheck,VisualLintTextFieldSize" />
+                    android:contentDescription="@string/edit_ad_condition" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Campo: Locación -->
+            <!-- Localización -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/locationInputLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -127,20 +141,20 @@
                 app:layout_constraintTop_toBottomOf="@id/conditionInputLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="16dp"
+                android:hint="@string/edit_ad_location">
 
                 <AutoCompleteTextView
                     android:id="@+id/locationAutoCompleteTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/edit_ad_location"
                     android:focusable="true"
                     android:clickable="true"
                     android:inputType="none"
-                    tools:ignore="VisualLintTextFieldSize" />
+                    android:contentDescription="@string/edit_ad_location" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Campo: Precio -->
+            <!-- Precio -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/priceInputLayout"
                 android:layout_width="0dp"
@@ -148,18 +162,18 @@
                 app:layout_constraintTop_toBottomOf="@id/locationInputLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="16dp"
+                android:hint="@string/edit_ad_price">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/priceEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/edit_ad_price"
                     android:inputType="numberDecimal"
-                    tools:ignore="VisualLintTextFieldSize" />
+                    android:contentDescription="@string/edit_ad_price" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Campo: Descripción -->
+            <!-- Descripción -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/descriptionInputLayout"
                 android:layout_width="0dp"
@@ -167,41 +181,39 @@
                 app:layout_constraintTop_toBottomOf="@id/priceInputLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="16dp"
+                android:hint="@string/edit_ad_description">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/descriptionEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/edit_ad_description"
-                    android:inputType="textMultiLine"
                     android:minHeight="120dp"
                     android:gravity="start|top"
-                    android:textAlignment="viewStart"
-                    tools:ignore="VisualLintTextFieldSize" />
+                    android:inputType="textMultiLine"
+                    android:contentDescription="@string/edit_ad_description" />
             </com.google.android.material.textfield.TextInputLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Botón para publicar -->
+    <!-- Botón Publicar -->
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/publishButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:background="@drawable/green_button"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
         android:text="@string/edit_ad_create_ad_button_text"
+        android:textColor="@color/white"
+        android:textAllCaps="false"
         app:cornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="VisualLintButtonSize" />
-
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 
 

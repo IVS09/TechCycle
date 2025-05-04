@@ -74,3 +74,4 @@ class AdAdapter(private val context: Context, private val adList: MutableList<Ad
     }
 
 }
+

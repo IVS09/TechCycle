@@ -18,3 +18,4 @@ data class AdModel(
     val viewCount: Int = 0,
     val imageUrls: List<String> = emptyList()
 )
+

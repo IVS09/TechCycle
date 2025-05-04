@@ -93,7 +93,6 @@
     <string name="edit_ad_category">Categoría</string>
     <string name="edit_ad_condition">Condición</string>
     <string name="edit_ad_location">Localización</string>
-    <string name="edit_ad_location_desc">Campo para introducir la localización del producto</string>
     <string name="edit_ad_price">Precio</string>
     <string name="edit_ad_title">Título</string>
     <string name="edit_ad_description">Descripción</string>

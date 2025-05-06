@@ -207,6 +207,7 @@ class EditAd : AppCompatActivity() {
         val adId = databaseReference.push().key ?: return
 
         val title = binding.titleEditText.text.toString().trim()
+        val description = binding.descriptionEditText.text.toString().trim()
 
         val adData = mapOf(
             "id" to adId,
@@ -214,9 +215,9 @@ class EditAd : AppCompatActivity() {
             "category" to binding.categoryAutoCompleteTextView.text.toString().trim(),
             "condition" to binding.conditionAutoCompleteTextView.text.toString().trim(),
             "location" to binding.locationAutoCompleteTextView.text.toString().trim(),
-            "price" to binding.priceEditText.text.toString().trim(),
+            "price" to (binding.priceEditText.text.toString().trim().toDoubleOrNull() ?: 0.0),
             "title" to title,
-            "description" to binding.descriptionEditText.text.toString().trim(),
+            "description" to description,
             "userId" to firebaseAuth.uid,
             "latitud" to selectedLatitude,
             "longitud" to selectedLongitude,
@@ -232,6 +233,8 @@ class EditAd : AppCompatActivity() {
                 Toast.makeText(this, "Error al subir el anuncio: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
+
 
     private fun uploadImagesToStorage(adId: String, progressDialog: ProgressDialog) {
         val storageReference = FirebaseStorage.getInstance().reference.child("AdImages")

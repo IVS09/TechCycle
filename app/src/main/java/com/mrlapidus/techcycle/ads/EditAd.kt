@@ -206,9 +206,6 @@ class EditAd : AppCompatActivity() {
         val databaseReference = FirebaseDatabase.getInstance().getReference("Anuncios")
         val adId = databaseReference.push().key ?: return
 
-        val title = binding.titleEditText.text.toString().trim()
-        val description = binding.descriptionEditText.text.toString().trim()
-
         val adData = mapOf(
             "id" to adId,
             "brand" to binding.brandEditText.text.toString().trim(),
@@ -216,8 +213,8 @@ class EditAd : AppCompatActivity() {
             "condition" to binding.conditionAutoCompleteTextView.text.toString().trim(),
             "location" to binding.locationAutoCompleteTextView.text.toString().trim(),
             "price" to (binding.priceEditText.text.toString().trim().toDoubleOrNull() ?: 0.0),
-            "title" to title,
-            "description" to description,
+            "title" to binding.titleEditText.text.toString().trim(),
+            "description" to binding.descriptionEditText.text.toString().trim(),
             "userId" to firebaseAuth.uid,
             "latitud" to selectedLatitude,
             "longitud" to selectedLongitude,
@@ -233,6 +230,7 @@ class EditAd : AppCompatActivity() {
                 Toast.makeText(this, "Error al subir el anuncio: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
 
 
 

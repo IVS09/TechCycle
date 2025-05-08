@@ -9,7 +9,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -39,7 +38,6 @@ class EditAd : AppCompatActivity() {
     private var selectedLatitude: Double = 0.0
     private var selectedLongitude: Double = 0.0
 
-    // Launcher para recibir la ubicación seleccionada
     private val selectLocationLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -47,13 +45,11 @@ class EditAd : AppCompatActivity() {
                 val latitude = result.data?.getDoubleExtra("latitude", 0.0) ?: 0.0
                 val longitude = result.data?.getDoubleExtra("longitude", 0.0) ?: 0.0
                 binding.locationAutoCompleteTextView.setText(address ?: "Ubicación no seleccionada")
-                // Guardar las coordenadas para usarlas al subir el anuncio
                 selectedLatitude = latitude
                 selectedLongitude = longitude
             }
         }
 
-    // Launcher para solicitar permisos de ubicación
     private val locationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (!isGranted) {
@@ -63,8 +59,6 @@ class EditAd : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Configuración inicial
         binding = ActivityEditAdBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -72,26 +66,20 @@ class EditAd : AppCompatActivity() {
         selectedImages = ArrayList()
         imageAdapter = SelectedImageAdapter(this, selectedImages)
 
-        // Configurar RecyclerView
         binding.selectedImagesRecyclerView.layoutManager = GridLayoutManager(this, 3)
         binding.selectedImagesRecyclerView.adapter = imageAdapter
 
-        // Configurar dropdowns
         setupDropdowns()
 
-        // Configurar clic en el campo de ubicación
         binding.locationAutoCompleteTextView.setOnClickListener {
             val intent = Intent(this, SelectLocation::class.java)
             selectLocationLauncher.launch(intent)
         }
 
-        // Verificar permisos de ubicación (opcional si se usa GPS en SelectLocation)
         checkLocationPermission()
 
-        // Configurar clic en el ImageView para agregar imágenes
         binding.addImageView.setOnClickListener { showImagePickerDialog() }
 
-        // Configurar botón de publicar
         binding.publishButton.setOnClickListener {
             if (validateInputs()) {
                 uploadAdToFirebase()
@@ -128,23 +116,17 @@ class EditAd : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK && imageUri != null) {
                 addImageToRecyclerView(imageUri!!)
-            } else {
-                Toast.makeText(this, "No se capturó ninguna imagen", Toast.LENGTH_SHORT).show()
             }
         }
 
     private val galleryLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            if (uri != null) {
-                addImageToRecyclerView(uri)
-            } else {
-                Toast.makeText(this, "No se seleccionó ninguna imagen", Toast.LENGTH_SHORT).show()
-            }
+            uri?.let { addImageToRecyclerView(it) }
         }
 
     private fun openCamera() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) !=
-            PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED
         ) {
             requestPermissions(arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE)
         } else {
@@ -175,25 +157,26 @@ class EditAd : AppCompatActivity() {
     }
 
     private fun validateInputs(): Boolean {
-        val brand = binding.brandEditText.text.toString().trim()
-        val category = binding.categoryAutoCompleteTextView.text.toString().trim()
-        val condition = binding.conditionAutoCompleteTextView.text.toString().trim()
-        val location = binding.locationAutoCompleteTextView.text.toString().trim()
-        val price = binding.priceEditText.text.toString().trim()
-        val description = binding.descriptionEditText.text.toString().trim()
-        val title = binding.titleEditText.text.toString().trim()
+        val requiredFields = listOf(
+            binding.brandEditText.text,
+            binding.titleEditText.text,
+            binding.categoryAutoCompleteTextView.text,
+            binding.conditionAutoCompleteTextView.text,
+            binding.locationAutoCompleteTextView.text,
+            binding.priceEditText.text,
+            binding.descriptionEditText.text
+        )
 
         if (selectedImages.isEmpty()) {
             Toast.makeText(this, "Debe agregar al menos una imagen", Toast.LENGTH_SHORT).show()
             return false
         }
 
-        if (brand.isEmpty() || category.isEmpty() || condition.isEmpty() || location.isEmpty() ||
-            price.isEmpty() || description.isEmpty() || title.isEmpty()
-        ) {
+        if (requiredFields.any { it.isNullOrBlank() }) {
             Toast.makeText(this, "Por favor complete todos los campos", Toast.LENGTH_SHORT).show()
             return false
         }
+
         return true
     }
 
@@ -209,11 +192,11 @@ class EditAd : AppCompatActivity() {
         val adData = mapOf(
             "id" to adId,
             "brand" to binding.brandEditText.text.toString().trim(),
+            "title" to binding.titleEditText.text.toString().trim(),
             "category" to binding.categoryAutoCompleteTextView.text.toString().trim(),
             "condition" to binding.conditionAutoCompleteTextView.text.toString().trim(),
             "location" to binding.locationAutoCompleteTextView.text.toString().trim(),
             "price" to (binding.priceEditText.text.toString().trim().toDoubleOrNull() ?: 0.0),
-            "title" to binding.titleEditText.text.toString().trim(),
             "description" to binding.descriptionEditText.text.toString().trim(),
             "userId" to firebaseAuth.uid,
             "latitud" to selectedLatitude,
@@ -222,17 +205,12 @@ class EditAd : AppCompatActivity() {
         )
 
         databaseReference.child(adId).setValue(adData)
-            .addOnSuccessListener {
-                uploadImagesToStorage(adId, progressDialog)
-            }
+            .addOnSuccessListener { uploadImagesToStorage(adId, progressDialog) }
             .addOnFailureListener { e ->
                 progressDialog.dismiss()
                 Toast.makeText(this, "Error al subir el anuncio: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
-
-
-
 
     private fun uploadImagesToStorage(adId: String, progressDialog: ProgressDialog) {
         val storageReference = FirebaseStorage.getInstance().reference.child("AdImages")
@@ -267,8 +245,8 @@ class EditAd : AppCompatActivity() {
     }
 
     private fun checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
-            PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
         ) {
             locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
@@ -278,6 +256,7 @@ class EditAd : AppCompatActivity() {
         private const val CAMERA_PERMISSION_CODE = 100
     }
 }
+
 
 
 

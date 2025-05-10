@@ -14,82 +14,49 @@
         android:padding="8dp">
 
         <!-- Campo de Localización -->
-        <com.google.android.material.card.MaterialCardView
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/locationInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="4dp"
             android:layout_marginBottom="8dp"
-            android:background="@drawable/card_background">
+            android:hint="@string/editText_location_home"
+            app:startIconDrawable="@drawable/ic_location_wrapper"
+            app:startIconTint="@color/black"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/black">
 
-            <LinearLayout
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/locationText"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="8dp">
-
-                <ImageView
-                    android:id="@+id/locationIcon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/category_location_icon"
-                    android:contentDescription="@string/location_icon_home" />
-
-                <EditText
-                    android:id="@+id/locationText"
-                    android:layout_width="310dp"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="8dp"
-                    android:hint="@string/editText_location_home"
-                    android:background="@android:color/transparent"
-                    android:imeOptions="actionNone"
-                    android:inputType="text"
-                    android:textSize="16sp"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/searchHintColor"
-                    android:importantForAutofill="yes"
-                    android:autofillHints="location"
-                    android:paddingVertical="12dp" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textColorHint="@color/searchHintColor"
+                android:focusable="false"
+                android:clickable="true"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Campo de Búsqueda -->
-        <com.google.android.material.card.MaterialCardView
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/searchInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="4dp"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/card_background">
+            app:endIconMode="clear_text"
+            app:endIconTint="@color/black"
+            app:boxStrokeColor="@color/black"
+            app:hintEnabled="true"
+            app:boxBackgroundMode="outline"
+            android:hint="@string/editText_search_home">
 
-            <LinearLayout
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/searchBar"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="8dp">
-
-                <ImageView
-                    android:id="@+id/searchIcon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/category_search_icon"
-                    android:contentDescription="@string/search_icon_home" />
-
-                <EditText
-                    android:id="@+id/searchBar"
-                    android:layout_width="310dp"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="8dp"
-                    android:hint="@string/editText_search_home"
-                    android:background="@android:color/transparent"
-                    android:imeOptions="actionSearch"
-                    android:inputType="text"
-                    android:textSize="16sp"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/searchHintColor"
-                    android:importantForAutofill="yes"
-                    android:autofillHints="search"
-                    android:paddingVertical="12dp" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textColorHint="@color/searchHintColor"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- RecyclerView para Categorías -->
         <TextView

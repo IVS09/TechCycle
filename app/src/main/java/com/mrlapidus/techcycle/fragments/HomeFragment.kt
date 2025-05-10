@@ -40,6 +40,8 @@ class HomeFragment : Fragment() {
     private var userLng: Double = 0.0
     private var userAddress: String = ""
 
+    private var originalFilteredList = mutableListOf<AdModel>() // ubicación + categoría
+
     private lateinit var adAdapter: AdAdapter
     private var adList = mutableListOf<AdModel>()
 
@@ -206,6 +208,9 @@ class HomeFragment : Fragment() {
                     binding.adLoadingText.visibility = View.GONE
                 }
 
+                originalFilteredList = newAds.toMutableList()
+                adAdapter.updateList(originalFilteredList)
+
                 adAdapter.updateList(newAds)
             }
 
@@ -217,22 +222,19 @@ class HomeFragment : Fragment() {
     }
 
     private fun filterAds(query: String) {
-        if (query.isEmpty()) {
-            // Si la consulta está vacía, mostrar todos los anuncios
-            adAdapter = AdAdapter(requireContext(), adList)
-            binding.adRecyclerView.adapter = adAdapter
+        if (query.isBlank()) {
+            adAdapter.updateList(originalFilteredList)
             return
         }
 
-        val filteredList = adList.filter {
+        val filtered = originalFilteredList.filter {
             it.title.contains(query, ignoreCase = true) ||
                     it.description.contains(query, ignoreCase = true) ||
                     it.brand.contains(query, ignoreCase = true) ||
                     it.category.contains(query, ignoreCase = true)
         }
 
-        // Actualizar el adaptador existente con la lista filtrada
-        adAdapter.updateList(filteredList)
+        adAdapter.updateList(filtered)
     }
 
     private fun calculateDistance(lat: Double, lng: Double): Double {

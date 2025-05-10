@@ -13,11 +13,13 @@ import com.mrlapidus.techcycle.model.AdModel
 class AdAdapter(private val context: Context, private val adList: MutableList<AdModel>) :
     RecyclerView.Adapter<AdAdapter.AdViewHolder>() {
 
+    private var filteredList: MutableList<AdModel> = adList.toMutableList()
+
     inner class AdViewHolder(private val binding: ItemAdBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(ad: AdModel) {
             binding.adCardTitle.text = ad.title
-            binding.adCardDescription.text = ad.description // <-- Añadido
-            binding.adCardCondition.text = ad.condition // <-- Añadido
+            binding.adCardDescription.text = ad.description
+            binding.adCardCondition.text = ad.condition
             binding.adCardLocation.text = ad.location
             binding.adCardPrice.text = context.getString(R.string.ad_card_price, ad.price)
             binding.adCardPostDate.text = android.text.format.DateFormat.format("dd/MM/yyyy", ad.timestamp)
@@ -36,7 +38,7 @@ class AdAdapter(private val context: Context, private val adList: MutableList<Ad
 
             binding.adCardFavoriteButton.setOnClickListener {
                 val newFavoriteStatus = !ad.isFavorite
-                adList[bindingAdapterPosition] = ad.copy(isFavorite = newFavoriteStatus)
+                filteredList[bindingAdapterPosition] = ad.copy(isFavorite = newFavoriteStatus)
                 notifyItemChanged(bindingAdapterPosition)
             }
         }
@@ -48,30 +50,30 @@ class AdAdapter(private val context: Context, private val adList: MutableList<Ad
     }
 
     override fun onBindViewHolder(holder: AdViewHolder, position: Int) {
-        holder.bind(adList[position])
+        holder.bind(filteredList[position])
     }
 
-    override fun getItemCount(): Int = adList.size
+    override fun getItemCount(): Int = filteredList.size
 
     fun updateList(newList: List<AdModel>) {
         val diffCallback = object : DiffUtil.Callback() {
-            override fun getOldListSize() = adList.size
+            override fun getOldListSize() = filteredList.size
             override fun getNewListSize() = newList.size
 
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return adList[oldItemPosition].id == newList[newItemPosition].id
+                return filteredList[oldItemPosition].id == newList[newItemPosition].id
             }
 
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return adList[oldItemPosition] == newList[newItemPosition]
+                return filteredList[oldItemPosition] == newList[newItemPosition]
             }
         }
 
         val diffResult = DiffUtil.calculateDiff(diffCallback)
-        adList.clear()
-        adList.addAll(newList)
+        filteredList.clear()
+        filteredList.addAll(newList)
         diffResult.dispatchUpdatesTo(this)
     }
-
 }
+
 

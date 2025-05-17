@@ -12,4 +12,5 @@
     <color name="searchTextColor">#000000</color>
     <color name="searchHintColor">#616161</color>
     <color name="text_gray_accessible">#666666</color>
+    <color name="background">#FAF6FC</color>
 </resources>

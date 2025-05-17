@@ -170,4 +170,8 @@
     <string name="ad_status_available">Available</string>
     <string name="ad_status_sold">Sold</string>
 
+    <!-- Texto Fragment FavAds -->
+    <string name="tab_navigation">Ad tabs navigation</string>
+    <string name="ads_view_pager">Ad view with swipe navigation</string>
+
 </resources>

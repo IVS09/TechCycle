@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container_ads"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.AdsFragment">
+    android:background="@color/background"
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:tabIndicatorColor="@color/primaryColor"
+        app:tabSelectedTextColor="@color/primaryColor"
+        app:tabTextColor="@color/black"
+        android:contentDescription="@string/tab_navigation" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/fragment_ads" />
-
-</FrameLayout>
+        android:contentDescription="@string/ads_view_pager" />
+</LinearLayout>

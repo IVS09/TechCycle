@@ -169,4 +169,8 @@
     <!-- Estados de anuncios -->
     <string name="ad_status_available">Disponible</string>
     <string name="ad_status_sold">Vendido</string>
+
+    <!-- Texto Fragment FavAds -->
+    <string name="tab_navigation">Navegación de pestañas de anuncios</string>
+    <string name="ads_view_pager">Vista de anuncios con deslizamiento</string>
 </resources>

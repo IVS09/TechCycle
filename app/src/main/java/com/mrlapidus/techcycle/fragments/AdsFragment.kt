@@ -5,14 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentPagerAdapter
-import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
+import com.mrlapidus.techcycle.adapter.AdsPagerAdapter
 import com.mrlapidus.techcycle.databinding.FragmentAdsBinding
 
 class AdsFragment : Fragment() {
 
     private var _binding: FragmentAdsBinding? = null
     private val binding get() = _binding!!
+
+    private val tabTitles = listOf("Publicados", "Favoritos")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,28 +28,12 @@ class AdsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = object : FragmentPagerAdapter(childFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-            override fun getItem(position: Int): Fragment {
-                return when (position) {
-                    0 -> FragmentMyPublishedAds()
-                    1 -> FragmentFavAds()
-                    else -> FragmentMyPublishedAds()
-                }
-            }
-
-            override fun getCount(): Int = 2
-
-            override fun getPageTitle(position: Int): CharSequence {
-                return when (position) {
-                    0 -> "Publicados"
-                    1 -> "Favoritos"
-                    else -> ""
-                }
-            }
-        }
-
+        val adapter = AdsPagerAdapter(this)
         binding.viewPager.adapter = adapter
-        binding.tabLayout.setupWithViewPager(binding.viewPager)
+
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = tabTitles[position]
+        }.attach()
     }
 
     override fun onDestroyView() {
@@ -55,3 +41,5 @@ class AdsFragment : Fragment() {
         _binding = null
     }
 }
+
+

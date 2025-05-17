@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.firebaseStorage)
     implementation(libs.google.maps)
     implementation(libs.google.places)
+    implementation("androidx.viewpager2:viewpager2:1.1.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

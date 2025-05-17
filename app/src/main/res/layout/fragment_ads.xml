@@ -17,9 +17,10 @@
         app:tabTextColor="@color/black"
         android:contentDescription="@string/tab_navigation" />
 
-    <androidx.viewpager.widget.ViewPager
+    <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/ads_view_pager" />
 </LinearLayout>
+

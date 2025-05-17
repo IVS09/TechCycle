@@ -19,6 +19,7 @@ class FragmentMyPublishedAds : Fragment() {
 
     private lateinit var adAdapter: AdAdapter
     private val publishedAds = mutableListOf<AdModel>()
+
     private lateinit var databaseReference: DatabaseReference
     private lateinit var auth: FirebaseAuth
 
@@ -43,10 +44,8 @@ class FragmentMyPublishedAds : Fragment() {
 
     private fun setupRecyclerView() {
         adAdapter = AdAdapter(requireContext(), publishedAds)
-        binding.recyclerViewMyAds.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = adAdapter
-        }
+        binding.recyclerViewMyAds.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerViewMyAds.adapter = adAdapter
     }
 
     private fun loadUserAds() {
@@ -55,19 +54,18 @@ class FragmentMyPublishedAds : Fragment() {
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 publishedAds.clear()
-
                 for (ds in snapshot.children) {
                     val ad = ds.getValue(AdModel::class.java)
                     if (ad != null && ad.userId == currentUserId) {
-                        publishedAds.add(ad)
+                        val adWithId = ad.copy(id = ds.key ?: "")
+                        publishedAds.add(adWithId)
                     }
                 }
-
                 adAdapter.updateList(publishedAds)
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Handle error if needed
+                // Manejar errores si es necesario
             }
         })
     }

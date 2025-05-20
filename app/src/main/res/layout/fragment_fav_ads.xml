@@ -27,6 +27,19 @@
             android:textColorHint="@color/searchHintColor" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Texto cuando no hay favoritos -->
+    <TextView
+        android:id="@+id/textNoFavAds"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_favorites_found"
+        android:textSize="16sp"
+        android:textColor="@color/gray"
+        android:visibility="gone"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp" />
+
     <!-- Lista de anuncios favoritos -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewFavAds"
@@ -36,5 +49,4 @@
         android:clipToPadding="false"
         android:paddingTop="4dp"
         android:paddingBottom="8dp" />
-
 </LinearLayout>

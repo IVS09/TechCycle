@@ -3,19 +3,57 @@ package com.mrlapidus.techcycle.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
+import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 import com.mrlapidus.techcycle.R
 import com.mrlapidus.techcycle.databinding.ItemAdBinding
 import com.mrlapidus.techcycle.model.AdModel
+import com.mrlapidus.techcycle.Utilities
 
-class AdAdapter(private val context: Context, private val adList: MutableList<AdModel>) :
-    RecyclerView.Adapter<AdAdapter.AdViewHolder>() {
+class AdAdapter(
+    private val context: Context,
+    private val adsDataSet: ArrayList<AdModel>
+) : RecyclerView.Adapter<AdAdapter.AdsViewHolder>() {
 
-    private var filteredList: MutableList<AdModel> = adList.toMutableList()
+    private val authInstance = FirebaseAuth.getInstance()
 
-    inner class AdViewHolder(private val binding: ItemAdBinding) : RecyclerView.ViewHolder(binding.root) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdsViewHolder {
+        val binding = ItemAdBinding.inflate(LayoutInflater.from(context), parent, false)
+        return AdsViewHolder(binding)
+    }
+
+    override fun getItemCount(): Int = adsDataSet.size
+
+    override fun onBindViewHolder(holder: AdsViewHolder, position: Int) {
+        val currentAd = adsDataSet[position]
+
+        holder.bind(currentAd)
+
+        loadFavoriteStatus(currentAd, holder.binding.adCardFavoriteButton)
+    }
+
+    private fun loadFavoriteStatus(ad: AdModel, button: ImageButton) {
+        val userRef = FirebaseDatabase.getInstance().getReference("Usuarios")
+            .child(authInstance.uid ?: return)
+            .child("Favoritos")
+            .child(ad.id)
+
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val favExists = snapshot.exists()
+                ad.isFavorite = favExists
+                val icon = if (favExists) R.drawable.ad_favorite_icon else R.drawable.ad_no_favorite_icon
+                button.setImageResource(icon)
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+    inner class AdsViewHolder(val binding: ItemAdBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(ad: AdModel) {
             binding.adCardTitle.text = ad.title
             binding.adCardDescription.text = ad.description
@@ -29,51 +67,33 @@ class AdAdapter(private val context: Context, private val adList: MutableList<Ad
                 .placeholder(R.drawable.ad_image_icon)
                 .into(binding.adCardImage)
 
-            val favoriteIcon = if (ad.isFavorite) {
+            updateFavoriteIcon(ad.isFavorite)
+
+            binding.adCardFavoriteButton.setOnClickListener {
+                ad.isFavorite = !ad.isFavorite
+                updateFavoriteIcon(ad.isFavorite)
+
+                if (ad.isFavorite) {
+                    Utilities.saveAdToFavorites(context, ad.id)
+                } else {
+                    Utilities.removeAdFromFavorites(context, ad.id)
+                }
+
+                notifyItemChanged(bindingAdapterPosition)
+            }
+        }
+
+        private fun updateFavoriteIcon(isFav: Boolean) {
+            val icon = if (isFav) {
                 R.drawable.ad_favorite_icon
             } else {
                 R.drawable.ad_no_favorite_icon
             }
-            binding.adCardFavoriteButton.setImageResource(favoriteIcon)
-
-            binding.adCardFavoriteButton.setOnClickListener {
-                val newFavoriteStatus = !ad.isFavorite
-                filteredList[bindingAdapterPosition] = ad.copy(isFavorite = newFavoriteStatus)
-                notifyItemChanged(bindingAdapterPosition)
-            }
-        }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdViewHolder {
-        val binding = ItemAdBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return AdViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: AdViewHolder, position: Int) {
-        holder.bind(filteredList[position])
-    }
-
-    override fun getItemCount(): Int = filteredList.size
-
-    fun updateList(newList: List<AdModel>) {
-        val diffCallback = object : DiffUtil.Callback() {
-            override fun getOldListSize() = filteredList.size
-            override fun getNewListSize() = newList.size
-
-            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return filteredList[oldItemPosition].id == newList[newItemPosition].id
-            }
-
-            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return filteredList[oldItemPosition] == newList[newItemPosition]
-            }
+            binding.adCardFavoriteButton.setImageResource(icon)
         }
 
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-        filteredList.clear()
-        filteredList.addAll(newList)
-        diffResult.dispatchUpdatesTo(this)
     }
 }
+
 
 

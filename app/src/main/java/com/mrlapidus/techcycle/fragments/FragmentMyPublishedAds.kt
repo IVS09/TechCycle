@@ -18,7 +18,7 @@ class FragmentMyPublishedAds : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adAdapter: AdAdapter
-    private val publishedAds = mutableListOf<AdModel>()
+    private val publishedAds = ArrayList<AdModel>()
     private lateinit var databaseReference: DatabaseReference
     private lateinit var auth: FirebaseAuth
 
@@ -63,7 +63,7 @@ class FragmentMyPublishedAds : Fragment() {
                     }
                 }
 
-                adAdapter.updateList(publishedAds)
+                adAdapter.notifyDataSetChanged()
             }
 
             override fun onCancelled(error: DatabaseError) {

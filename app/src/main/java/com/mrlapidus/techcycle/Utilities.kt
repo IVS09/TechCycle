@@ -1,6 +1,10 @@
 package com.mrlapidus.techcycle
 
+import android.content.Context
 import android.text.format.DateFormat
+import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import java.util.*
 
 object Utilities {
@@ -53,4 +57,28 @@ object Utilities {
         calendar.timeInMillis = timestamp
         return DateFormat.format("dd/MM/yyyy", calendar).toString()
     }
+
+    fun saveAdToFavorites(context: Context, adId: String) {
+        val uid = FirebaseAuth.getInstance().uid ?: return
+        val ref = FirebaseDatabase.getInstance().getReference("Usuarios").child(uid).child("Favoritos").child(adId)
+        val favData = mapOf("adId" to adId, "addedAt" to System.currentTimeMillis())
+
+        ref.setValue(favData).addOnSuccessListener {
+            Toast.makeText(context, "Añadido a favoritos", Toast.LENGTH_SHORT).show()
+        }.addOnFailureListener {
+            Toast.makeText(context, "Error al guardar favorito", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun removeAdFromFavorites(context: Context, adId: String) {
+        val uid = FirebaseAuth.getInstance().uid ?: return
+        val ref = FirebaseDatabase.getInstance().getReference("Usuarios").child(uid).child("Favoritos").child(adId)
+
+        ref.removeValue().addOnSuccessListener {
+            Toast.makeText(context, "Favorito eliminado", Toast.LENGTH_SHORT).show()
+        }.addOnFailureListener {
+            Toast.makeText(context, "Error al eliminar favorito", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 }

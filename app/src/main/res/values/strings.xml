@@ -173,5 +173,6 @@
     <!-- Texto Fragment FavAds -->
     <string name="tab_navigation">Ad tabs navigation</string>
     <string name="ads_view_pager">Ad view with swipe navigation</string>
+    <string name="no_favorites_found">No favorite ads yet</string>
 
 </resources>

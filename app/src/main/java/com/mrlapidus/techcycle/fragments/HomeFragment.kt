@@ -43,7 +43,7 @@ class HomeFragment : Fragment() {
     private var originalFilteredList = mutableListOf<AdModel>() // ubicación + categoría
 
     private lateinit var adAdapter: AdAdapter
-    private var adList = mutableListOf<AdModel>()
+    private var adList = ArrayList<AdModel>()
 
     private lateinit var categoryAdapter: CategoryAdapter
 
@@ -209,9 +209,13 @@ class HomeFragment : Fragment() {
                 }
 
                 originalFilteredList = newAds.toMutableList()
-                adAdapter.updateList(originalFilteredList)
+                adList.clear()
+                adList.addAll(originalFilteredList)
+                adAdapter.notifyDataSetChanged()
 
-                adAdapter.updateList(newAds)
+                adList.clear()
+                adList.addAll(newAds)
+                adAdapter.notifyDataSetChanged()
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -223,7 +227,9 @@ class HomeFragment : Fragment() {
 
     private fun filterAds(query: String) {
         if (query.isBlank()) {
-            adAdapter.updateList(originalFilteredList)
+            adList.clear()
+            adList.addAll(originalFilteredList)
+            adAdapter.notifyDataSetChanged()
             return
         }
 
@@ -234,7 +240,9 @@ class HomeFragment : Fragment() {
                     it.category.contains(query, ignoreCase = true)
         }
 
-        adAdapter.updateList(filtered)
+        adList.clear()
+        adList.addAll(filtered)
+        adAdapter.notifyDataSetChanged()
     }
 
     private fun calculateDistance(lat: Double, lng: Double): Double {

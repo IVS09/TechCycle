@@ -14,7 +14,7 @@ data class AdModel(
     val timestamp: Long = 0,
     val latitud: Double = 0.0,
     val longitud: Double = 0.0,
-    val isFavorite: Boolean = false,
+    var isFavorite: Boolean = false,
     val viewCount: Int = 0,
     val imageUrls: List<String> = emptyList()
 )

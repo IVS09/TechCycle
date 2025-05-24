@@ -174,4 +174,5 @@
     <string name="tab_navigation">Navegación de pestañas de anuncios</string>
     <string name="ads_view_pager">Vista de anuncios con deslizamiento</string>
     <string name="no_favorites_found">No hay anuncios favoritos</string>
+    <string name="favorites_title">Favoritos</string>
 </resources>

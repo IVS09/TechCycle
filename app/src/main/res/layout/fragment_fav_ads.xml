@@ -7,6 +7,16 @@
     android:padding="16dp"
     android:background="@color/background">
 
+    <TextView
+        android:id="@+id/titleFavTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/favorites_title"
+        android:padding="16dp"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/poppins_semibold" />
+
     <!-- Campo de búsqueda con botón para limpiar -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/searchInputLayout"

@@ -9,6 +9,7 @@ import com.mrlapidus.techcycle.ads.EditAd
 import com.mrlapidus.techcycle.databinding.ActivityMainBinding
 import com.mrlapidus.techcycle.fragments.AdsFragment
 import com.mrlapidus.techcycle.fragments.ChatFragment
+import com.mrlapidus.techcycle.fragments.FragmentFavAds
 import com.mrlapidus.techcycle.fragments.HomeFragment
 import com.mrlapidus.techcycle.fragments.ProfileFragment
 import com.mrlapidus.techcycle.fragments.ShopFragment
@@ -43,7 +44,7 @@ class MainActivity : AppCompatActivity() {
                     false // No marcar "Shop" como seleccionado en el menú
                 }
                 R.id.nav_ads -> {
-                    loadFragment(AdsFragment())
+                    loadFragment(FragmentFavAds())
                     true
                 }
                 R.id.nav_profile -> {

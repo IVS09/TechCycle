@@ -173,7 +173,7 @@ class HomeFragment : Fragment() {
                             category = categoryValue,
                             condition = condition,
                             location = location,
-                            price = price,
+                            price = price.toString(),
                             title = title,
                             description = description,
                             status = status,

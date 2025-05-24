@@ -14,77 +14,68 @@ import com.mrlapidus.techcycle.model.AdModel
 
 class FragmentFavAds : Fragment() {
 
-    private var _binding: FragmentFavAdsBinding? = null
-    private val binding get() = _binding!!
-
+    private lateinit var binding: FragmentFavAdsBinding
     private lateinit var adAdapter: AdAdapter
-    private val favoriteAds = arrayListOf<AdModel>()
-    private val favAdIds = mutableSetOf<String>()
+    private val favoriteAds = ArrayList<AdModel>()
 
-    private val userId by lazy { FirebaseAuth.getInstance().currentUser?.uid.orEmpty() }
-    private val dbUsers by lazy { FirebaseDatabase.getInstance().getReference("Usuarios") }
-    private val dbAds by lazy { FirebaseDatabase.getInstance().getReference("Anuncios") }
+    private val auth = FirebaseAuth.getInstance()
+    private val database = FirebaseDatabase.getInstance()
+    private val usersRef = database.getReference("Usuarios")
+    private val adsRef = database.getReference("Anuncios")
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentFavAdsBinding.inflate(inflater, container, false)
+        binding = FragmentFavAdsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupRecyclerView()
-        loadFavoriteAdIds()
+        loadFavorites()
     }
 
     private fun setupRecyclerView() {
-        binding.recyclerViewFavAds.layoutManager = LinearLayoutManager(requireContext())
         adAdapter = AdAdapter(requireContext(), favoriteAds)
+        binding.recyclerViewFavAds.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewFavAds.adapter = adAdapter
     }
 
-    private fun loadFavoriteAdIds() {
-        dbUsers.child(userId).child("Favoritos")
+    private fun loadFavorites() {
+        val uid = auth.currentUser?.uid ?: return
+
+        usersRef.child(uid).child("Favoritos")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    favAdIds.clear()
-                    for (child in snapshot.children) {
-                        val adId = child.key
-                        if (!adId.isNullOrEmpty()) favAdIds.add(adId)
+                    val favIds = snapshot.children.mapNotNull { it.key }
+                    if (favIds.isEmpty()) {
+                        binding.textNoFavAds.visibility = View.VISIBLE
+                        favoriteAds.clear()
+                        adAdapter.notifyDataSetChanged()
+                        return
                     }
-                    loadFavoriteAds()
+
+                    adsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(adSnap: DataSnapshot) {
+                            favoriteAds.clear()
+                            for (child in adSnap.children) {
+                                val ad = child.getValue(AdModel::class.java)
+                                if (ad != null && favIds.contains(ad.id)) {
+                                    favoriteAds.add(ad)
+                                }
+                            }
+                            adAdapter.notifyDataSetChanged()
+                            binding.textNoFavAds.visibility =
+                                if (favoriteAds.isEmpty()) View.VISIBLE else View.GONE
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {}
+                    })
                 }
 
                 override fun onCancelled(error: DatabaseError) {}
             })
-    }
-
-    private fun loadFavoriteAds() {
-        dbAds.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                favoriteAds.clear()
-                for (child in snapshot.children) {
-                    val ad = child.getValue(AdModel::class.java)
-                    if (ad != null && favAdIds.contains(ad.id)) {
-                        ad.isFavorite = true
-                        favoriteAds.add(ad)
-                    }
-                }
-                adAdapter.notifyDataSetChanged()
-                binding.textNoFavAds.visibility =
-                    if (favoriteAds.isEmpty()) View.VISIBLE else View.GONE
-            }
-
-            override fun onCancelled(error: DatabaseError) {}
-        })
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }
 

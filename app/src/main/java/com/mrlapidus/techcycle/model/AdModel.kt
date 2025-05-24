@@ -1,13 +1,13 @@
 package com.mrlapidus.techcycle.model
 
 data class AdModel(
-    val id: String = "",
+    var id: String = "",
     val userId: String = "",
     val brand: String = "",
     val category: String = "",
     val condition: String = "",
     val location: String = "",
-    val price: Double = 0.0,
+    var price: String = "",
     val title: String = "",
     val description: String = "",
     val status: String = "Disponible",

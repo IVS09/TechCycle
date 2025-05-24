@@ -29,9 +29,7 @@ class AdAdapter(
 
     override fun onBindViewHolder(holder: AdsViewHolder, position: Int) {
         val currentAd = adsDataSet[position]
-
         holder.bind(currentAd)
-
         loadFavoriteStatus(currentAd, holder.binding.adCardFavoriteButton)
     }
 
@@ -59,7 +57,7 @@ class AdAdapter(
             binding.adCardDescription.text = ad.description
             binding.adCardCondition.text = ad.condition
             binding.adCardLocation.text = ad.location
-            binding.adCardPrice.text = context.getString(R.string.ad_card_price, ad.price)
+            binding.adCardPrice.text = "${ad.price} €"
             binding.adCardPostDate.text = android.text.format.DateFormat.format("dd/MM/yyyy", ad.timestamp)
 
             Glide.with(context)
@@ -91,7 +89,12 @@ class AdAdapter(
             }
             binding.adCardFavoriteButton.setImageResource(icon)
         }
+    }
 
+    fun updateAds(newAds: List<AdModel>) {
+        adsDataSet.clear()
+        adsDataSet.addAll(newAds)
+        notifyDataSetChanged()
     }
 }
 

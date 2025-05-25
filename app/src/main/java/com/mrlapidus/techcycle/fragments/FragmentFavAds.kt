@@ -1,8 +1,6 @@
 package com.mrlapidus.techcycle.fragments
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +19,6 @@ class FragmentFavAds : Fragment() {
 
     private lateinit var adAdapter: AdAdapter
     private val favoriteAds = arrayListOf<AdModel>()
-    private val allFavoriteAds = arrayListOf<AdModel>()
     private val favAdIds = mutableSetOf<String>()
 
     private val userId by lazy { FirebaseAuth.getInstance().currentUser?.uid.orEmpty() }
@@ -38,8 +35,8 @@ class FragmentFavAds : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         setupRecyclerView()
-        setupSearchBar()
         loadFavoriteAdIds()
     }
 
@@ -47,32 +44,6 @@ class FragmentFavAds : Fragment() {
         binding.recyclerViewFavAds.layoutManager = LinearLayoutManager(requireContext())
         adAdapter = AdAdapter(requireContext(), favoriteAds)
         binding.recyclerViewFavAds.adapter = adAdapter
-    }
-
-    private fun setupSearchBar() {
-        binding.searchBarFav.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(query: CharSequence?, start: Int, before: Int, count: Int) {
-                filterFavorites(query.toString())
-            }
-            override fun afterTextChanged(s: Editable?) {}
-        })
-    }
-
-    private fun filterFavorites(query: String) {
-        val lowerQuery = query.trim().lowercase()
-        favoriteAds.clear()
-
-        if (lowerQuery.isEmpty()) {
-            favoriteAds.addAll(allFavoriteAds)
-        } else {
-            favoriteAds.addAll(allFavoriteAds.filter {
-                it.title.lowercase().contains(lowerQuery)
-            })
-        }
-
-        binding.textNoFavAds.visibility = if (favoriteAds.isEmpty()) View.VISIBLE else View.GONE
-        adAdapter.notifyDataSetChanged()
     }
 
     private fun loadFavoriteAdIds() {
@@ -95,20 +66,22 @@ class FragmentFavAds : Fragment() {
         dbAds.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 favoriteAds.clear()
-                allFavoriteAds.clear()
-
                 for (child in snapshot.children) {
                     val ad = child.getValue(AdModel::class.java)
                     if (ad != null && favAdIds.contains(ad.id)) {
-                        ad.isFavorite = true
-                        allFavoriteAds.add(ad)
+                        val imageUrls = mutableListOf<String>()
+                        val imagesSnapshot = child.child("images")
+                        for (img in imagesSnapshot.children) {
+                            val url = img.child("imageUrl").getValue(String::class.java)
+                            if (!url.isNullOrEmpty()) imageUrls.add(url)
+                        }
+                        val updatedAd = ad.copy(imageUrls = imageUrls, isFavorite = true)
+                        favoriteAds.add(updatedAd)
                     }
                 }
-
-                favoriteAds.addAll(allFavoriteAds)
+                adAdapter.notifyDataSetChanged()
                 binding.textNoFavAds.visibility =
                     if (favoriteAds.isEmpty()) View.VISIBLE else View.GONE
-                adAdapter.notifyDataSetChanged()
             }
 
             override fun onCancelled(error: DatabaseError) {}

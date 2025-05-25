@@ -176,4 +176,8 @@
     <string name="no_favorites_found">No favorite ads yet</string>
     <string name="favourites_title">Favourites</string>
 
+    <!-- Texto Fragment MyPublishedAds -->
+    <string name="my_ads_title">My Ads</string>
+    <string name="no_published_ads_found">You have not published any ads</string>
+
 </resources>

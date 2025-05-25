@@ -175,4 +175,9 @@
     <string name="ads_view_pager">Vista de anuncios con deslizamiento</string>
     <string name="no_favorites_found">No hay anuncios favoritos</string>
     <string name="favourites_title">Favoritos</string>
+
+    <!-- Texto Fragment MyPublishedAds -->
+    <string name="my_ads_title">Mis anuncios</string>
+    <string name="no_published_ads_found">No has publicado ningún anuncio</string>
+
 </resources>

@@ -10,6 +10,7 @@ import com.mrlapidus.techcycle.databinding.ActivityMainBinding
 import com.mrlapidus.techcycle.fragments.AdsFragment
 import com.mrlapidus.techcycle.fragments.ChatFragment
 import com.mrlapidus.techcycle.fragments.FragmentFavAds
+import com.mrlapidus.techcycle.fragments.FragmentMyPublishedAds
 import com.mrlapidus.techcycle.fragments.HomeFragment
 import com.mrlapidus.techcycle.fragments.ProfileFragment
 import com.mrlapidus.techcycle.fragments.ShopFragment
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_chat -> {
-                    loadFragment(ChatFragment())
+                    loadFragment(FragmentMyPublishedAds())
                     true
                 }
                 R.id.nav_shop -> {

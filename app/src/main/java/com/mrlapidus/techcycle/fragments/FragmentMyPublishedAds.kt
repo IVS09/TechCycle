@@ -1,6 +1,8 @@
 package com.mrlapidus.techcycle.fragments
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +21,8 @@ class FragmentMyPublishedAds : Fragment() {
 
     private lateinit var adAdapter: AdAdapter
     private val publishedAds = ArrayList<AdModel>()
+    private val allAds = ArrayList<AdModel>()
+
     private lateinit var databaseReference: DatabaseReference
     private lateinit var auth: FirebaseAuth
 
@@ -39,6 +43,7 @@ class FragmentMyPublishedAds : Fragment() {
 
         setupRecyclerView()
         loadUserAds()
+        setupSearchBar()
     }
 
     private fun setupRecyclerView() {
@@ -54,16 +59,20 @@ class FragmentMyPublishedAds : Fragment() {
 
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                allAds.clear()
                 publishedAds.clear()
 
                 for (ds in snapshot.children) {
                     val ad = ds.getValue(AdModel::class.java)
                     if (ad != null && ad.userId == currentUserId) {
-                        publishedAds.add(ad)
+                        allAds.add(ad)
                     }
                 }
 
+                publishedAds.addAll(allAds)
                 adAdapter.notifyDataSetChanged()
+                binding.textNoPublishedAds.visibility =
+                    if (publishedAds.isEmpty()) View.VISIBLE else View.GONE
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -72,8 +81,36 @@ class FragmentMyPublishedAds : Fragment() {
         })
     }
 
+    private fun setupSearchBar() {
+        binding.searchBarPublished.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                filterAds(s.toString())
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+    }
+
+    private fun filterAds(query: String) {
+        val filteredList = if (query.isEmpty()) {
+            allAds
+        } else {
+            allAds.filter {
+                it.title.contains(query, ignoreCase = true)
+            }
+        }
+
+        publishedAds.clear()
+        publishedAds.addAll(filteredList)
+        adAdapter.notifyDataSetChanged()
+        binding.textNoPublishedAds.visibility =
+            if (publishedAds.isEmpty()) View.VISIBLE else View.GONE
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
+

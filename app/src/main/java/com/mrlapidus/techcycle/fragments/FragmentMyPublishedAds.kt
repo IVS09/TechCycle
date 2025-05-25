@@ -57,7 +57,7 @@ class FragmentMyPublishedAds : Fragment() {
     private fun loadUserAds() {
         val currentUserId = auth.currentUser?.uid ?: return
 
-        databaseReference.addValueEventListener(object : ValueEventListener {
+        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 allAds.clear()
                 publishedAds.clear()
@@ -65,7 +65,12 @@ class FragmentMyPublishedAds : Fragment() {
                 for (ds in snapshot.children) {
                     val ad = ds.getValue(AdModel::class.java)
                     if (ad != null && ad.userId == currentUserId) {
-                        allAds.add(ad)
+                        // ✅ Leer imágenes correctamente del nodo "images"
+                        val imageList = ds.child("images").children.mapNotNull {
+                            it.child("imageUrl").getValue(String::class.java)
+                        }
+                        val adWithImages = ad.copy(imageUrls = imageList)
+                        allAds.add(adWithImages)
                     }
                 }
 
@@ -76,10 +81,11 @@ class FragmentMyPublishedAds : Fragment() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Handle error if needed
+                // Manejo de errores si es necesario
             }
         })
     }
+
 
     private fun setupSearchBar() {
         binding.searchBarPublished.addTextChangedListener(object : TextWatcher {

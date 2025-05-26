@@ -35,18 +35,18 @@
 
     <!-- Menú en el ButtonNavigationView -->
     <string name="nav_home">Home</string>
-    <string name="nav_chat">Chat</string>
-    <string name="nav_shop">Shop</string>
-    <string name="nav_ads">Ads</string>
+    <string name="nav_my_ads">My ads</string>
+    <string name="nav_publish">Publish</string>
+    <string name="nav_favorites">Favourites</string>
     <string name="nav_profile">Profile</string>
     <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
 
     <!-- Text Fragments -->
     <string name="fragment_home">HOME</string>
-    <string name="fragment_ads">ADS</string>
-    <string name="fragment_chat">CHAT</string>
+    <string name="fragment_my_ads">MY ADS</string>
+    <string name="fragment_publish">PUBLISH</string>
+    <string name="fragment_favorites">FAVORITES</string>
     <string name="fragment_profile">PROFILE</string>
-    <string name="fragment_shop">SHOP</string>
 
     <!-- Texto Progress Dialog -->
     <string name="progress_loading">Loading, please wait…</string>

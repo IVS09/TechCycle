@@ -4,18 +4,22 @@
         android:id="@+id/nav_home"
         android:icon="@drawable/ic_home"
         android:title="@string/nav_home" />
+
     <item
-        android:id="@+id/nav_chat"
+        android:id="@+id/nav_my_ads"
         android:icon="@drawable/ic_my_ads"
-        android:title="@string/nav_chat" />
+        android:title="@string/nav_my_ads" />
+
     <item
-        android:id="@+id/nav_shop"
+        android:id="@+id/nav_publish"
         android:icon="@drawable/ic_ads"
-        android:title="@string/nav_shop" />
+        android:title="@string/nav_publish" />
+
     <item
-        android:id="@+id/nav_ads"
+        android:id="@+id/nav_favorites"
         android:icon="@drawable/ic_favorites"
-        android:title="@string/nav_ads" />
+        android:title="@string/nav_favorites" />
+
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_profile"

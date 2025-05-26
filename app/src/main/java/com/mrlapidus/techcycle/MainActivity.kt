@@ -7,13 +7,10 @@ import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.mrlapidus.techcycle.ads.EditAd
 import com.mrlapidus.techcycle.databinding.ActivityMainBinding
-import com.mrlapidus.techcycle.fragments.AdsFragment
-import com.mrlapidus.techcycle.fragments.ChatFragment
 import com.mrlapidus.techcycle.fragments.FragmentFavAds
 import com.mrlapidus.techcycle.fragments.FragmentMyPublishedAds
 import com.mrlapidus.techcycle.fragments.HomeFragment
 import com.mrlapidus.techcycle.fragments.ProfileFragment
-import com.mrlapidus.techcycle.fragments.ShopFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,17 +31,16 @@ class MainActivity : AppCompatActivity() {
                     loadFragment(HomeFragment())
                     true
                 }
-                R.id.nav_chat -> {
+                R.id.nav_my_ads -> {
                     loadFragment(FragmentMyPublishedAds())
                     true
                 }
-                R.id.nav_shop -> {
-                    // Abrir la actividad EditAd directamente
+                R.id.nav_publish -> {
                     val intent = Intent(this, EditAd::class.java)
                     startActivity(intent)
-                    false // No marcar "Shop" como seleccionado en el menú
+                    false
                 }
-                R.id.nav_ads -> {
+                R.id.nav_favorites -> {
                     loadFragment(FragmentFavAds())
                     true
                 }

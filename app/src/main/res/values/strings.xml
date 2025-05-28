@@ -180,4 +180,19 @@
     <string name="my_ads_title">My Ads</string>
     <string name="no_published_ads_found">You have not published any ads</string>
 
+    <!-- Texto Fragment ProductDetail -->
+    <string name="edit_ad">Edit Ad</string>
+    <string name="delete_ad">Delete Ad</string>
+    <string name="reserve_ad">Reserve</string>
+    <string name="product_detail_title">Product Detail</string>
+    <string name="product_condition">Condition</string>
+    <string name="product_category">Category</string>
+    <string name="product_brand">Brand</string>
+    <string name="product_location">Location</string>
+    <string name="product_price">Price</string>
+    <string name="product_description">Description</string>
+    <string name="seller_info">Seller Information</string>
+    <string name="member_since">Member since %1$s</string>
+
+
 </resources>

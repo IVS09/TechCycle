@@ -1,11 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ProductDetailActivity">
+    android:background="@color/background"
+    android:padding="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Iconos superiores: editar, eliminar, favorito -->
+        <LinearLayout
+            android:id="@+id/topActionIcons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="4dp">
+
+            <ImageButton
+                android:id="@+id/btnEditAd"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_edit"
+                android:contentDescription="@string/edit_ad"
+                app:tint="@color/black" />
+
+            <ImageButton
+                android:id="@+id/btnDeleteAd"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_delete"
+                android:contentDescription="@string/delete_ad"
+                app:tint="@color/black" />
+
+            <ImageButton
+                android:id="@+id/btnFavorite"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ad_no_favorite_icon"
+                android:contentDescription="@string/ad_card_favorite_button_desc"
+                app:tint="@color/black" />
+        </LinearLayout>
+
+        <!-- Carrusel de imágenes -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/imageCarousel"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Nombre del producto -->
+        <TextView
+            android:id="@+id/productTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/product_detail_title"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginBottom="4dp" />
+
+        <!-- Precio -->
+        <TextView
+            android:id="@+id/productPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="149.99 €"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Condición + Categoría -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:id="@+id/productCondition"
+                style="@style/ChipStyle"
+                android:text="@string/product_condition" />
+
+            <TextView
+                android:id="@+id/productCategory"
+                style="@style/ChipStyle"
+                android:text="@string/product_category"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <!-- Marca -->
+        <TextView
+            android:id="@+id/productBrand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/product_brand"
+            android:textColor="@color/black"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Ubicación -->
+        <TextView
+            android:id="@+id/productLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/product_location"
+            android:textColor="@color/black"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Descripción -->
+        <TextView
+            android:id="@+id/productDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/product_description"
+            android:textColor="@color/black"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Información del vendedor -->
+        <LinearLayout
+            android:id="@+id/sellerInfoSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+
+            <ImageView
+                android:id="@+id/sellerAvatar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_profile"
+                android:scaleType="centerCrop"
+                android:background="@drawable/circle_avatar_mask"
+                android:contentDescription="@string/profile_image_description"
+                android:layout_marginEnd="12dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/sellerName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Miguel Rodríguez"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/sellerSince"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/member_since"
+                    android:textSize="14sp"
+                    android:textColor="@color/gray" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Botón Reservar -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnReserve"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="32dp"
+            android:background="@drawable/green_button"
+            android:text="@string/reserve_ad"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            app:cornerRadius="8dp" />
+
+    </LinearLayout>
+</ScrollView>
+
 

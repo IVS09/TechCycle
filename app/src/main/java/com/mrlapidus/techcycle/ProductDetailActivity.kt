@@ -25,11 +25,10 @@ class ProductDetailActivity : AppCompatActivity() {
         val brand = intent.getStringExtra("brand") ?: ""
         val location = intent.getStringExtra("location") ?: ""
         val description = intent.getStringExtra("description") ?: ""
-        val sellerName = intent.getStringExtra("sellerName") ?: ""
-        val sellerSince = intent.getStringExtra("sellerSince") ?: ""
-        val sellerAvatarUrl = intent.getStringExtra("sellerAvatarUrl") ?: ""
         val images = intent.getStringArrayListExtra("images") ?: arrayListOf()
         val ownerId = intent.getStringExtra("ownerId") ?: ""
+
+        loadSellerData(ownerId)
 
         // Muestra los datos
         binding.productTitle.text = title
@@ -39,13 +38,7 @@ class ProductDetailActivity : AppCompatActivity() {
         binding.productBrand.text = getString(R.string.product_brand_format, brand)
         binding.productLocation.text = getString(R.string.product_location_format, location)
         binding.productDescription.text = description
-        binding.sellerName.text = sellerName
-        binding.sellerSince.text = getString(R.string.member_since, sellerSince)
 
-        Glide.with(this)
-            .load(sellerAvatarUrl)
-            .placeholder(R.drawable.ic_profile)
-            .into(binding.sellerAvatar)
 
         // Carga el carrusel de imágenes
         val adapter = ImageSliderAdapter(images)
@@ -60,4 +53,27 @@ class ProductDetailActivity : AppCompatActivity() {
         binding.btnEditAd.visibility = if (isOwner) View.VISIBLE else View.GONE
         binding.btnDeleteAd.visibility = if (isOwner) View.VISIBLE else View.GONE
     }
+
+    private fun loadSellerData(userId: String) {
+        val userRef = com.google.firebase.database.FirebaseDatabase.getInstance()
+            .getReference("Usuarios").child(userId)
+
+        userRef.get().addOnSuccessListener { snapshot ->
+            val nombre = snapshot.child("nombreCompleto").getValue(String::class.java) ?: "Usuario"
+            val avatarUrl = snapshot.child("urlAvatar").getValue(String::class.java) ?: ""
+            val fechaRegistro = snapshot.child("fechaDeRegistro").getValue(Long::class.java) ?: 0L
+
+            binding.sellerName.text = nombre
+            binding.sellerSince.text = getString(
+                R.string.member_since,
+                android.text.format.DateFormat.format("dd/MM/yyyy", fechaRegistro)
+            )
+
+            Glide.with(this)
+                .load(avatarUrl)
+                .placeholder(R.drawable.ic_profile)
+                .into(binding.sellerAvatar)
+        }
+    }
+
 }

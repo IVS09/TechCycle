@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
 import com.mrlapidus.techcycle.adapter.ImageSliderAdapter
 import com.mrlapidus.techcycle.databinding.ActivityProductDetailBinding
-import com.google.firebase.auth.FirebaseAuth
 
 class ProductDetailActivity : AppCompatActivity() {
 
@@ -17,9 +17,9 @@ class ProductDetailActivity : AppCompatActivity() {
         binding = ActivityProductDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Recuperar datos del intent
+        // Recoge los datos del Intent
         val title = intent.getStringExtra("title") ?: ""
-        val price = intent.getStringExtra("price") ?: ""
+        val price = intent.getDoubleExtra("price", 0.0)
         val condition = intent.getStringExtra("condition") ?: ""
         val category = intent.getStringExtra("category") ?: ""
         val brand = intent.getStringExtra("brand") ?: ""
@@ -28,12 +28,12 @@ class ProductDetailActivity : AppCompatActivity() {
         val sellerName = intent.getStringExtra("sellerName") ?: ""
         val sellerSince = intent.getStringExtra("sellerSince") ?: ""
         val sellerAvatarUrl = intent.getStringExtra("sellerAvatarUrl") ?: ""
-        val userId = intent.getStringExtra("userId") ?: ""
         val images = intent.getStringArrayListExtra("images") ?: arrayListOf()
+        val ownerId = intent.getStringExtra("ownerId") ?: ""
 
-        // Mostrar datos
+        // Muestra los datos
         binding.productTitle.text = title
-        binding.productPrice.text = getString(R.string.product_price_format, price)
+        binding.productPrice.text = getString(R.string.product_price_format, price.toString())
         binding.productCondition.text = condition
         binding.productCategory.text = category
         binding.productBrand.text = getString(R.string.product_brand_format, brand)
@@ -42,43 +42,22 @@ class ProductDetailActivity : AppCompatActivity() {
         binding.sellerName.text = sellerName
         binding.sellerSince.text = getString(R.string.member_since, sellerSince)
 
-        // Cargar avatar del vendedor
         Glide.with(this)
             .load(sellerAvatarUrl)
             .placeholder(R.drawable.ic_profile)
             .into(binding.sellerAvatar)
 
-        // Lógica de visibilidad según si el producto pertenece al usuario actual
+        // Carga el carrusel de imágenes
+        val adapter = ImageSliderAdapter(images)
+        binding.imageCarousel.adapter = adapter
+        binding.imageCounter.text = getString(R.string.image_counter_format, 1, images.size)
+
+        // Oculta botones si el usuario es el dueño
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        val isOwner = currentUserId == ownerId
 
-        if (currentUserId == userId) {
-            binding.btnReserve.visibility = View.GONE
-        } else {
-            binding.btnEditAd.visibility = View.GONE
-            binding.btnDeleteAd.visibility = View.GONE
-        }
-
-        // Adaptador del carrusel
-        val imageSliderAdapter = ImageSliderAdapter(images)
-        binding.imageCarousel.adapter = imageSliderAdapter
-
-        // Mostrar contador de imágenes si hay más de una
-        if (images.size > 1) {
-            binding.imageCounter.text =
-                getString(R.string.image_counter_format, 1, images.size)
-            binding.imageCarousel.registerOnPageChangeCallback(object :
-                androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    binding.imageCounter.text = getString(
-                        R.string.image_counter_format,
-                        position + 1,
-                        images.size
-                    )
-                }
-            })
-        } else {
-            binding.imageCounter.visibility = View.GONE
-        }
+        binding.btnReserve.visibility = if (isOwner) View.GONE else View.VISIBLE
+        binding.btnEditAd.visibility = if (isOwner) View.VISIBLE else View.GONE
+        binding.btnDeleteAd.visibility = if (isOwner) View.VISIBLE else View.GONE
     }
 }

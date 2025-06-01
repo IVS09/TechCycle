@@ -1,6 +1,7 @@
 package com.mrlapidus.techcycle.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageButton
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.mrlapidus.techcycle.ProductDetailActivity
 import com.mrlapidus.techcycle.R
 import com.mrlapidus.techcycle.databinding.ItemAdBinding
 import com.mrlapidus.techcycle.model.AdModel
@@ -67,6 +69,25 @@ class AdAdapter(
 
             updateFavoriteIcon(ad.isFavorite)
 
+            // 🧠 Manejamos clic para ir al detalle
+            binding.root.setOnClickListener {
+                val intent = Intent(context, ProductDetailActivity::class.java).apply {
+                    putExtra("title", ad.title)
+                    putExtra("price", ad.price)
+                    putExtra("condition", ad.condition)
+                    putExtra("category", ad.category)
+                    putExtra("brand", ad.brand)
+                    putExtra("location", ad.location)
+                    putExtra("description", ad.description)
+                    putExtra("sellerName", "Miguel Rodríguez") // si lo tienes dinámico, usa el valor correcto
+                    putExtra("sellerSince", "01/05/2024")       // idem arriba
+                    putExtra("sellerAvatarUrl", "")             // idem arriba
+                    putExtra("ownerId", ad.userId)
+                    putStringArrayListExtra("images", ArrayList(ad.imageUrls))
+                }
+                context.startActivity(intent)
+            }
+
             binding.adCardFavoriteButton.setOnClickListener {
                 ad.isFavorite = !ad.isFavorite
                 updateFavoriteIcon(ad.isFavorite)
@@ -80,6 +101,7 @@ class AdAdapter(
                 notifyItemChanged(bindingAdapterPosition)
             }
         }
+
 
         private fun updateFavoriteIcon(isFav: Boolean) {
             val icon = if (isFav) {

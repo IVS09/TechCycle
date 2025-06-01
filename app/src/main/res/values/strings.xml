@@ -65,6 +65,7 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="change_password">Change Password</string>
     <string name="delete_ads">Delete Ads</string>
+    <string name="session_closed">Session successfully closed</string>
 
     <string name="profile_name_value">Miguel Rodriguez</string>
     <string name="profile_email_value">miguelro@gmail.com</string>

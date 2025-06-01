@@ -9,10 +9,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
+import com.mrlapidus.techcycle.Login
 import com.mrlapidus.techcycle.R
 import com.mrlapidus.techcycle.Utilities
 import com.mrlapidus.techcycle.databinding.FragmentProfileBinding
@@ -36,22 +34,29 @@ class ProfileFragment : Fragment() {
 
         firebaseAuth = FirebaseAuth.getInstance()
 
-        // Mostrar barra de carga y cargar información del usuario
+        // Cargar datos del usuario
         binding.progressBar.visibility = View.VISIBLE
         loadUserInfo()
 
-        // Lógica del botón para editar el perfil
+        // Botón Editar Perfil
         binding.editProfileButton.setOnClickListener {
-            // Navegar a la actividad EditProfile
             val intent = Intent(requireContext(), EditProfile::class.java)
             startActivity(intent)
+        }
+
+        // Botón Cerrar Sesión
+        binding.logoutButton.setOnClickListener {
+            firebaseAuth.signOut()
+            Toast.makeText(requireContext(), getString(R.string.session_closed), Toast.LENGTH_SHORT).show()
+
+            val intent = Intent(requireContext(), Login::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            requireActivity().finish()
         }
     }
 
     private fun loadUserInfo() {
-        // Mostrar el ProgressBar al inicio de la carga
-        binding.progressBar.visibility = View.VISIBLE
-
         val ref = FirebaseDatabase.getInstance().getReference("Usuarios")
         ref.child(firebaseAuth.uid ?: return)
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -62,39 +67,29 @@ class ProfileFragment : Fragment() {
                     val registrationDate = snapshot.child("fechaDeRegistro").value as? Long ?: 0L
                     val provider = snapshot.child("métodoDeRegistro").value as? String ?: "N/A"
 
-                    // Actualizar la interfaz con datos del usuario
                     binding.nameValueTextView.text = name
                     binding.emailValueTextView.text = email
                     binding.memberSinceValueTextView.text =
                         Utilities.formatTimestampToDate(registrationDate)
 
-                    // Cargar imagen de perfil
                     Glide.with(requireContext())
                         .load(profileImage)
                         .placeholder(R.drawable.avatar_profile)
                         .into(binding.profileImageView)
 
-                    // Ocultar el ProgressBar después de cargar los datos
                     binding.progressBar.visibility = View.GONE
 
-                    // Verificar estado de la cuenta
                     if (provider == getString(R.string.login_provider_email)) {
                         val isVerified = firebaseAuth.currentUser?.isEmailVerified ?: false
-                        if (isVerified) {
-                            // Usuario verificado
-                            binding.accountStatusValueTextView.text = getString(R.string.account_verified)
-                            binding.accountStatusValueTextView.setTextColor(
-                                requireContext().getColor(R.color.primaryColor)
+                        binding.accountStatusValueTextView.text = if (isVerified)
+                            getString(R.string.account_verified) else getString(R.string.account_not_verified)
+
+                        binding.accountStatusValueTextView.setTextColor(
+                            requireContext().getColor(
+                                if (isVerified) R.color.primaryColor else R.color.red
                             )
-                        } else {
-                            // Usuario no verificado
-                            binding.accountStatusValueTextView.text = getString(R.string.account_not_verified)
-                            binding.accountStatusValueTextView.setTextColor(
-                                requireContext().getColor(R.color.red)
-                            )
-                        }
+                        )
                     } else if (provider == getString(R.string.login_provider_google)) {
-                        // Usuario con cuenta de Google siempre está verificado
                         binding.accountStatusValueTextView.text = getString(R.string.account_verified)
                         binding.accountStatusValueTextView.setTextColor(
                             requireContext().getColor(R.color.primaryColor)
@@ -108,10 +103,9 @@ class ProfileFragment : Fragment() {
                         getString(R.string.error_loading_data, error.message),
                         Toast.LENGTH_SHORT
                     ).show()
-
-                    // También ocultar el ProgressBar en caso de error
                     binding.progressBar.visibility = View.GONE
                 }
             })
     }
 }
+

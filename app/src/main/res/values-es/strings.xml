@@ -64,6 +64,7 @@
     <string name="edit_profile">Editar Perfil</string>
     <string name="change_password">Cambiar contraseña</string>
     <string name="delete_ads">Eliminar anuncios</string>
+    <string name="session_closed">Sesión cerrada correctamente</string>
 
     <string name="profile_name_value">Miguel Rodríguez</string>
     <string name="profile_email_value">miguelro@gmail.com</string>

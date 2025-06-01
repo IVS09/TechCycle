@@ -69,7 +69,7 @@ class AdAdapter(
 
             updateFavoriteIcon(ad.isFavorite)
 
-            // 🧠 Manejamos clic para ir al detalle
+            // Manejamos clic para ir al detalle
             binding.root.setOnClickListener {
                 val intent = Intent(context, ProductDetailActivity::class.java).apply {
                     putExtra("title", ad.title)

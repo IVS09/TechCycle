@@ -19,7 +19,7 @@ class ProductDetailActivity : AppCompatActivity() {
 
         // Recoge los datos del Intent
         val title = intent.getStringExtra("title") ?: ""
-        val price = intent.getDoubleExtra("price", 0.0)
+        val price = intent.getStringExtra("price") ?: "0.0"
         val condition = intent.getStringExtra("condition") ?: ""
         val category = intent.getStringExtra("category") ?: ""
         val brand = intent.getStringExtra("brand") ?: ""
@@ -33,7 +33,7 @@ class ProductDetailActivity : AppCompatActivity() {
 
         // Muestra los datos
         binding.productTitle.text = title
-        binding.productPrice.text = getString(R.string.product_price_format, price.toString())
+        binding.productPrice.text = getString(R.string.product_price_format, price)
         binding.productCondition.text = condition
         binding.productCategory.text = category
         binding.productBrand.text = getString(R.string.product_brand_format, brand)

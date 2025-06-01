@@ -47,8 +47,7 @@
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ad_no_favorite_icon"
-                android:contentDescription="@string/ad_card_favorite_button_desc"
-                app:tint="@color/black" />
+                android:contentDescription="@string/ad_card_favorite_button_desc" />
         </LinearLayout>
 
         <!-- Carrusel de imágenes -->

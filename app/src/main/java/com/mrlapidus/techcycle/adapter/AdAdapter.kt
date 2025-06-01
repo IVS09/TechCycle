@@ -83,6 +83,7 @@ class AdAdapter(
                     putExtra("sellerSince", "01/05/2024")       // idem arriba
                     putExtra("sellerAvatarUrl", "")             // idem arriba
                     putExtra("ownerId", ad.userId)
+                    putExtra("adId", ad.id)
                     putStringArrayListExtra("images", ArrayList(ad.imageUrls))
                 }
                 context.startActivity(intent)

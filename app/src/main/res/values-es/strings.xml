@@ -193,5 +193,11 @@
     <string name="product_description">Descripción</string>
     <string name="seller_info">Información del vendedor</string>
     <string name="member_since">Miembro desde %1$s</string>
+    <string name="product_image">Imagen del producto</string>
+    <string name="product_price_format">%1$s €</string>
+    <string name="product_brand_format">Marca: %1$s</string>
+    <string name="product_location_format">Ubicación: %1$s</string>
+    <string name="image_counter_format">%1$d/%2$d</string>
+
 
 </resources>

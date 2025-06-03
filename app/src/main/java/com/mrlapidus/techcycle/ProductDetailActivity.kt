@@ -1,6 +1,5 @@
 package com.mrlapidus.techcycle
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -8,7 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
 import com.mrlapidus.techcycle.adapter.ImageSliderAdapter
 import com.mrlapidus.techcycle.databinding.ActivityProductDetailBinding
 
@@ -18,7 +18,6 @@ class ProductDetailActivity : AppCompatActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
     private var adId: String = ""
     private var isFavorite = false
-    private var ownerId: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +26,6 @@ class ProductDetailActivity : AppCompatActivity() {
 
         firebaseAuth = FirebaseAuth.getInstance()
         adId = intent.getStringExtra("adId") ?: ""
-        ownerId = intent.getStringExtra("ownerId") ?: ""
 
         val title = intent.getStringExtra("title") ?: ""
         val price = intent.getStringExtra("price") ?: "0.0"
@@ -37,6 +35,7 @@ class ProductDetailActivity : AppCompatActivity() {
         val location = intent.getStringExtra("location") ?: ""
         val description = intent.getStringExtra("description") ?: ""
         val images = intent.getStringArrayListExtra("images") ?: arrayListOf()
+        val ownerId = intent.getStringExtra("ownerId") ?: ""
 
         loadSellerData(ownerId)
         checkFavoriteStatus()
@@ -48,6 +47,7 @@ class ProductDetailActivity : AppCompatActivity() {
         binding.productBrand.text = getString(R.string.product_brand_format, brand)
         binding.productLocation.text = getString(R.string.product_location_format, location)
         binding.productDescription.text = description
+
         binding.imageCarousel.adapter = ImageSliderAdapter(images)
         binding.imageCounter.text = getString(R.string.image_counter_format, 1, images.size)
 
@@ -59,11 +59,49 @@ class ProductDetailActivity : AppCompatActivity() {
         binding.btnDeleteAd.visibility = if (isOwner) View.VISIBLE else View.GONE
 
         binding.btnFavorite.setOnClickListener {
-            if (isFavorite) removeFromFavorites() else addToFavorites()
+            if (isFavorite) {
+                removeFromFavorites()
+            } else {
+                addToFavorites()
+            }
         }
 
         binding.btnDeleteAd.setOnClickListener {
-            showDeleteConfirmationDialog()
+            confirmAdDeletion()
+        }
+    }
+
+    private fun confirmAdDeletion() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Eliminar anuncio")
+            .setMessage("¿Estás seguro de eliminar este anuncio?")
+            .setNegativeButton("Cancelar", null)
+            .setPositiveButton("Eliminar") { _, _ ->
+                deleteAdFromDatabase()
+            }
+            .show()
+    }
+
+    private fun deleteAdFromDatabase() {
+        val adRef = FirebaseDatabase.getInstance().getReference("Anuncios").child(adId)
+        val imageFolderRef = FirebaseStorage.getInstance().getReference("AdImages").child(adId)
+
+        // 1. Elimina anuncio de Realtime Database
+        adRef.removeValue().addOnSuccessListener {
+            // 2. Elimina carpeta de imágenes en Storage
+            imageFolderRef.listAll()
+                .addOnSuccessListener { result ->
+                    val deleteTasks = result.items.map { it.delete() }
+                    val allDeleted = deleteTasks.fold(true) { acc, task -> acc && true }
+                    Toast.makeText(this, "Anuncio e imágenes eliminadas", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Anuncio eliminado, pero error al eliminar imágenes", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+        }.addOnFailureListener {
+            Toast.makeText(this, "Error al eliminar el anuncio", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -74,10 +112,14 @@ class ProductDetailActivity : AppCompatActivity() {
             .child("Favoritos")
             .child(adId)
 
-        ref.get().addOnSuccessListener { snapshot ->
-            isFavorite = snapshot.exists()
-            updateFavoriteIcon()
-        }
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                isFavorite = snapshot.exists()
+                updateFavoriteIcon()
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
     private fun updateFavoriteIcon() {
@@ -88,59 +130,47 @@ class ProductDetailActivity : AppCompatActivity() {
     private fun addToFavorites() {
         val uid = firebaseAuth.currentUser?.uid ?: return
         val ref = FirebaseDatabase.getInstance().getReference("Usuarios")
-            .child(uid).child("Favoritos").child(adId)
+            .child(uid)
+            .child("Favoritos")
+            .child(adId)
 
-        val data = mapOf("adId" to adId, "addedAt" to System.currentTimeMillis())
+        val data = mapOf(
+            "adId" to adId,
+            "addedAt" to System.currentTimeMillis()
+        )
 
-        ref.setValue(data).addOnSuccessListener {
-            isFavorite = true
-            updateFavoriteIcon()
-            Toast.makeText(this, "Añadido a favoritos", Toast.LENGTH_SHORT).show()
-        }.addOnFailureListener {
-            Toast.makeText(this, "Error al añadir a favoritos", Toast.LENGTH_SHORT).show()
-        }
+        ref.setValue(data)
+            .addOnSuccessListener {
+                isFavorite = true
+                updateFavoriteIcon()
+                Toast.makeText(this, "Añadido a favoritos", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Error al añadir a favoritos", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun removeFromFavorites() {
         val uid = firebaseAuth.currentUser?.uid ?: return
         val ref = FirebaseDatabase.getInstance().getReference("Usuarios")
-            .child(uid).child("Favoritos").child(adId)
+            .child(uid)
+            .child("Favoritos")
+            .child(adId)
 
-        ref.removeValue().addOnSuccessListener {
-            isFavorite = false
-            updateFavoriteIcon()
-            Toast.makeText(this, "Eliminado de favoritos", Toast.LENGTH_SHORT).show()
-        }.addOnFailureListener {
-            Toast.makeText(this, "Error al eliminar favorito", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun showDeleteConfirmationDialog() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Eliminar anuncio")
-            .setMessage("¿Estás seguro de que quieres eliminar este anuncio?")
-            .setNegativeButton("Cancelar", null)
-            .setPositiveButton("Eliminar") { _, _ ->
-                deleteAd()
-            }
-            .show()
-    }
-
-    private fun deleteAd() {
-        val ref = FirebaseDatabase.getInstance().getReference("Anuncios").child(adId)
         ref.removeValue()
             .addOnSuccessListener {
-                Toast.makeText(this, "Anuncio eliminado correctamente", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, MainActivity::class.java))
-                finishAffinity()
+                isFavorite = false
+                updateFavoriteIcon()
+                Toast.makeText(this, "Eliminado de favoritos", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener {
-                Toast.makeText(this, "Error al eliminar el anuncio", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Error al eliminar favorito", Toast.LENGTH_SHORT).show()
             }
     }
 
     private fun loadSellerData(userId: String) {
         val userRef = FirebaseDatabase.getInstance().getReference("Usuarios").child(userId)
+
         userRef.get().addOnSuccessListener { snapshot ->
             val nombre = snapshot.child("nombreCompleto").getValue(String::class.java) ?: "Usuario"
             val avatarUrl = snapshot.child("urlAvatar").getValue(String::class.java) ?: ""

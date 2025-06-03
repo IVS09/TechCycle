@@ -16,10 +16,8 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 import com.mrlapidus.techcycle.R
 import com.mrlapidus.techcycle.SelectLocation
 import com.mrlapidus.techcycle.Utilities
@@ -40,13 +38,10 @@ class HomeFragment : Fragment() {
     private var userLng: Double = 0.0
     private var userAddress: String = ""
 
-    private var originalFilteredList = mutableListOf<AdModel>() // ubicación + categoría
-
+    private var originalFilteredList = mutableListOf<AdModel>()
     private lateinit var adAdapter: AdAdapter
     private var adList = ArrayList<AdModel>()
-
     private lateinit var categoryAdapter: CategoryAdapter
-
     private val firebaseDatabase = FirebaseDatabase.getInstance().getReference("Anuncios")
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -62,22 +57,16 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupUI() {
-        // Mostrar ubicación actual
         binding.locationText.text = Editable.Factory.getInstance().newEditable(userAddress)
 
-        // Configurar selección de ubicación
         binding.locationText.setOnClickListener {
             val intent = Intent(requireContext(), SelectLocation::class.java)
             locationResultLauncher.launch(intent)
         }
 
-        // Configurar RecyclerView de categorías
         setupCategoryRecyclerView()
-
-        // Configurar RecyclerView de anuncios
         setupAdRecyclerView()
 
-        // Configurar búsqueda
         binding.searchBar.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(query: CharSequence?, start: Int, before: Int, count: Int) {
@@ -131,69 +120,46 @@ class HomeFragment : Fragment() {
         loadAds()
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadAds()
+    }
+
     private fun loadAds(category: String = "Todos") {
         binding.adLoadingText.text = getString(R.string.home_loading_ads)
         binding.adLoadingText.visibility = View.VISIBLE
 
-        firebaseDatabase.addValueEventListener(object : ValueEventListener {
+        firebaseDatabase.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                Log.d("FIREBASE", "Snapshot recibido con ${snapshot.childrenCount} anuncios")
-
                 val newAds = mutableListOf<AdModel>()
 
                 for (ds in snapshot.children) {
                     try {
                         val id = ds.key ?: continue
-                        val userId = ds.child("userId").getValue(String::class.java) ?: ""
-                        val brand = ds.child("brand").getValue(String::class.java) ?: ""
-                        val categoryValue = ds.child("category").getValue(String::class.java) ?: ""
-                        val condition = ds.child("condition").getValue(String::class.java) ?: ""
-                        val location = ds.child("location").getValue(String::class.java) ?: ""
-                        val price = ds.child("price").getValue(String::class.java)?.toDoubleOrNull() ?: 0.0
-                        val title = ds.child("title").getValue(String::class.java) ?: ""
-                        val description = ds.child("description").getValue(String::class.java) ?: ""
-                        val status = ds.child("status").getValue(String::class.java) ?: "Disponible"
-                        val timestamp = ds.child("timestamp").getValue(Long::class.java) ?: 0L
-                        val latitud = ds.child("latitud").getValue(Double::class.java) ?: 0.0
-                        val longitud = ds.child("longitud").getValue(Double::class.java) ?: 0.0
-                        val isFavorite = ds.child("isFavorite").getValue(Boolean::class.java) ?: false
-                        val viewCount = ds.child("viewCount").getValue(Int::class.java) ?: 0
-
-                        val imageUrls = mutableListOf<String>()
-                        val imagesSnapshot = ds.child("images")
-                        for (imageNode in imagesSnapshot.children) {
-                            val url = imageNode.child("imageUrl").getValue(String::class.java)
-                            if (!url.isNullOrEmpty()) imageUrls.add(url)
-                        }
-
                         val ad = AdModel(
                             id = id,
-                            userId = userId,
-                            brand = brand,
-                            category = categoryValue,
-                            condition = condition,
-                            location = location,
-                            price = price.toString(),
-                            title = title,
-                            description = description,
-                            status = status,
-                            timestamp = timestamp,
-                            latitud = latitud,
-                            longitud = longitud,
-                            isFavorite = isFavorite,
-                            viewCount = viewCount,
-                            imageUrls = imageUrls
+                            userId = ds.child("userId").getValue(String::class.java) ?: "",
+                            brand = ds.child("brand").getValue(String::class.java) ?: "",
+                            category = ds.child("category").getValue(String::class.java) ?: "",
+                            condition = ds.child("condition").getValue(String::class.java) ?: "",
+                            location = ds.child("location").getValue(String::class.java) ?: "",
+                            price = ds.child("price").getValue(String::class.java) ?: "0.0",
+                            title = ds.child("title").getValue(String::class.java) ?: "",
+                            description = ds.child("description").getValue(String::class.java) ?: "",
+                            status = ds.child("status").getValue(String::class.java) ?: "Disponible",
+                            timestamp = ds.child("timestamp").getValue(Long::class.java) ?: 0L,
+                            latitud = ds.child("latitud").getValue(Double::class.java) ?: 0.0,
+                            longitud = ds.child("longitud").getValue(Double::class.java) ?: 0.0,
+                            viewCount = ds.child("viewCount").getValue(Int::class.java) ?: 0,
+                            imageUrls = ds.child("images").children.mapNotNull {
+                                it.child("imageUrl").getValue(String::class.java)
+                            }.toMutableList()
                         )
 
-                        if (latitud != 0.0 && longitud != 0.0) {
-                            val distance = calculateDistance(latitud, longitud)
-                            Log.d("DISTANCIA", "Distancia calculada: $distance km")
-
-                            if (category == "Todos" || category == categoryValue) {
-                                if (distance <= 10.0) {
-                                    newAds.add(ad)
-                                    Log.d("AD_CARGADO", "Añadido: ${ad.title}")
-                                }
+                        if (ad.latitud != 0.0 && ad.longitud != 0.0) {
+                            val distance = calculateDistance(ad.latitud, ad.longitud)
+                            if ((category == "Todos" || category == ad.category) && distance <= 10.0) {
+                                newAds.add(ad)
                             }
                         }
 
@@ -208,14 +174,13 @@ class HomeFragment : Fragment() {
                     binding.adLoadingText.visibility = View.GONE
                 }
 
-                originalFilteredList = newAds.toMutableList()
-                adList.clear()
-                adList.addAll(originalFilteredList)
-                adAdapter.notifyDataSetChanged()
-
-                adList.clear()
-                adList.addAll(newAds)
-                adAdapter.notifyDataSetChanged()
+                loadUserFavorites { userFavs ->
+                    val adsWithFavs = newAds.map { it.copy(isFavorite = userFavs.contains(it.id)) }
+                    originalFilteredList = adsWithFavs.toMutableList()
+                    adList.clear()
+                    adList.addAll(originalFilteredList)
+                    adAdapter.notifyDataSetChanged()
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -250,13 +215,38 @@ class HomeFragment : Fragment() {
             latitude = userLat
             longitude = userLng
         }
-
         val endPoint = Location(LocationManager.NETWORK_PROVIDER).apply {
             latitude = lat
             longitude = lng
         }
+        return startPoint.distanceTo(endPoint).toDouble() / 1000
+    }
 
-        return startPoint.distanceTo(endPoint).toDouble() / 1000 // Convertir a kilómetros
+    private fun loadUserFavorites(onResult: (Set<String>) -> Unit) {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        if (uid == null) {
+            onResult(emptySet())
+            return
+        }
+
+        val favRef = FirebaseDatabase.getInstance()
+            .getReference("Usuarios")
+            .child(uid)
+            .child("Favoritos")
+
+        favRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val favIds = mutableSetOf<String>()
+                for (ds in snapshot.children) {
+                    ds.key?.let { favIds.add(it) }
+                }
+                onResult(favIds)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                onResult(emptySet())
+            }
+        })
     }
 
     override fun onDestroyView() {
@@ -264,6 +254,7 @@ class HomeFragment : Fragment() {
         _binding = null
     }
 }
+
 
 
 

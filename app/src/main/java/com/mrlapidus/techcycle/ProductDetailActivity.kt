@@ -39,6 +39,8 @@ class ProductDetailActivity : AppCompatActivity() {
 
         loadSellerData(ownerId)
         checkFavoriteStatus()
+        verificarEstadoReserva()
+
 
         binding.productTitle.text = title
         binding.productPrice.text = getString(R.string.product_price_format, price)
@@ -216,6 +218,41 @@ class ProductDetailActivity : AppCompatActivity() {
                 Toast.makeText(this, "Error al enviar reserva", Toast.LENGTH_SHORT).show()
             }
     }
+
+    private fun verificarEstadoReserva() {
+        val currentUser = firebaseAuth.currentUser ?: return
+        val ref = FirebaseDatabase.getInstance().getReference("Reservas")
+            .child(adId)
+            .child(currentUser.uid)
+
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val estado = snapshot.child("estado").getValue(String::class.java) ?: "pendiente"
+                    when (estado) {
+                        "pendiente" -> {
+                            Toast.makeText(this@ProductDetailActivity, "Ya has solicitado esta reserva. Esperando respuesta.", Toast.LENGTH_LONG).show()
+                            binding.btnReserve.isEnabled = false
+                            binding.btnReserve.text = "Reserva pendiente"
+                        }
+                        "aceptado" -> {
+                            Toast.makeText(this@ProductDetailActivity, "Tu reserva fue aceptada.", Toast.LENGTH_LONG).show()
+                            binding.btnReserve.isEnabled = false
+                            binding.btnReserve.text = "Reservado"
+                        }
+                        "rechazado" -> {
+                            Toast.makeText(this@ProductDetailActivity, "Tu reserva fue rechazada.", Toast.LENGTH_LONG).show()
+                            binding.btnReserve.isEnabled = false
+                            binding.btnReserve.text = "Reserva rechazada"
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
 
 }
 

@@ -15,6 +15,7 @@ import com.mrlapidus.techcycle.R
 import com.mrlapidus.techcycle.Utilities
 import com.mrlapidus.techcycle.databinding.FragmentProfileBinding
 import com.mrlapidus.techcycle.EditProfile
+import com.mrlapidus.techcycle.ManageMyAdsActivity
 
 class ProfileFragment : Fragment() {
 

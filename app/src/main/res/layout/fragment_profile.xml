@@ -189,7 +189,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="@drawable/green_button"
-        android:text="@string/delete_ads"
+        android:text="@string/manage_ads"
         android:textAllCaps="false"
         android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/changePasswordButton"

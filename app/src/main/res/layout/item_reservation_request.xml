@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/itemReservationRequestLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp">
+
+    <ImageView
+        android:id="@+id/ivBuyerAvatar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/tvBuyerName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Nombre del comprador"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@id/ivBuyerAvatar"
+        app:layout_constraintTop_toTopOf="@id/ivBuyerAvatar"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="8dp" />
+
+    <TextView
+        android:id="@+id/tvReservationDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Fecha de reserva"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@id/tvBuyerName"
+        app:layout_constraintTop_toBottomOf="@id/tvBuyerName"
+        app:layout_constraintEnd_toEndOf="@id/tvBuyerName" />
+
+    <TextView
+        android:id="@+id/tvReservationStatus"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Estado: pendiente"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@id/tvBuyerName"
+        app:layout_constraintTop_toBottomOf="@id/tvReservationDate"
+        app:layout_constraintEnd_toEndOf="@id/tvBuyerName" />
+
+    <Button
+        android:id="@+id/btnAccept"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Aceptar"
+        app:layout_constraintStart_toStartOf="@id/tvBuyerName"
+        app:layout_constraintTop_toBottomOf="@id/tvReservationStatus"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/btnReject"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rechazar"
+        app:layout_constraintStart_toEndOf="@id/btnAccept"
+        app:layout_constraintTop_toTopOf="@id/btnAccept"
+        android:layout_marginStart="8dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

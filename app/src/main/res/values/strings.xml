@@ -64,7 +64,7 @@
     <string name="account_status_label">Account status:</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="change_password">Change Password</string>
-    <string name="delete_ads">Delete Ads</string>
+    <string name="manage_ads">Manage ads</string>
     <string name="session_closed">Session successfully closed</string>
 
     <string name="profile_name_value">Miguel Rodriguez</string>
@@ -199,6 +199,24 @@
     <string name="product_brand_format">Brand: %1$s</string>
     <string name="product_location_format">Location: %1$s</string>
     <string name="image_counter_format">%1$d/%2$d</string>
+
+    <!-- Texto item_reservation -->
+    <string name="product_status_label">Status: %1$s</string>
+    <string name="product_price_label">Price: %1$s €</string>
+    <string name="reservation_title">Ads with Reservations</string>
+
+    <string name="reservations_title">Reservation Requests</string>
+    <string name="reservation_status">Status: %1$s</string>
+    <string name="reservation_accept">Accept</string>
+    <string name="reservation_reject">Reject</string>
+    <string name="reservation_updated">Reservation %1$s</string>
+    <string name="reservation_update_error">Failed to update reservation</string>
+    <string name="reservation_date_format">MM/dd/yyyy hh:mm a</string>
+    <string name="buyer_default_name">User</string>
+
+    <string name="manage_ads_title">My ads</string>
+    <string name="ad_status_label">State: %1$s</string>
+    <string name="ad_price_label">Price: %1$s €</string>
 
 
 

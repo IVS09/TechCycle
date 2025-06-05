@@ -36,6 +36,15 @@
         android:theme="@style/Theme.TechCycle"
         tools:targetApi="33">
         <activity
+            android:name=".ManageMyAdsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ReservaDetalleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdReservationsActivity"
+            android:exported="false" />
+        <activity
             android:name=".ProductDetailActivity"
             android:exported="false" />
         <activity

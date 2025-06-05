@@ -44,6 +44,12 @@ class ProfileFragment : Fragment() {
             startActivity(intent)
         }
 
+        // Botón Editar ads
+        binding.deleteAdsButton.setOnClickListener {
+            val intent = Intent(requireContext(), ManageMyAdsActivity::class.java)
+            startActivity(intent)
+        }
+
         // Botón Cerrar Sesión
         binding.logoutButton.setOnClickListener {
             firebaseAuth.signOut()

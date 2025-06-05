@@ -69,6 +69,11 @@ class ProductDetailActivity : AppCompatActivity() {
         binding.btnDeleteAd.setOnClickListener {
             confirmAdDeletion()
         }
+
+        binding.btnReserve.setOnClickListener {
+            enviarSolicitudReserva()
+        }
+
     }
 
     private fun confirmAdDeletion() {
@@ -188,6 +193,30 @@ class ProductDetailActivity : AppCompatActivity() {
                 .into(binding.sellerAvatar)
         }
     }
+
+    private fun enviarSolicitudReserva() {
+        val buyerId = firebaseAuth.currentUser?.uid ?: return
+        val reservaRef = FirebaseDatabase.getInstance()
+            .getReference("Reservas")
+            .child(adId)
+            .child(buyerId)
+
+        val reservaData = mapOf(
+            "fecha" to System.currentTimeMillis(),
+            "estado" to "pendiente"
+        )
+
+        reservaRef.setValue(reservaData)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Reserva enviada correctamente", Toast.LENGTH_SHORT).show()
+                binding.btnReserve.isEnabled = false
+                binding.btnReserve.text = "Reserva pendiente"
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Error al enviar reserva", Toast.LENGTH_SHORT).show()
+            }
+    }
+
 }
 
 

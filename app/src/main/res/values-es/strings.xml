@@ -63,7 +63,7 @@
     <string name="account_status_label">Estado de la cuenta:</string>
     <string name="edit_profile">Editar Perfil</string>
     <string name="change_password">Cambiar contraseña</string>
-    <string name="delete_ads">Eliminar anuncios</string>
+    <string name="manage_ads">Gestionar anuncios</string>
     <string name="session_closed">Sesión cerrada correctamente</string>
 
     <string name="profile_name_value">Miguel Rodríguez</string>
@@ -199,6 +199,26 @@
     <string name="product_brand_format">Marca: %1$s</string>
     <string name="product_location_format">Ubicación: %1$s</string>
     <string name="image_counter_format">%1$d/%2$d</string>
+
+    <!-- Texto item_reservation -->
+    <string name="product_status_label">Estado: %1$s</string>
+    <string name="product_price_label">Precio: %1$s €</string>
+    <string name="reservation_title">Anuncios con Reservas</string>
+
+    <string name="reservations_title">Solicitudes de Reserva</string>
+    <string name="reservation_status">Estado: %1$s</string>
+    <string name="reservation_accept">Aceptar</string>
+    <string name="reservation_reject">Rechazar</string>
+    <string name="reservation_updated">Reserva %1$s</string>
+    <string name="reservation_update_error">Error al actualizar la reserva</string>
+    <string name="reservation_date_format">dd/MM/yyyy HH:mm</string>
+    <string name="buyer_default_name">Usuario</string>
+
+    <string name="manage_ads_title">Mis Anuncios</string>
+    <string name="ad_status_label">Estado: %1$s</string>
+    <string name="ad_price_label">Precio: %1$s €</string>
+
+
 
 
 </resources>

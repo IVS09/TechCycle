@@ -89,6 +89,16 @@
             android:textColor="@color/black"
             android:layout_marginBottom="8dp" />
 
+        <!-- Estado -->
+        <TextView
+            android:id="@+id/productStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Estado: Disponible"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:layout_marginBottom="8dp" />
+
         <!-- Condición + Categoría -->
         <LinearLayout
             android:layout_width="wrap_content"

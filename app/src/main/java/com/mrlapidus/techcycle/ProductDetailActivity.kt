@@ -38,6 +38,7 @@ class ProductDetailActivity : AppCompatActivity() {
         val ownerId = intent.getStringExtra("ownerId") ?: ""
 
         loadSellerData(ownerId)
+        checkAdStatus()
         checkFavoriteStatus()
         verificarEstadoReserva()
 
@@ -195,6 +196,19 @@ class ProductDetailActivity : AppCompatActivity() {
                 .into(binding.sellerAvatar)
         }
     }
+
+    private fun checkAdStatus() {
+        val adRef = FirebaseDatabase.getInstance().getReference("Anuncios").child(adId)
+        adRef.child("status").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val status = snapshot.getValue(String::class.java) ?: "Disponible"
+                binding.productStatus.text = "Estado: $status"
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
 
     private fun enviarSolicitudReserva() {
         val buyerId = firebaseAuth.currentUser?.uid ?: return

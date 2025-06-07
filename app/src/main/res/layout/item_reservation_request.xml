@@ -1,67 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/itemReservationRequestLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="12dp">
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
 
-    <ImageView
-        android:id="@+id/ivBuyerAvatar"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
-    <TextView
-        android:id="@+id/tvBuyerName"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nombre del comprador"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@id/ivBuyerAvatar"
-        app:layout_constraintTop_toTopOf="@id/ivBuyerAvatar"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="8dp" />
+        android:orientation="horizontal"
+        android:padding="12dp">
 
-    <TextView
-        android:id="@+id/tvReservationDate"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Fecha de reserva"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@id/tvBuyerName"
-        app:layout_constraintTop_toBottomOf="@id/tvBuyerName"
-        app:layout_constraintEnd_toEndOf="@id/tvBuyerName" />
+        <ImageView
+            android:id="@+id/imageAvatar"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/ic_profile"
+            android:scaleType="centerCrop"
+            android:layout_marginEnd="12dp" />
 
-    <TextView
-        android:id="@+id/tvReservationStatus"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Estado: pendiente"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@id/tvBuyerName"
-        app:layout_constraintTop_toBottomOf="@id/tvReservationDate"
-        app:layout_constraintEnd_toEndOf="@id/tvBuyerName" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
 
-    <Button
-        android:id="@+id/btnAccept"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Aceptar"
-        app:layout_constraintStart_toStartOf="@id/tvBuyerName"
-        app:layout_constraintTop_toBottomOf="@id/tvReservationStatus"
-        android:layout_marginTop="8dp" />
+            <TextView
+                android:id="@+id/textBuyerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nombre del comprador"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="@color/black" />
 
-    <Button
-        android:id="@+id/btnReject"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Rechazar"
-        app:layout_constraintStart_toEndOf="@id/btnAccept"
-        app:layout_constraintTop_toTopOf="@id/btnAccept"
-        android:layout_marginStart="8dp" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/textFechaReserva"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fecha reserva: dd/MM/yyyy"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/textEstadoReserva"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Estado: pendiente"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="4dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnAceptar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Aceptar"
+                    android:background="@drawable/green_button"
+                    android:textColor="@color/white"
+                    android:textAllCaps="false" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnRechazar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rechazar"
+                    android:background="@drawable/secondary_button"
+                    android:textColor="@color/white"
+                    android:textAllCaps="false"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
+

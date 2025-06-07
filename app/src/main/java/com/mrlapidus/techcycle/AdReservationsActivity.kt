@@ -24,11 +24,12 @@ class AdReservationsActivity : AppCompatActivity() {
 
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         adList = mutableListOf()
-        adapter = AdReservationAdapter(this, adList) { ad ->
+        adapter = AdReservationAdapter(adList) { ad ->
             val intent = Intent(this, ReservaDetalleActivity::class.java)
             intent.putExtra("adId", ad.id)
             startActivity(intent)
         }
+
 
         binding.recyclerReservations.layoutManager = LinearLayoutManager(this)
         binding.recyclerReservations.adapter = adapter

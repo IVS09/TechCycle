@@ -26,10 +26,12 @@ class ReservaDetalleActivity : AppCompatActivity() {
 
         adId = intent.getStringExtra("adId") ?: return
 
-        adapter = ReservationRequestAdapter(reservationList,
-            onAccept = { request -> updateReservationStatus(request, "aceptado") },
-            onReject = { request -> updateReservationStatus(request, "rechazado") }
+        adapter = ReservationRequestAdapter(
+            reservationList,
+            onAcceptClick = { request -> updateReservationStatus(request, "aceptado") },
+            onRejectClick = { request -> updateReservationStatus(request, "rechazado") }
         )
+
 
         binding.recyclerReservationRequests.layoutManager = LinearLayoutManager(this)
         binding.recyclerReservationRequests.adapter = adapter

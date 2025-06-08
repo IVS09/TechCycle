@@ -219,6 +219,10 @@
     <string name="ad_price_label">Price: %1$s €</string>
 
     <string name="default_username">User</string>
+    <string name="product_reserved">Reserved</string>
+
+    <string name="reserve_requested">Reservation requested</string>
+
 
 
 

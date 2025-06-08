@@ -270,8 +270,3 @@ class ProductDetailActivity : AppCompatActivity() {
 
 }
 
-
-
-
-
-

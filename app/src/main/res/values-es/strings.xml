@@ -220,6 +220,12 @@
 
 
     <string name="default_username">Usuario</string>
+    <string name="product_reserved">Reservado</string>
+
+    <string name="reserve_requested">Reserva pendiente</string>
+
+
+
 
 
 

@@ -218,6 +218,17 @@
     <string name="ad_status_label">Estado: %1$s</string>
     <string name="ad_price_label">Precio: %1$s €</string>
 
+    <string name="accept">Aceptar</string>
+    <string name="reject">Rechazar</string>
+    <string name="reservation_pending">Reserva pendiente</string>
+    <string name="reserved">Reservado</string>
+    <string name="reservation_rejected">Reserva rechazada</string>
+    <string name="reservation_accepted">Reserva aceptada</string>
+
+
+
+
+
 
 
 

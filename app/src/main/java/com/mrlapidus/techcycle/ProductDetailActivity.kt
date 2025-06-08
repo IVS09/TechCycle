@@ -77,6 +77,11 @@ class ProductDetailActivity : AppCompatActivity() {
             enviarSolicitudReserva()
         }
 
+        if (!isOwner) {
+            checkMyReservationStatus()
+        }
+
+
     }
 
     private fun confirmAdDeletion() {
@@ -266,6 +271,41 @@ class ProductDetailActivity : AppCompatActivity() {
             override fun onCancelled(error: DatabaseError) {}
         })
     }
+
+    private fun checkMyReservationStatus() {
+        val uid = firebaseAuth.currentUser?.uid ?: return
+        val ref = FirebaseDatabase.getInstance().getReference("Reservas")
+            .child(adId)
+            .child(uid)
+
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val estado = snapshot.child("estado").getValue(String::class.java) ?: ""
+
+                when (estado) {
+                    "pendiente" -> {
+                        binding.btnReserve.text = "Reserva pendiente"
+                        binding.btnReserve.isEnabled = false
+                    }
+                    "aceptado" -> {
+                        binding.btnReserve.text = "Reservado"
+                        binding.btnReserve.isEnabled = false
+                    }
+                    "rechazado" -> {
+                        binding.btnReserve.text = "Reserva rechazada"
+                        binding.btnReserve.isEnabled = true // si quieres permitir volver a reservar
+                    }
+                    else -> {
+                        binding.btnReserve.text = getString(R.string.reserve_ad)
+                        binding.btnReserve.isEnabled = true
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
 
 
 }

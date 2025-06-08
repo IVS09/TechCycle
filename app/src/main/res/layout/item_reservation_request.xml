@@ -1,92 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:padding="12dp">
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:orientation="vertical"
+        android:padding="12dp">
 
-        <ImageView
-            android:id="@+id/imageAvatar"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:scaleType="centerCrop"
-            android:background="@drawable/circle_background"
-            android:src="@drawable/ic_profile"
-            android:layout_marginEnd="12dp"
-            android:contentDescription="@string/profile_image_description" />
-
+        <!-- Parte superior: avatar + nombre -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingBottom="8dp">
+
+            <ImageView
+                android:id="@+id/imageAvatar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="12dp"
+                android:scaleType="centerCrop"
+                android:background="@drawable/circle_background"
+                android:padding="2dp"
+                android:src="@drawable/ic_profile" />
 
             <TextView
                 android:id="@+id/textNombreComprador"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/buyer_default_name"
-                android:textStyle="bold"
+                android:layout_weight="1"
+                android:text="Nombre del Comprador"
+                android:textColor="@color/black"
                 android:textSize="16sp"
-                android:textColor="@color/black" />
+                android:textStyle="bold" />
+        </LinearLayout>
 
-            <TextView
-                android:id="@+id/textFechaReserva"
+        <!-- Fecha reserva -->
+        <TextView
+            android:id="@+id/textFechaReserva"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fecha reserva: 05/06/2025"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:layout_marginBottom="4dp" />
+
+        <!-- Estado -->
+        <TextView
+            android:id="@+id/textEstado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Estado: pendiente"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Botones -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btnAceptar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Fecha reserva: --"
-                android:textSize="14sp"
-                android:textColor="@color/black" />
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/green_button"
+                android:text="@string/accept"
+                android:textColor="@color/white"
+                android:textAllCaps="false" />
 
-            <TextView
-                android:id="@+id/textEstado"
+            <Button
+                android:id="@+id/btnRechazar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Estado: pendiente"
-                android:textSize="14sp"
-                android:textColor="@color/black" />
+                android:background="@drawable/red_button"
+                android:text="@string/reject"
+                android:textColor="@color/white"
+                android:textAllCaps="false" />
         </LinearLayout>
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp">
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnAceptar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/green_button"
-            android:text="@string/reservation_accept"
-            android:textColor="@color/white"
-            android:textAllCaps="false"
-            app:cornerRadius="8dp" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnRechazar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/red_button"
-            android:text="@string/reservation_reject"
-            android:textColor="@color/white"
-            android:textAllCaps="false"
-            app:cornerRadius="8dp" />
-    </LinearLayout>
-</LinearLayout>
-
-
-
-
+</androidx.cardview.widget.CardView>
 

@@ -211,12 +211,14 @@
     <string name="reservation_reject">Reject</string>
     <string name="reservation_updated">Reservation %1$s</string>
     <string name="reservation_update_error">Failed to update reservation</string>
-    <string name="reservation_date_format">MM/dd/yyyy hh:mm a</string>
+    <string name="reservation_date_format">Reservation date: %1$s</string>
     <string name="buyer_default_name">User</string>
 
     <string name="manage_ads_title">My ads</string>
     <string name="ad_status_label">State: %1$s</string>
     <string name="ad_price_label">Price: %1$s €</string>
+
+    <string name="default_username">User</string>
 
 
 

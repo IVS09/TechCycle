@@ -223,6 +223,12 @@
     <string name="reservation_requests_title">Reservation requests</string>
     <string name="no_reservation_requests">No reservation request</string>
 
+    <string name="reservation_btn_pending">Reservation pending</string>
+    <string name="reservation_btn_accepted">Reservation accepted</string>
+    <string name="reservation_btn_rejected">Reservation rejected</string>
+    <string name="reservation_btn_reserved">Reserved</string>
+
+
 
 
 

@@ -23,6 +23,8 @@ class ProductDetailActivity : AppCompatActivity() {
     private var adId: String = ""
     private var ownerId: String = ""           // 🔥 NUEVO
     private var isFavorite = false
+    private var adStatus = "Disponible"
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,23 +98,20 @@ class ProductDetailActivity : AppCompatActivity() {
     private fun refreshReserveButton(adStatus: String) {
         binding.productStatus.text = "Estado: $adStatus"
 
-        // compradores diferentes al dueño
-        val currentUser = firebaseAuth.currentUser
-        if (currentUser == null || currentUser.uid == ownerId) return
+        val currentUser = firebaseAuth.currentUser ?: return
+        if (currentUser.uid == ownerId) return     // el dueño nunca ve el botón
 
-        when (adStatus) {
-            "Reservado" -> {
-                binding.btnReserve.apply {
-                    isEnabled = false
-                    text = "Reservado"
-                }
-            }
-            else -> {
-                // si no está reservado, vemos si este user ya tiene pendiente/aceptada
-                verificarEstadoReserva()
+        if (adStatus == "Reservado") {
+            // puede que el anuncio esté reservado PARA ESTE usuario ▶ repasamos su estado
+            verificarEstadoReserva(adStatus)      // 👈 le pasamos el estado global
+        } else {
+            binding.btnReserve.apply {
+                isEnabled = true
+                text = getString(R.string.reserve_ad)
             }
         }
     }
+
 
     private fun enviarSolicitudReserva() {
         val buyerId = firebaseAuth.currentUser?.uid ?: return
@@ -134,27 +133,49 @@ class ProductDetailActivity : AppCompatActivity() {
     }
 
     /** Comprueba si el usuario YA había interactuado con la reserva  */
-    private fun verificarEstadoReserva() {
+    private fun verificarEstadoReserva(adStatusFromDb: String = adStatus) {
+
         val uid = firebaseAuth.currentUser?.uid ?: return
-        FirebaseDatabase.getInstance().getReference("Reservas")
-            .child(adId).child(uid)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (!snapshot.exists()) return
+        val resRef = FirebaseDatabase.getInstance()
+            .getReference("Reservas").child(adId).child(uid)
+
+        resRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                // -- Si el usuario tiene una solicitud propia --
+                if (snapshot.exists()) {
                     when (snapshot.child("estado").getValue(String::class.java)) {
                         "pendiente" -> binding.btnReserve.apply {
-                            isEnabled = false; text = "Reserva pendiente"
+                            isEnabled = false
+                            text = getString(R.string.reservation_btn_pending)
                         }
                         "aceptado"  -> binding.btnReserve.apply {
-                            isEnabled = false; text = "Reservado"
+                            isEnabled = false
+                            text = getString(R.string.reservation_btn_accepted)   // ✅
                         }
                         "rechazado" -> binding.btnReserve.apply {
-                            isEnabled = false; text = "Reserva rechazada"
+                            isEnabled = false
+                            text = getString(R.string.reservation_btn_rejected)
                         }
                     }
                 }
-                override fun onCancelled(error: DatabaseError) {}
-            })
+                // -- No tiene solicitud propia: vemos el estado global del anuncio --
+                else {
+                    if (adStatusFromDb == "Reservado") {
+                        binding.btnReserve.apply {
+                            isEnabled = false
+                            text = getString(R.string.reservation_btn_reserved)  // 👥
+                        }
+                    } else {
+                        binding.btnReserve.apply {
+                            isEnabled = true
+                            text = getString(R.string.reserve_ad)
+                        }
+                    }
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
     // ╔══════════════════════════════════════════════════════════════════╗

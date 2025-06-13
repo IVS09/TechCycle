@@ -223,6 +223,12 @@
     <string name="reservation_requests_title">Solicitudes de Reserva</string>
     <string name="no_reservation_requests">Aún no hay solicitudes</string>
 
+    <string name="reservation_btn_pending">Reserva pendiente</string>
+    <string name="reservation_btn_accepted">Reserva aceptada</string>
+    <string name="reservation_btn_rejected">Reserva rechazada</string>
+    <string name="reservation_btn_reserved">Reservado</string>
+
+
 
 
 

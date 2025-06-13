@@ -228,6 +228,13 @@
     <string name="reservation_btn_rejected">Reservation rejected</string>
     <string name="reservation_btn_reserved">Reserved</string>
 
+    <!--  New strings for ProductDetailActivity  -->
+    <string name="ad_deleted_ok">Ad deleted</string>
+    <string name="ad_deleted_error">Failed to delete ad</string>
+
+    <string name="default_username">User</string>
+
+
 
 
 

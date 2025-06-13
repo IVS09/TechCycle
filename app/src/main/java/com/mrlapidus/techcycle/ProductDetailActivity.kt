@@ -26,8 +26,7 @@ class ProductDetailActivity : AppCompatActivity() {
     private var adStatus       = "Disponible"
 
     // ──────────────────────────────────────────────────────────────────────────────
-    //  ░░  LIFECYCLE  ░░
-    // ──────────────────────────────────────────────────────────────────────────────
+    // 1) métodos para el lifecycle de la actividad
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProductDetailBinding.inflate(layoutInflater)
@@ -42,7 +41,7 @@ class ProductDetailActivity : AppCompatActivity() {
             .getReference("Anuncios")
             .child(adId)
 
-        // ─ Datos recibidos por intent ─
+        // Datos recibidos por intent
         val title       = intent.getStringExtra("title"      ) ?: ""
         val price       = intent.getStringExtra("price"      ) ?: "0.0"
         val condition   = intent.getStringExtra("condition"  ) ?: ""
@@ -52,7 +51,7 @@ class ProductDetailActivity : AppCompatActivity() {
         val description = intent.getStringExtra("description") ?: ""
         val images      = intent.getStringArrayListExtra("images") ?: arrayListOf()
 
-        // ─ Pintado inmediato ─
+        // Pintado inmediato
         binding.apply {
             productTitle.text       = title
             productPrice.text       = getString(R.string.product_price_format, price)
@@ -65,7 +64,7 @@ class ProductDetailActivity : AppCompatActivity() {
             imageCounter.text       = getString(R.string.image_counter_format, 1, images.size)
         }
 
-        // ─ Mostrar / ocultar botones según quién sea ─
+        // Mostrar / ocultar botones según quién sea el usuario (comprador o vendedor)
         val isOwner = firebaseAuth.currentUser?.uid == ownerId
         binding.btnReserve.visibility  = if (isOwner) View.GONE else View.VISIBLE
         binding.btnEditAd.visibility   = if (isOwner) View.VISIBLE else View.GONE
@@ -74,7 +73,8 @@ class ProductDetailActivity : AppCompatActivity() {
         loadSellerData(ownerId)
         checkFavoriteStatus()
         verificarEstadoReserva()
-        listenStatusRealtime()               // escucha cambios en “status” del anuncio
+        // escucha los cambios en “status” del anuncio
+        listenStatusRealtime()
 
         // ─ Listeners ─
         binding.btnFavorite.setOnClickListener {
@@ -85,8 +85,7 @@ class ProductDetailActivity : AppCompatActivity() {
     }
 
     // ──────────────────────────────────────────────────────────────────────────────
-    //  ░░  RESERVAS  ░░
-    // ──────────────────────────────────────────────────────────────────────────────
+    // 2) Reservas
     /** Observa el nodo status en tiempo-real */
     private fun listenStatusRealtime() {
         adRef.child("status").addValueEventListener(object : ValueEventListener {
@@ -186,9 +185,9 @@ class ProductDetailActivity : AppCompatActivity() {
         })
     }
 
+
     // ──────────────────────────────────────────────────────────────────────────────
-    //  ░░  FAVORITOS  ░░
-    // ──────────────────────────────────────────────────────────────────────────────
+    //3) Favoritos
     private fun checkFavoriteStatus() {
         val uid = firebaseAuth.currentUser?.uid ?: return
         val favRef = FirebaseDatabase.getInstance()
@@ -243,9 +242,9 @@ class ProductDetailActivity : AppCompatActivity() {
         }
     }
 
+
     // ──────────────────────────────────────────────────────────────────────────────
-    //  ░░  ELIMINAR / EDITAR  ░░
-    // ──────────────────────────────────────────────────────────────────────────────
+    //4) Eliminar anuncio
     private fun confirmAdDeletion() {
         MaterialAlertDialogBuilder(this)
             .setTitle("Eliminar anuncio")
@@ -278,9 +277,9 @@ class ProductDetailActivity : AppCompatActivity() {
         }
     }
 
+
     // ──────────────────────────────────────────────────────────────────────────────
-    //  ░░  DATOS DEL VENDEDOR  ░░
-    // ──────────────────────────────────────────────────────────────────────────────
+    //5) Carga los datos del vendedor
     private fun loadSellerData(userId: String) {
 
         if (userId.isBlank()) {

@@ -37,7 +37,7 @@ class AdReservationsActivity : AppCompatActivity() {
         binding.recyclerReservations.adapter       = adapter
 
         db = FirebaseDatabase.getInstance().getReference("Anuncios")
-        cargarAnunciosConReservaAceptada(userId)      // 🔥 NUEVO nombre más claro
+        cargarAnunciosConReservaAceptada(userId)
     }
 
     // --------------------------------------------------------------------
@@ -59,7 +59,7 @@ class AdReservationsActivity : AppCompatActivity() {
                         reservasRef.addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(reservaSnap: DataSnapshot) {
 
-                                // 🔥 NUEVO --> ¿Al menos una reserva aceptada?
+                                // ¿Al menos una reserva aceptada?
                                 var hayAceptada = false
                                 for (child in reservaSnap.children) {
                                     val estado = child.child("estado")

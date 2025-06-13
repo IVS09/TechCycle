@@ -37,7 +37,7 @@ class ManageMyAdsActivity : AppCompatActivity() {
         cargarMisAnuncios(userId)
     }
 
-    /** Listener permanente para que la vista “Mis anuncios” se actualice al vuelo. */
+    /** Listener permanente para actualizar la vista “Mis anuncios” */
     private fun cargarMisAnuncios(ownerId: String) {
         database.orderByChild("userId").equalTo(ownerId)
             .addValueEventListener(object : ValueEventListener {

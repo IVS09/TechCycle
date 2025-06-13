@@ -16,6 +16,7 @@ import com.mrlapidus.techcycle.Utilities
 import com.mrlapidus.techcycle.databinding.FragmentProfileBinding
 import com.mrlapidus.techcycle.EditProfile
 import com.mrlapidus.techcycle.ManageMyAdsActivity
+import com.mrlapidus.techcycle.Recuperacion
 
 class ProfileFragment : Fragment() {
 
@@ -44,6 +45,13 @@ class ProfileFragment : Fragment() {
             val intent = Intent(requireContext(), EditProfile::class.java)
             startActivity(intent)
         }
+
+        // Botón Cambiar Contraseña
+        binding.changePasswordButton.setOnClickListener {
+            // reuse the same screen you use in Login
+            startActivity(Intent(requireContext(), Recuperacion::class.java))
+        }
+
 
         // Botón Editar ads
         binding.deleteAdsButton.setOnClickListener {

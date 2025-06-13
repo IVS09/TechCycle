@@ -1,5 +1,6 @@
 package com.mrlapidus.techcycle
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -10,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.mrlapidus.techcycle.adapter.ImageSliderAdapter
+import com.mrlapidus.techcycle.ads.EditAd
 import com.mrlapidus.techcycle.databinding.ActivityProductDetailBinding
 
 class ProductDetailActivity : AppCompatActivity() {
@@ -82,6 +84,14 @@ class ProductDetailActivity : AppCompatActivity() {
         }
         binding.btnDeleteAd.setOnClickListener { confirmAdDeletion() }
         binding.btnReserve  .setOnClickListener { enviarSolicitudReserva() }
+
+        binding.btnEditAd.setOnClickListener {
+            val i = Intent(this, EditAd::class.java).apply {
+                putExtra("mode", "edit")
+                putExtra("adId", adId)
+            }
+            startActivity(i)
+        }
     }
 
     // ──────────────────────────────────────────────────────────────────────────────

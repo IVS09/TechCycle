@@ -217,7 +217,11 @@
     <string name="manage_ads_title">Mis Anuncios</string>
     <string name="ad_status_label">Estado: %1$s</string>
     <string name="ad_price_label">Precio: %1$s €</string>
+    <string name="ad_reservation_label">Anuncios con Reserva</string>
 
+
+    <string name="reservation_requests_title">Solicitudes de Reserva</string>
+    <string name="no_reservation_requests">Aún no hay solicitudes</string>
 
 
 

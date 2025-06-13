@@ -10,7 +10,7 @@
         android:id="@+id/tvTituloReservas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Anuncios con Reservas"
+        android:text="Anuncios con Reserva"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/recyclerReservations"

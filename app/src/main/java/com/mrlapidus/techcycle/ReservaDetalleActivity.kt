@@ -43,86 +43,119 @@ class ReservaDetalleActivity : AppCompatActivity() {
     //  Carga (en tiempo-real) de las solicitudes
     // --------------------------------------------------------------------
     private fun loadReservations() {
-        db.child("Reservas").child(adId)
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    reservationList.clear()
 
-                    snapshot.children.forEach { reservaSnap ->
-                        val buyerId = reservaSnap.key ?: return@forEach
-                        val estado  = reservaSnap.child("estado").getValue(String::class.java) ?: "pendiente"
-                        val fecha   = reservaSnap.child("fecha").getValue(Long::class.java) ?: 0L
+        binding.progressBar.visibility = View.VISIBLE      // 🔄 loader
 
-                        // obtenemos nombre + avatar del comprador
-                        db.child("Usuarios").child(buyerId)
-                            .addListenerForSingleValueEvent(object : ValueEventListener {
-                                override fun onDataChange(userSnap: DataSnapshot) {
-                                    val nombre    = userSnap.child("nombreCompleto").getValue(String::class.java) ?: "Usuario"
-                                    val avatarUrl = userSnap.child("urlAvatar").getValue(String::class.java) ?: ""
+        val reservationsRef = db.child("Reservas").child(adId)
+        reservationsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
 
-                                    reservationList.add(
-                                        ReservationRequest(
-                                            buyerId         = buyerId,
-                                            buyerName       = nombre,
-                                            buyerAvatarUrl  = avatarUrl,
-                                            fecha           = fecha,
-                                            estado          = estado
-                                        )
+                reservationList.clear()
+
+                snapshot.children.forEach { reservaSnap ->
+
+                    val buyerId = reservaSnap.key ?: return@forEach
+                    val estado  = reservaSnap.child("estado").getValue(String::class.java) ?: "pendiente"
+                    val fecha   = reservaSnap.child("fecha").getValue(Long::class.java) ?: 0L
+
+                    // ── Datos del comprador ───────────────────────────────
+                    db.child("Usuarios").child(buyerId)
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(userSnap: DataSnapshot) {
+
+                                val nombre    = userSnap.child("nombreCompleto")
+                                    .getValue(String::class.java) ?: "Usuario"
+                                val avatarUrl = userSnap.child("urlAvatar")
+                                    .getValue(String::class.java) ?: ""
+
+                                reservationList.add(
+                                    ReservationRequest(
+                                        buyerId        = buyerId,
+                                        buyerName      = nombre,
+                                        buyerAvatarUrl = avatarUrl,
+                                        fecha          = fecha,
+                                        estado         = estado
                                     )
-                                    adapter.notifyDataSetChanged()
-                                    toggleEmptyLabel()
-                                }
-                                override fun onCancelled(error: DatabaseError) {}
-                            })
-                    }
+                                )
 
-                    toggleEmptyLabel()
+                                adapter.notifyDataSetChanged()
+                                togglePlaceholder()        // 👈
+                            }
+                            override fun onCancelled(error: DatabaseError) {}
+                        })
                 }
 
-                override fun onCancelled(error: DatabaseError) {}
-            })
+                togglePlaceholder()
+                binding.progressBar.visibility = View.GONE
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                togglePlaceholder()
+                binding.progressBar.visibility = View.GONE
+            }
+        })
     }
 
-    private fun toggleEmptyLabel() {
-        binding.recyclerReservationRequests.visibility =
-            if (reservationList.isEmpty()) View.GONE else View.VISIBLE
-        binding.tvTituloDetalleReservas.visibility     =
-            if (reservationList.isEmpty()) View.GONE else View.VISIBLE
+
+    private fun togglePlaceholder() {
+        if (reservationList.isEmpty()) {
+            binding.recyclerReservationRequests.visibility = View.GONE
+            binding.tvNoRequests.visibility                = View.VISIBLE
+        } else {
+            binding.recyclerReservationRequests.visibility = View.VISIBLE
+            binding.tvNoRequests.visibility                = View.GONE
+        }
     }
+
 
     // --------------------------------------------------------------------
     //  Cambiar estado  (aceptar / rechazar)
     // --------------------------------------------------------------------
-    private fun updateReservationStatus(request: ReservationRequest, newStatus: String) {
+    private fun updateReservationStatus(
+        request: ReservationRequest,
+        newStatus: String
+    ) {
+        val reservasRef     = db.child("Reservas").child(adId)
+        val currentResRef   = reservasRef.child(request.buyerId)
+        val anunciosRef     = db.child("Anuncios").child(adId)
 
-        val reservationRef = db.child("Reservas").child(adId).child(request.buyerId)
+        /* ---------- 1. Cambiamos el estado de ESTA reserva ---------- */
+        currentResRef.child("estado").setValue(newStatus).addOnSuccessListener {
 
-        if (newStatus == "rechazado") {
-            // 🔥 NUEVO 1 ➜  Si se rechaza, se elimina la reserva del nodo
-            reservationRef.removeValue().addOnSuccessListener {
-                Toast.makeText(this, "Reserva rechazada y eliminada", Toast.LENGTH_SHORT).show()
-            }.addOnFailureListener {
-                Toast.makeText(this, "Error al rechazar la reserva", Toast.LENGTH_SHORT).show()
+            if (newStatus == "aceptado") {
+
+                // 1-A. Marcamos el anuncio como Reservado
+                anunciosRef.child("status").setValue("Reservado")
+
+                // 1-B. Borramos SOLO las demás reservas (para evitar doble booking)
+                reservasRef.get().addOnSuccessListener { snap ->
+                    snap.children.forEach { child ->
+                        if (child.key != request.buyerId) child.ref.removeValue()
+                    }
+                }
+            } else {                 // ←  “rechazado”  (o cuando rechaces un aceptado)
+                // 1-C. Si no queda ningún otro “aceptado”, liberamos el anuncio
+                reservasRef.get().addOnSuccessListener { snap ->
+                    val sigueReservado = snap.children.any {
+                        it.child("estado").getValue(String::class.java) == "aceptado"
+                    }
+                    if (!sigueReservado) anunciosRef.child("status").setValue("Disponible")
+                }
             }
-            return
+
+            Toast.makeText(
+                this,
+                if (newStatus == "aceptado") "Reserva aceptada"
+                else "Reserva rechazada",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            loadReservations()      // 🔄  refrescamos la lista
+        }.addOnFailureListener {
+            Toast.makeText(this, "Error al actualizar la reserva", Toast.LENGTH_SHORT).show()
         }
-
-        // Aceptar reserva
-        reservationRef.child("estado").setValue("aceptado")
-            .addOnSuccessListener {
-
-                // 🔥 NUEVO 2 ➜  Al aceptar, se marca el anuncio como “Reservado”
-                db.child("Anuncios").child(adId).child("status").setValue("Reservado")
-
-                // 🔥 NUEVO 3 ➜  Todas las DEMÁS solicitudes se eliminan
-                borrarOtrasReservas(request.buyerId)
-
-                Toast.makeText(this, "Reserva aceptada", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Error al actualizar la reserva", Toast.LENGTH_SHORT).show()
-            }
     }
+
 
     // --------------------------------------------------------------------
     //  Borra las reservas de otros compradores cuando se acepta una

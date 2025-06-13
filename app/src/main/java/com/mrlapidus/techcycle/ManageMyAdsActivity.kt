@@ -37,9 +37,10 @@ class ManageMyAdsActivity : AppCompatActivity() {
         cargarMisAnuncios(userId)
     }
 
+    /** Listener permanente para que la vista “Mis anuncios” se actualice al vuelo. */
     private fun cargarMisAnuncios(ownerId: String) {
         database.orderByChild("userId").equalTo(ownerId)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
+            .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     adList.clear()
                     for (adSnapshot in snapshot.children) {
@@ -47,19 +48,25 @@ class ManageMyAdsActivity : AppCompatActivity() {
                         val title = adSnapshot.child("title").getValue(String::class.java) ?: continue
                         val price = adSnapshot.child("price").getValue(String::class.java) ?: "0"
                         val status = adSnapshot.child("status").getValue(String::class.java) ?: "Disponible"
-                        val images = mutableListOf<String>()
+                        val images = adSnapshot.child("images").children.mapNotNull {
+                            it.child("imageUrl").getValue(String::class.java)
+                        }.toMutableList()
 
-                        adSnapshot.child("images").children.forEach { img ->
-                            img.child("imageUrl").getValue(String::class.java)?.let { images.add(it) }
-                        }
-
-                        val ad = AdModel(id = adId, title = title, price = price, status = status, imageUrls = images)
-                        adList.add(ad)
+                        adList.add(
+                            AdModel(
+                                id = adId,
+                                title = title,
+                                price = price,
+                                status = status,
+                                imageUrls = images
+                            )
+                        )
                     }
                     adapter.notifyDataSetChanged()
                 }
 
-                override fun onCancelled(error: DatabaseError) {}
+                override fun onCancelled(error: DatabaseError) { /* opcional: log */ }
             })
     }
 }
+

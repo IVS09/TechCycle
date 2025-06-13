@@ -9,12 +9,11 @@ import com.google.firebase.database.*
 import com.mrlapidus.techcycle.adapter.ReservationRequestAdapter
 import com.mrlapidus.techcycle.databinding.ActivityReservaDetalleBinding
 import com.mrlapidus.techcycle.model.ReservationRequest
-import com.mrlapidus.techcycle.model.UserModel
 
 class ReservaDetalleActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityReservaDetalleBinding
-    private lateinit var database: DatabaseReference
+    private lateinit var db   : DatabaseReference
     private lateinit var adapter: ReservationRequestAdapter
     private val reservationList = mutableListOf<ReservationRequest>()
     private var adId: String = ""
@@ -25,6 +24,7 @@ class ReservaDetalleActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         adId = intent.getStringExtra("adId") ?: return
+        db   = FirebaseDatabase.getInstance().reference
 
         adapter = ReservationRequestAdapter(
             reservationList,
@@ -32,84 +32,132 @@ class ReservaDetalleActivity : AppCompatActivity() {
             onRejectClick = { request -> updateReservationStatus(request, "rechazado") }
         )
 
-
         binding.recyclerReservationRequests.layoutManager = LinearLayoutManager(this)
-        binding.recyclerReservationRequests.adapter = adapter
+        binding.recyclerReservationRequests.adapter       = adapter
 
-        database = FirebaseDatabase.getInstance().reference
 
         loadReservations()
     }
 
+    // --------------------------------------------------------------------
+    //  Carga (en tiempo-real) de las solicitudes
+    // --------------------------------------------------------------------
     private fun loadReservations() {
-        val reservationsRef = database.child("Reservas").child(adId)
-        reservationsRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                reservationList.clear()
-                for (child in snapshot.children) {
-                    val buyerId = child.key ?: continue
-                    val estado = child.child("estado").getValue(String::class.java) ?: "pendiente"
-                    val fecha = child.child("fecha").getValue(Long::class.java) ?: 0L
+        db.child("Reservas").child(adId)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    reservationList.clear()
 
-                    // Obtener información del usuario
-                    database.child("Usuarios").child(buyerId)
-                        .addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(userSnapshot: DataSnapshot) {
-                                val nombre = userSnapshot.child("nombreCompleto").getValue(String::class.java) ?: "Usuario"
-                                val avatarUrl = userSnapshot.child("urlAvatar").getValue(String::class.java) ?: ""
+                    snapshot.children.forEach { reservaSnap ->
+                        val buyerId = reservaSnap.key ?: return@forEach
+                        val estado  = reservaSnap.child("estado").getValue(String::class.java) ?: "pendiente"
+                        val fecha   = reservaSnap.child("fecha").getValue(Long::class.java) ?: 0L
 
-                                val request = ReservationRequest(
-                                    buyerId = buyerId,
-                                    buyerName = nombre,
-                                    buyerAvatarUrl = avatarUrl,
-                                    fecha = fecha,
-                                    estado = estado
-                                )
-                                reservationList.add(request)
-                                adapter.notifyDataSetChanged()
-                            }
+                        // obtenemos nombre + avatar del comprador
+                        db.child("Usuarios").child(buyerId)
+                            .addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(userSnap: DataSnapshot) {
+                                    val nombre    = userSnap.child("nombreCompleto").getValue(String::class.java) ?: "Usuario"
+                                    val avatarUrl = userSnap.child("urlAvatar").getValue(String::class.java) ?: ""
 
-                            override fun onCancelled(error: DatabaseError) {}
-                        })
+                                    reservationList.add(
+                                        ReservationRequest(
+                                            buyerId         = buyerId,
+                                            buyerName       = nombre,
+                                            buyerAvatarUrl  = avatarUrl,
+                                            fecha           = fecha,
+                                            estado          = estado
+                                        )
+                                    )
+                                    adapter.notifyDataSetChanged()
+                                    toggleEmptyLabel()
+                                }
+                                override fun onCancelled(error: DatabaseError) {}
+                            })
+                    }
+
+                    toggleEmptyLabel()
                 }
-            }
 
-            override fun onCancelled(error: DatabaseError) {}
-        })
+                override fun onCancelled(error: DatabaseError) {}
+            })
     }
 
+    private fun toggleEmptyLabel() {
+        binding.recyclerReservationRequests.visibility =
+            if (reservationList.isEmpty()) View.GONE else View.VISIBLE
+        binding.tvTituloDetalleReservas.visibility     =
+            if (reservationList.isEmpty()) View.GONE else View.VISIBLE
+    }
+
+    // --------------------------------------------------------------------
+    //  Cambiar estado  (aceptar / rechazar)
+    // --------------------------------------------------------------------
     private fun updateReservationStatus(request: ReservationRequest, newStatus: String) {
-        val reservationRef = database.child("Reservas").child(adId).child(request.buyerId)
-        reservationRef.child("estado").setValue(newStatus)
+
+        val reservationRef = db.child("Reservas").child(adId).child(request.buyerId)
+
+        if (newStatus == "rechazado") {
+            // 🔥 NUEVO 1 ➜  Si se rechaza, se elimina la reserva del nodo
+            reservationRef.removeValue().addOnSuccessListener {
+                Toast.makeText(this, "Reserva rechazada y eliminada", Toast.LENGTH_SHORT).show()
+            }.addOnFailureListener {
+                Toast.makeText(this, "Error al rechazar la reserva", Toast.LENGTH_SHORT).show()
+            }
+            return
+        }
+
+        // Aceptar reserva
+        reservationRef.child("estado").setValue("aceptado")
             .addOnSuccessListener {
-                Toast.makeText(this, "Reserva ${newStatus}", Toast.LENGTH_SHORT).show()
-                if (newStatus == "aceptado") {
-                    // Actualizar estado del anuncio a "Reservado"
-                    database.child("Anuncios").child(adId).child("status").setValue("Reservado")
-                }
-                loadReservations()
+
+                // 🔥 NUEVO 2 ➜  Al aceptar, se marca el anuncio como “Reservado”
+                db.child("Anuncios").child(adId).child("status").setValue("Reservado")
+
+                // 🔥 NUEVO 3 ➜  Todas las DEMÁS solicitudes se eliminan
+                borrarOtrasReservas(request.buyerId)
+
+                Toast.makeText(this, "Reserva aceptada", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener {
                 Toast.makeText(this, "Error al actualizar la reserva", Toast.LENGTH_SHORT).show()
             }
     }
 
+    // --------------------------------------------------------------------
+    //  Borra las reservas de otros compradores cuando se acepta una
+    // --------------------------------------------------------------------
+    private fun borrarOtrasReservas(buyerAceptado: String) {           // 🔥 NUEVO
+        val reservasRef = db.child("Reservas").child(adId)
+        reservasRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.children.forEach { child ->
+                    val uid = child.key ?: return@forEach
+                    if (uid != buyerAceptado) reservasRef.child(uid).removeValue()
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+    // --------------------------------------------------------------------
+    //  (Opcional) Enviar notificación push en futuro
+    // --------------------------------------------------------------------
     private fun enviarNotificacionReserva(
         compradorId: String,
         mensaje: String
     ) {
-        val notificacionRef = FirebaseDatabase.getInstance()
-            .getReference("Notificaciones")
+        val notificacionRef = db.child("Notificaciones")
             .child(compradorId)
             .push()
 
-        val data = mapOf(
-            "mensaje" to mensaje,
-            "timestamp" to System.currentTimeMillis(),
-            "leido" to false
+        notificacionRef.setValue(
+            mapOf(
+                "mensaje"   to mensaje,
+                "timestamp" to System.currentTimeMillis(),
+                "leido"     to false
+            )
         )
-
-        notificacionRef.setValue(data)
     }
-
 }
+

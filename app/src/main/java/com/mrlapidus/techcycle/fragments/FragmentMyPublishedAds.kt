@@ -54,61 +54,50 @@ class FragmentMyPublishedAds : Fragment() {
         }
     }
 
+    /** Escucha en tiempo real: refresca la lista al instante cuando cambia el nodo “Anuncios”. */
     private fun loadUserAds() {
         val currentUserId = auth.currentUser?.uid ?: return
 
-        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+        databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 allAds.clear()
                 publishedAds.clear()
 
-                for (ds in snapshot.children) {
+                snapshot.children.forEach { ds ->
                     val ad = ds.getValue(AdModel::class.java)
                     if (ad != null && ad.userId == currentUserId) {
-                        // ✅ Leer imágenes correctamente del nodo "images"
                         val imageList = ds.child("images").children.mapNotNull {
                             it.child("imageUrl").getValue(String::class.java)
                         }
-                        val adWithImages = ad.copy(imageUrls = imageList)
-                        allAds.add(adWithImages)
+                        allAds.add(ad.copy(imageUrls = imageList))
                     }
                 }
 
-                publishedAds.addAll(allAds)
-                adAdapter.notifyDataSetChanged()
-                binding.textNoPublishedAds.visibility =
-                    if (publishedAds.isEmpty()) View.VISIBLE else View.GONE
+                /** Mantener búsqueda vigente si el usuario la dejó escrita */
+                val query = binding.searchBarPublished.text?.toString().orEmpty()
+                filterAds(query)
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                // Manejo de errores si es necesario
-            }
+            override fun onCancelled(error: DatabaseError) { /* opcional: log */ }
         })
     }
 
-
     private fun setupSearchBar() {
         binding.searchBarPublished.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                filterAds(s.toString())
-            }
-
+            override fun afterTextChanged(s: Editable?) = filterAds(s.toString())
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
 
     private fun filterAds(query: String) {
-        val filteredList = if (query.isEmpty()) {
-            allAds
-        } else {
-            allAds.filter {
-                it.title.contains(query, ignoreCase = true)
-            }
-        }
+        val filteredList = if (query.isBlank()) allAds
+        else allAds.filter { it.title.contains(query, ignoreCase = true) }
 
-        publishedAds.clear()
-        publishedAds.addAll(filteredList)
+        publishedAds.apply {
+            clear()
+            addAll(filteredList)
+        }
         adAdapter.notifyDataSetChanged()
         binding.textNoPublishedAds.visibility =
             if (publishedAds.isEmpty()) View.VISIBLE else View.GONE
@@ -119,4 +108,5 @@ class FragmentMyPublishedAds : Fragment() {
         _binding = null
     }
 }
+
 

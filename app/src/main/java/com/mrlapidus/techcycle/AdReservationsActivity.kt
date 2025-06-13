@@ -12,10 +12,10 @@ import com.mrlapidus.techcycle.model.AdModel
 
 class AdReservationsActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityAdReservationsBinding
-    private lateinit var database: DatabaseReference
-    private lateinit var adList: MutableList<AdModel>
-    private lateinit var adapter: AdReservationAdapter
+    private lateinit var binding : ActivityAdReservationsBinding
+    private lateinit var db      : DatabaseReference
+    private lateinit var adList  : MutableList<AdModel>
+    private lateinit var adapter : AdReservationAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,51 +23,82 @@ class AdReservationsActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        adList = mutableListOf()
+
+        adList  = mutableListOf()
         adapter = AdReservationAdapter(adList) { ad ->
-            val intent = Intent(this, ReservaDetalleActivity::class.java)
-            intent.putExtra("adId", ad.id)
-            startActivity(intent)
+            startActivity(
+                Intent(this, ReservaDetalleActivity::class.java).apply {
+                    putExtra("adId", ad.id)
+                }
+            )
         }
 
-
         binding.recyclerReservations.layoutManager = LinearLayoutManager(this)
-        binding.recyclerReservations.adapter = adapter
+        binding.recyclerReservations.adapter       = adapter
 
-        database = FirebaseDatabase.getInstance().getReference("Anuncios")
-        cargarAnunciosConReservas(userId)
+        db = FirebaseDatabase.getInstance().getReference("Anuncios")
+        cargarAnunciosConReservaAceptada(userId)      // 🔥 NUEVO nombre más claro
     }
 
-    private fun cargarAnunciosConReservas(ownerId: String) {
-        database.orderByChild("userId").equalTo(ownerId)
+    // --------------------------------------------------------------------
+    //  Solo anuncios con alguna reserva == "aceptado"
+    // --------------------------------------------------------------------
+    private fun cargarAnunciosConReservaAceptada(ownerId: String) {
+
+        db.orderByChild("userId").equalTo(ownerId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     adList.clear()
-                    for (adSnapshot in snapshot.children) {
-                        val adId = adSnapshot.key ?: continue
-                        val title = adSnapshot.child("title").getValue(String::class.java) ?: continue
-                        val price = adSnapshot.child("price").getValue(String::class.java) ?: "0"
-                        val images = mutableListOf<String>()
 
-                        adSnapshot.child("images").children.forEach { img ->
-                            img.child("imageUrl").getValue(String::class.java)?.let { images.add(it) }
-                        }
+                    snapshot.children.forEach { adSnap ->
+                        val adId    = adSnap.key ?: return@forEach
+                        val reservasRef = FirebaseDatabase.getInstance()
+                            .getReference("Reservas")
+                            .child(adId)
 
-                        // Comprobar si tiene reservas
-                        val reservasRef = FirebaseDatabase.getInstance().getReference("Reservas").child(adId)
                         reservasRef.addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(reservaSnap: DataSnapshot) {
-                                if (reservaSnap.exists()) {
-                                    adList.add(AdModel(id = adId, title = title, price = price, imageUrls = images))
+
+                                // 🔥 NUEVO --> ¿Al menos una reserva aceptada?
+                                var hayAceptada = false
+                                for (child in reservaSnap.children) {
+                                    val estado = child.child("estado")
+                                        .getValue(String::class.java) ?: "pendiente"
+                                    if (estado == "aceptado") {
+                                        hayAceptada = true
+                                        break
+                                    }
+                                }
+
+                                if (hayAceptada) {
+                                    // --- datos mínimos para la tarjeta
+                                    val title  = adSnap.child("title")
+                                        .getValue(String::class.java) ?: "—"
+                                    val price  = adSnap.child("price")
+                                        .getValue(String::class.java) ?: "0"
+                                    val images = mutableListOf<String>()
+                                    adSnap.child("images").children.forEach { img ->
+                                        img.child("imageUrl")
+                                            .getValue(String::class.java)
+                                            ?.let { images.add(it) }
+                                    }
+
+                                    adList.add(
+                                        AdModel(
+                                            id         = adId,
+                                            title      = title,
+                                            price      = price,
+                                            status     = "Reservado",        // 🔥 NUEVO
+                                            imageUrls  = images
+                                        )
+                                    )
                                     adapter.notifyDataSetChanged()
                                 }
                             }
-
                             override fun onCancelled(error: DatabaseError) {}
                         })
                     }
                 }
-
                 override fun onCancelled(error: DatabaseError) {}
             })
     }

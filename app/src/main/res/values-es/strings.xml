@@ -234,6 +234,10 @@
 
     <string name="default_username">Usuario</string>
 
+    <!--  Recuperacion  -->
+    <string name="email_sent">Hemos enviado un correo con instrucciones</string>
+
+
 
 
 

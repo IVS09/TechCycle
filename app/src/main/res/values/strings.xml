@@ -234,6 +234,9 @@
 
     <string name="default_username">User</string>
 
+    <!--  Recuperacion  -->
+    <string name="email_sent">We have sent an email with instructions</string>
+
 
 
 

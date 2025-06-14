@@ -1,5 +1,6 @@
 package com.mrlapidus.techcycle
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -61,6 +62,7 @@ class ReservaDetalleActivity : AppCompatActivity() {
                     // ── Datos del comprador ───────────────────────────────
                     db.child("Usuarios").child(buyerId)
                         .addListenerForSingleValueEvent(object : ValueEventListener {
+                            @SuppressLint("NotifyDataSetChanged")
                             override fun onDataChange(userSnap: DataSnapshot) {
 
                                 val nombre    = userSnap.child("nombreCompleto")
@@ -160,7 +162,7 @@ class ReservaDetalleActivity : AppCompatActivity() {
     // --------------------------------------------------------------------
     //  Borra las reservas de otros compradores cuando se acepta una
     // --------------------------------------------------------------------
-    private fun borrarOtrasReservas(buyerAceptado: String) {           // 🔥 NUEVO
+    /*private fun borrarOtrasReservas(buyerAceptado: String) {           // 🔥 NUEVO
         val reservasRef = db.child("Reservas").child(adId)
         reservasRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -171,12 +173,12 @@ class ReservaDetalleActivity : AppCompatActivity() {
             }
             override fun onCancelled(error: DatabaseError) {}
         })
-    }
+    }*/
 
     // --------------------------------------------------------------------
     //  (Opcional) Enviar notificación push en futuro
     // --------------------------------------------------------------------
-    private fun enviarNotificacionReserva(
+    /*private fun enviarNotificacionReserva(
         compradorId: String,
         mensaje: String
     ) {
@@ -191,6 +193,6 @@ class ReservaDetalleActivity : AppCompatActivity() {
                 "leido"     to false
             )
         )
-    }
+    }*/
 }
 

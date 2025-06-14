@@ -10,6 +10,8 @@ import java.util.*
 object Utilities {
     const val STATUS_AVAILABLE = "Disponible"
     const val STATUS_SOLD = "Vendido"
+    const val EXTRA_AUTO_GOOGLE = "AUTO_GOOGLE_SIGN_IN"
+
 
     val CATEGORIES = arrayOf(
         "Todos",

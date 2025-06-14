@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.FirebaseDatabase
 import com.mrlapidus.techcycle.databinding.ActivityLoginBinding
+import com.mrlapidus.techcycle.Utilities.EXTRA_AUTO_GOOGLE
 
 class Login : AppCompatActivity() {
 
@@ -47,6 +48,7 @@ class Login : AppCompatActivity() {
         }
 
         setupGoogleSignIn()
+        checkAutoGoogle()
 
         binding.registerTextView.setOnClickListener {
             val intent = Intent(this@Login, Registro::class.java)
@@ -80,6 +82,8 @@ class Login : AppCompatActivity() {
             )
             .build()
     }
+
+
 
     private fun initiateGoogleSignIn() {
         oneTapClient.beginSignIn(signInRequest)
@@ -207,4 +211,11 @@ class Login : AppCompatActivity() {
                 }
             }
     }
+
+    private fun checkAutoGoogle() {
+        if (intent.getBooleanExtra(EXTRA_AUTO_GOOGLE, false)) {
+            initiateGoogleSignIn()
+        }
+    }
+
 }

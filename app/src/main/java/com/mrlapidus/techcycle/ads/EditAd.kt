@@ -3,7 +3,6 @@ package com.mrlapidus.techcycle.ads
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,7 +10,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.LayoutInflater
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -31,86 +32,102 @@ import com.mrlapidus.techcycle.model.SelectedImageModel
 
 class EditAd : AppCompatActivity() {
 
-    // ───────────────────────────────────────────────────────
-    // NUEVO ▶ variables de modo
-    private var mode = "create"        // create | edit
-    private var adId = ""              // id que vamos a editar
-    // ───────────────────────────────────────────────────────
+    // ────────────── modo de trabajo ──────────────
+    private var mode = "create"   // create | edit
+    private var adId = ""         // id del anuncio a editar
 
-
+    // ────────────── UI & helpers ──────────────
     private lateinit var binding: ActivityEditAdBinding
     private lateinit var selectedImages: ArrayList<SelectedImageModel>
     private lateinit var imageAdapter: SelectedImageAdapter
+
     private lateinit var firebaseAuth: FirebaseAuth
     private var imageUri: Uri? = null
     private val maxImages = 3
+
     private var selectedLatitude: Double = 0.0
     private var selectedLongitude: Double = 0.0
 
-    // Launcher para recibir la ubicación seleccionada
+    // Diálogo de progreso reutilizable
+    private var progressDialog: AlertDialog? = null
+
+    /*--------------------------------------------------*
+     *   Helpers para mostrar / ocultar diálogo          *
+     *--------------------------------------------------*/
+    private fun showBlockingProgress(message: String) {
+        if (progressDialog == null) {
+            val view = LayoutInflater.from(this).inflate(R.layout.dialog_progress, null)
+            progressDialog = AlertDialog.Builder(this)
+                .setView(view)
+                .setCancelable(false)
+                .create()
+        }
+        progressDialog?.show()
+        progressDialog
+            ?.findViewById<TextView>(R.id.progress_text)
+            ?.text = message
+    }
+
+    private fun hideBlockingProgress() {
+        progressDialog?.dismiss()
+    }
+
+    /*--------------------------------------------------*
+     *           Launchers y permisos                    *
+     *--------------------------------------------------*/
     private val selectLocationLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                val address = result.data?.getStringExtra("address")
-                val latitude = result.data?.getDoubleExtra("latitude", 0.0) ?: 0.0
-                val longitude = result.data?.getDoubleExtra("longitude", 0.0) ?: 0.0
+                val data = result.data
+                val address = data?.getStringExtra("address")
+                selectedLatitude = data?.getDoubleExtra("latitude", 0.0) ?: 0.0
+                selectedLongitude = data?.getDoubleExtra("longitude", 0.0) ?: 0.0
                 binding.locationAutoCompleteTextView.setText(address ?: "Ubicación no seleccionada")
-                // Guardar las coordenadas para usarlas al subir el anuncio
-                selectedLatitude = latitude
-                selectedLongitude = longitude
             }
         }
 
-    // Launcher para solicitar permisos de ubicación
     private val locationPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (!isGranted) {
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (!granted) {
                 Toast.makeText(this, "Permiso de ubicación denegado", Toast.LENGTH_SHORT).show()
             }
         }
 
+    /*--------------------------------------------------*
+     *                  onCreate                         *
+     *--------------------------------------------------*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Configuración inicial
         binding = ActivityEditAdBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // ───── leer modo + id que vienen del intent ─────
-        mode = intent.getStringExtra("mode") ?: "create"   // "edit" o "create"
+        // Modo (crear | editar)
+        mode = intent.getStringExtra("mode") ?: "create"
         adId = intent.getStringExtra("adId") ?: ""
-        // ────────────────────────────────────────────────
 
         firebaseAuth = FirebaseAuth.getInstance()
         selectedImages = ArrayList()
         imageAdapter = SelectedImageAdapter(this, selectedImages)
 
-        // Configurar RecyclerView
         binding.selectedImagesRecyclerView.layoutManager = GridLayoutManager(this, 3)
         binding.selectedImagesRecyclerView.adapter = imageAdapter
 
-        // Configurar dropdowns
         setupDropdowns()
 
-        // Si estamos en modo edición cargamos los datos existentes
         if (mode == "edit" && adId.isNotEmpty()) {
             binding.publishButton.text = getString(R.string.save_changes)
             loadExistingAd(adId)
         }
 
-        // Configurar clic en el campo de ubicación
         binding.locationAutoCompleteTextView.setOnClickListener {
             val intent = Intent(this, SelectLocation::class.java)
             selectLocationLauncher.launch(intent)
         }
 
-        // Verificar permisos de ubicación (opcional si se usa GPS en SelectLocation)
         checkLocationPermission()
 
-        // Configurar clic en el ImageView para agregar imágenes
         binding.addImageView.setOnClickListener { showImagePickerDialog() }
 
-        // Configurar botón de publicar
         binding.publishButton.setOnClickListener {
             if (validateInputs()) {
                 if (mode == "edit") updateAd(adId) else createAd()
@@ -118,10 +135,9 @@ class EditAd : AppCompatActivity() {
         }
     }
 
-    // ╔═════════════════════════════════════════════════════╗
-    // ║                     MODO EDICIÓN                    ║
-    // ╚═════════════════════════════════════════════════════╝
-    /** Rellena el formulario con los datos que existen en Firebase */
+    /*--------------------------------------------------*
+     *               MODO EDICIÓN                       *
+     *--------------------------------------------------*/
     @SuppressLint("NotifyDataSetChanged")
     private fun loadExistingAd(id: String) {
         FirebaseDatabase.getInstance().getReference("Anuncios")
@@ -142,14 +158,10 @@ class EditAd : AppCompatActivity() {
                 )
                 binding.descriptionEditText.setText(snap.child("description").value.toString())
 
-                selectedLatitude  = snap.child("latitud").getValue(Double::class.java) ?: 0.0
+                selectedLatitude = snap.child("latitud").getValue(Double::class.java) ?: 0.0
                 selectedLongitude = snap.child("longitud").getValue(Double::class.java) ?: 0.0
 
-                // ▸ (Opcional) cargar URLs de imágenes en el Recycler para que el
-                //   usuario pueda ver las actuales. Si quieres permitir borrado
-                //   añade un flag isFromInternet = true
-                val imagesSnap = snap.child("images")
-                imagesSnap.children.forEach { img ->
+                snap.child("images").children.forEach { img ->
                     val url = img.child("imageUrl").getValue(String::class.java) ?: return@forEach
                     selectedImages.add(
                         SelectedImageModel(img.key ?: "", null, url, true)
@@ -159,73 +171,70 @@ class EditAd : AppCompatActivity() {
             }
     }
 
-    /** Actualiza los campos editables del anuncio existente */
     private fun updateAd(id: String) {
-        val progress = ProgressDialog(this).apply {
-            setMessage(getString(R.string.publishing_ad))
-            setCancelable(false)
-            show()
-        }
+        showBlockingProgress(getString(R.string.publishing_ad))
 
         val updates = mapOf(
-            "brand"      to binding.brandEditText.text.toString().trim(),
-            "title"      to binding.titleEditText.text.toString().trim(),
-            "price"      to binding.priceEditText.text.toString().trim(),
-            "category"   to binding.categoryAutoCompleteTextView.text.toString().trim(),
-            "condition"  to binding.conditionAutoCompleteTextView.text.toString().trim(),
-            "location"   to binding.locationAutoCompleteTextView.text.toString().trim(),
+            "brand" to binding.brandEditText.text.toString().trim(),
+            "title" to binding.titleEditText.text.toString().trim(),
+            "price" to binding.priceEditText.text.toString().trim(),
+            "category" to binding.categoryAutoCompleteTextView.text.toString().trim(),
+            "condition" to binding.conditionAutoCompleteTextView.text.toString().trim(),
+            "location" to binding.locationAutoCompleteTextView.text.toString().trim(),
             "description" to binding.descriptionEditText.text.toString().trim(),
-            "latitud"    to selectedLatitude,
-            "longitud"   to selectedLongitude,
-            "timestamp"  to System.currentTimeMillis()
+            "latitud" to selectedLatitude,
+            "longitud" to selectedLongitude,
+            "timestamp" to System.currentTimeMillis()
         )
 
-        val adRef = FirebaseDatabase.getInstance().getReference("Anuncios").child(id)
-
-        adRef.updateChildren(updates)
+        FirebaseDatabase.getInstance().getReference("Anuncios")
+            .child(id)
+            .updateChildren(updates)
             .addOnSuccessListener {
-                // Subir / reemplazar imágenes nuevas si el usuario añadió más
                 if (selectedImages.any { !it.isFromInternet }) {
-                    uploadImagesToStorage(id, progress)   // usa el mismo método
+                    uploadImagesToStorage(id)
                 } else {
-                    progress.dismiss()
+                    hideBlockingProgress()
                     Toast.makeText(this, "Anuncio actualizado", Toast.LENGTH_SHORT).show()
                     finish()
                 }
             }
             .addOnFailureListener { e ->
-                progress.dismiss()
+                hideBlockingProgress()
                 Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
-    /** Alias del create original: NO toques tu lógica previa */
+    /*--------------------------------------------------*
+     *               MODO CREACIÓN                       *
+     *--------------------------------------------------*/
     private fun createAd() = uploadAdToFirebase()
 
-
     private fun setupDropdowns() {
-        val categoryAdapter = ArrayAdapter(this, R.layout.item_category, CATEGORIES)
-        binding.categoryAutoCompleteTextView.setAdapter(categoryAdapter)
-
-        val conditionAdapter = ArrayAdapter(this, R.layout.item_condition, CONDITIONS)
-        binding.conditionAutoCompleteTextView.setAdapter(conditionAdapter)
+        binding.categoryAutoCompleteTextView.setAdapter(
+            ArrayAdapter(this, R.layout.item_category, CATEGORIES)
+        )
+        binding.conditionAutoCompleteTextView.setAdapter(
+            ArrayAdapter(this, R.layout.item_condition, CONDITIONS)
+        )
     }
 
+    /*--------------------------------------------------*
+     *      Selector de imágenes (cámara / galería)      *
+     *--------------------------------------------------*/
     private fun showImagePickerDialog() {
         if (selectedImages.size >= maxImages) {
-            Toast.makeText(this, "Máximo de $maxImages imágenes alcanzado", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Máximo de $maxImages imágenes alcanzado", Toast.LENGTH_SHORT)
+                .show()
             return
         }
 
-        val options = arrayOf("Cámara", "Galería")
         AlertDialog.Builder(this)
             .setTitle("Seleccionar imagen")
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> openCamera()
-                    1 -> openGallery()
-                }
-            }.show()
+            .setItems(arrayOf("Cámara", "Galería")) { _, which ->
+                if (which == 0) openCamera() else openGallery()
+            }
+            .show()
     }
 
     private val cameraLauncher =
@@ -239,45 +248,45 @@ class EditAd : AppCompatActivity() {
 
     private val galleryLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            if (uri != null) {
-                addImageToRecyclerView(uri)
-            } else {
-                Toast.makeText(this, "No se seleccionó ninguna imagen", Toast.LENGTH_SHORT).show()
-            }
+            if (uri != null) addImageToRecyclerView(uri)
+            else Toast.makeText(this, "No se seleccionó ninguna imagen", Toast.LENGTH_SHORT).show()
         }
 
     private fun openCamera() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) !=
-            PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED
         ) {
             requestPermissions(arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE)
-        } else {
-            val values = ContentValues().apply {
-                put(MediaStore.Images.Media.TITLE, "Nueva Imagen")
-                put(MediaStore.Images.Media.DESCRIPTION, "Desde la cámara")
-            }
-            imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-            cameraLauncher.launch(cameraIntent)
+            return
         }
+        val values = ContentValues().apply {
+            put(MediaStore.Images.Media.TITLE, "Nueva Imagen")
+            put(MediaStore.Images.Media.DESCRIPTION, "Desde la cámara")
+        }
+        imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
+            putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+        }
+        cameraLauncher.launch(cameraIntent)
     }
 
-    private fun openGallery() {
-        galleryLauncher.launch("image/*")
-    }
+    private fun openGallery() = galleryLauncher.launch("image/*")
 
     private fun addImageToRecyclerView(uri: Uri) {
-        val newImage = SelectedImageModel(
-            id = System.currentTimeMillis().toString(),
-            imageUri = uri,
-            imageUrl = null,
-            isFromInternet = false
+        selectedImages.add(
+            SelectedImageModel(
+                id = System.currentTimeMillis().toString(),
+                imageUri = uri,
+                imageUrl = null,
+                isFromInternet = false
+            )
         )
-        selectedImages.add(newImage)
         imageAdapter.notifyItemInserted(selectedImages.size - 1)
     }
 
+    /*--------------------------------------------------*
+     *          Validación + subida a Firebase           *
+     *--------------------------------------------------*/
     private fun validateInputs(): Boolean {
         val brand = binding.brandEditText.text.toString().trim()
         val category = binding.categoryAutoCompleteTextView.text.toString().trim()
@@ -291,9 +300,8 @@ class EditAd : AppCompatActivity() {
             Toast.makeText(this, "Debe agregar al menos una imagen", Toast.LENGTH_SHORT).show()
             return false
         }
-
-        if (brand.isEmpty() || category.isEmpty() || condition.isEmpty() || location.isEmpty() ||
-            price.isEmpty() || description.isEmpty() || title.isEmpty()
+        if (brand.isEmpty() || category.isEmpty() || condition.isEmpty() || location.isEmpty()
+            || price.isEmpty() || description.isEmpty() || title.isEmpty()
         ) {
             Toast.makeText(this, "Por favor complete todos los campos", Toast.LENGTH_SHORT).show()
             return false
@@ -302,15 +310,10 @@ class EditAd : AppCompatActivity() {
     }
 
     private fun uploadAdToFirebase() {
-        val progressDialog = ProgressDialog(this)
-        progressDialog.setMessage("Subiendo anuncio...")
-        progressDialog.setCancelable(false)
-        progressDialog.show()
+        showBlockingProgress("Subiendo anuncio…")
 
         val databaseReference = FirebaseDatabase.getInstance().getReference("Anuncios")
         val adId = databaseReference.push().key ?: return
-
-        val title = binding.titleEditText.text.toString().trim()
 
         val adData = mapOf(
             "id" to adId,
@@ -319,7 +322,7 @@ class EditAd : AppCompatActivity() {
             "condition" to binding.conditionAutoCompleteTextView.text.toString().trim(),
             "location" to binding.locationAutoCompleteTextView.text.toString().trim(),
             "price" to binding.priceEditText.text.toString().trim(),
-            "title" to title,
+            "title" to binding.titleEditText.text.toString().trim(),
             "description" to binding.descriptionEditText.text.toString().trim(),
             "userId" to firebaseAuth.uid,
             "latitud" to selectedLatitude,
@@ -328,30 +331,33 @@ class EditAd : AppCompatActivity() {
         )
 
         databaseReference.child(adId).setValue(adData)
-            .addOnSuccessListener {
-                uploadImagesToStorage(adId, progressDialog)
-            }
+            .addOnSuccessListener { uploadImagesToStorage(adId) }
             .addOnFailureListener { e ->
-                progressDialog.dismiss()
-                Toast.makeText(this, "Error al subir el anuncio: ${e.message}", Toast.LENGTH_SHORT).show()
+                hideBlockingProgress()
+                Toast.makeText(this, "Error al subir el anuncio: ${e.message}", Toast.LENGTH_SHORT)
+                    .show()
             }
     }
 
-    private fun uploadImagesToStorage(adId: String, progressDialog: ProgressDialog) {
+    private fun uploadImagesToStorage(adId: String) {
         val storageReference = FirebaseStorage.getInstance().reference.child("AdImages")
         var uploadedCount = 0
-        var totalToUpload = selectedImages.count { !it.isFromInternet && it.imageUri != null }
+        val totalToUpload = selectedImages.count { !it.isFromInternet && it.imageUri != null }
 
-        // ⚠️ si no hay nada que subir salimos y cerramos el dialog
+        // Si no hay nuevas imágenes, terminamos
         if (totalToUpload == 0) {
-            progressDialog.dismiss()
-            Toast.makeText(this, if (mode=="edit") "Anuncio actualizado" else "Anuncio subido", Toast.LENGTH_SHORT).show()
+            hideBlockingProgress()
+            Toast.makeText(
+                this,
+                if (mode == "edit") "Anuncio actualizado" else "Anuncio subido",
+                Toast.LENGTH_SHORT
+            ).show()
             finish()
             return
         }
 
         for (image in selectedImages) {
-            if (image.isFromInternet || image.imageUri == null) continue   // ①
+            if (image.isFromInternet || image.imageUri == null) continue
 
             val imageRef = storageReference.child("$adId/${image.id}.jpg")
             imageRef.putFile(image.imageUri!!)
@@ -364,28 +370,36 @@ class EditAd : AppCompatActivity() {
                             .setValue(imageData)
                             .addOnCompleteListener {
                                 uploadedCount++
-                                if (uploadedCount == totalToUpload) {     // ②
-                                    progressDialog.dismiss()
-                                    Toast.makeText(this,
-                                        if (mode=="edit") "Anuncio actualizado"
+                                if (uploadedCount == totalToUpload) {
+                                    hideBlockingProgress()
+                                    Toast.makeText(
+                                        this,
+                                        if (mode == "edit") "Anuncio actualizado"
                                         else "Anuncio subido exitosamente",
-                                        Toast.LENGTH_SHORT).show()
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                     finish()
                                 }
                             }
                     }
                 }
                 .addOnFailureListener { e ->
-                    progressDialog.dismiss()
-                    Toast.makeText(this, "Error al subir imágenes: ${e.message}", Toast.LENGTH_SHORT).show()
+                    hideBlockingProgress()
+                    Toast.makeText(
+                        this,
+                        "Error al subir imágenes: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
         }
     }
 
-
+    /*--------------------------------------------------*
+     *        Permiso de localización (GPS)              *
+     *--------------------------------------------------*/
     private fun checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
-            PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
         ) {
             locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }

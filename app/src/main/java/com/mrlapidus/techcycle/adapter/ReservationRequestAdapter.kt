@@ -43,6 +43,8 @@ class ReservationRequestAdapter(
                 Glide.with(holder.itemView.context)
                     .load(avatarUrl)
                     .placeholder(R.drawable.ic_profile)
+                    .error(R.drawable.avatar_profile)
+                    .circleCrop()
                     .into(holder.imageAvatar)
             }
 

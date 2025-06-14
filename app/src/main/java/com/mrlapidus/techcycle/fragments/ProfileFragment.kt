@@ -90,6 +90,8 @@ class ProfileFragment : Fragment() {
                     Glide.with(requireContext())
                         .load(profileImage)
                         .placeholder(R.drawable.avatar_profile)
+                        .error(R.drawable.avatar_profile)
+                        .circleCrop()
                         .into(binding.profileImageView)
 
                     binding.progressBar.visibility = View.GONE

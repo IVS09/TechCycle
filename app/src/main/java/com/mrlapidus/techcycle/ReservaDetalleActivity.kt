@@ -79,7 +79,7 @@ class ReservaDetalleActivity : AppCompatActivity() {
                                 )
 
                                 adapter.notifyDataSetChanged()
-                                togglePlaceholder()        // 👈
+                                togglePlaceholder()
                             }
                             override fun onCancelled(error: DatabaseError) {}
                         })

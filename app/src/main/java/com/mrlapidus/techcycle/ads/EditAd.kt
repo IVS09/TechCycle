@@ -1,6 +1,7 @@
 package com.mrlapidus.techcycle.ads
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.ContentValues
@@ -121,6 +122,7 @@ class EditAd : AppCompatActivity() {
     // ║                     MODO EDICIÓN                    ║
     // ╚═════════════════════════════════════════════════════╝
     /** Rellena el formulario con los datos que existen en Firebase */
+    @SuppressLint("NotifyDataSetChanged")
     private fun loadExistingAd(id: String) {
         FirebaseDatabase.getInstance().getReference("Anuncios")
             .child(id)

@@ -162,7 +162,7 @@ class ReservaDetalleActivity : AppCompatActivity() {
 
 
     // --------------------------------------------------------------------
-    //  (Opcional) Enviar notificación push en futuro
+    //  Enviar notificación push en futuro
     // --------------------------------------------------------------------
     @Suppress("unused")
     private fun enviarNotificacionReserva(

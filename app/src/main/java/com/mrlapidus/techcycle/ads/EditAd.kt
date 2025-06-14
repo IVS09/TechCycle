@@ -50,9 +50,8 @@ class EditAd : AppCompatActivity() {
     // Diálogo de progreso reutilizable
     private var progressDialog: AlertDialog? = null
 
-    /*--------------------------------------------------*
-     *   Helpers para mostrar / ocultar diálogo          *
-     *--------------------------------------------------*/
+
+    // Helpers para mostrar / ocultar diálogo
     private fun showBlockingProgress(message: String) {
         if (progressDialog == null) {
             val view = LayoutInflater.from(this).inflate(R.layout.dialog_progress, null)
@@ -71,9 +70,8 @@ class EditAd : AppCompatActivity() {
         progressDialog?.dismiss()
     }
 
-    /*--------------------------------------------------*
-     *           Launchers y permisos                    *
-     *--------------------------------------------------*/
+
+    // Launchers y permisos
     private val selectLocationLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -92,9 +90,8 @@ class EditAd : AppCompatActivity() {
             }
         }
 
-    /*--------------------------------------------------*
-     *                  onCreate                         *
-     *--------------------------------------------------*/
+
+    // onCreate
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEditAdBinding.inflate(layoutInflater)
@@ -134,9 +131,8 @@ class EditAd : AppCompatActivity() {
         }
     }
 
-    /*--------------------------------------------------*
-     *               MODO EDICIÓN                       *
-     *--------------------------------------------------*/
+
+    // modo edición
     @SuppressLint("NotifyDataSetChanged")
     private fun loadExistingAd(id: String) {
         FirebaseDatabase.getInstance().getReference("Anuncios")
@@ -204,9 +200,8 @@ class EditAd : AppCompatActivity() {
             }
     }
 
-    /*--------------------------------------------------*
-     *               MODO CREACIÓN                       *
-     *--------------------------------------------------*/
+
+    // modo creación
     private fun createAd() = uploadAdToFirebase()
 
     private fun setupDropdowns() {
@@ -218,9 +213,8 @@ class EditAd : AppCompatActivity() {
         )
     }
 
-    /*--------------------------------------------------*
-     *      Selector de imágenes (cámara / galería)      *
-     *--------------------------------------------------*/
+
+    // Selector de imágenes (cámara / galería)
     private fun showImagePickerDialog() {
         if (selectedImages.size >= maxImages) {
             Toast.makeText(this, "Máximo de $maxImages imágenes alcanzado", Toast.LENGTH_SHORT)
@@ -283,9 +277,8 @@ class EditAd : AppCompatActivity() {
         imageAdapter.notifyItemInserted(selectedImages.size - 1)
     }
 
-    /*--------------------------------------------------*
-     *          Validación + subida a Firebase           *
-     *--------------------------------------------------*/
+
+    // Validación de campos y subida a Firebase
     private fun validateInputs(): Boolean {
         val brand = binding.brandEditText.text.toString().trim()
         val category = binding.categoryAutoCompleteTextView.text.toString().trim()
@@ -393,9 +386,8 @@ class EditAd : AppCompatActivity() {
         }
     }
 
-    /*--------------------------------------------------*
-     *        Permiso de localización (GPS)              *
-     *--------------------------------------------------*/
+
+    // Permiso de localización (GPS)
     private fun checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED

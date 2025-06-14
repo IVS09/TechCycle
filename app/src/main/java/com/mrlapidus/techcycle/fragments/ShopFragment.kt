@@ -12,7 +12,7 @@ class ShopFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflar el layout del fragmento shop_fragment.xml (si lo tienes)
+        // Inflar el layout del fragmento shop_fragment.xml
         return inflater.inflate(R.layout.fragment_shop, container, false)
     }
 }

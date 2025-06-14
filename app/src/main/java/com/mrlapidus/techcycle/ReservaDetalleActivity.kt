@@ -159,26 +159,13 @@ class ReservaDetalleActivity : AppCompatActivity() {
     }
 
 
-    // --------------------------------------------------------------------
-    //  Borra las reservas de otros compradores cuando se acepta una
-    // --------------------------------------------------------------------
-    /*private fun borrarOtrasReservas(buyerAceptado: String) {           // 🔥 NUEVO
-        val reservasRef = db.child("Reservas").child(adId)
-        reservasRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                snapshot.children.forEach { child ->
-                    val uid = child.key ?: return@forEach
-                    if (uid != buyerAceptado) reservasRef.child(uid).removeValue()
-                }
-            }
-            override fun onCancelled(error: DatabaseError) {}
-        })
-    }*/
+
 
     // --------------------------------------------------------------------
     //  (Opcional) Enviar notificación push en futuro
     // --------------------------------------------------------------------
-    /*private fun enviarNotificacionReserva(
+    @Suppress("unused")
+    private fun enviarNotificacionReserva(
         compradorId: String,
         mensaje: String
     ) {
@@ -193,6 +180,6 @@ class ReservaDetalleActivity : AppCompatActivity() {
                 "leido"     to false
             )
         )
-    }*/
+    }
 }
 

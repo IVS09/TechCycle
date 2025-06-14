@@ -237,6 +237,8 @@
     <!--  Recuperacion  -->
     <string name="email_sent">Hemos enviado un correo con instrucciones</string>
 
+    <string name="save_changes">Guardar cambios</string>
+
 
 
 

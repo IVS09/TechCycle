@@ -30,6 +30,13 @@ import com.mrlapidus.techcycle.model.SelectedImageModel
 
 class EditAd : AppCompatActivity() {
 
+    // ───────────────────────────────────────────────────────
+    // NUEVO ▶ variables de modo
+    private var mode = "create"        // create | edit
+    private var adId = ""              // id que vamos a editar
+    // ───────────────────────────────────────────────────────
+
+
     private lateinit var binding: ActivityEditAdBinding
     private lateinit var selectedImages: ArrayList<SelectedImageModel>
     private lateinit var imageAdapter: SelectedImageAdapter
@@ -68,6 +75,11 @@ class EditAd : AppCompatActivity() {
         binding = ActivityEditAdBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // ───── leer modo + id que vienen del intent ─────
+        mode = intent.getStringExtra("mode") ?: "create"   // "edit" o "create"
+        adId = intent.getStringExtra("adId") ?: ""
+        // ────────────────────────────────────────────────
+
         firebaseAuth = FirebaseAuth.getInstance()
         selectedImages = ArrayList()
         imageAdapter = SelectedImageAdapter(this, selectedImages)
@@ -78,6 +90,12 @@ class EditAd : AppCompatActivity() {
 
         // Configurar dropdowns
         setupDropdowns()
+
+        // Si estamos en modo edición cargamos los datos existentes
+        if (mode == "edit" && adId.isNotEmpty()) {
+            binding.publishButton.text = getString(R.string.save_changes)
+            loadExistingAd(adId)
+        }
 
         // Configurar clic en el campo de ubicación
         binding.locationAutoCompleteTextView.setOnClickListener {
@@ -94,10 +112,94 @@ class EditAd : AppCompatActivity() {
         // Configurar botón de publicar
         binding.publishButton.setOnClickListener {
             if (validateInputs()) {
-                uploadAdToFirebase()
+                if (mode == "edit") updateAd(adId) else createAd()
             }
         }
     }
+
+    // ╔═════════════════════════════════════════════════════╗
+    // ║                     MODO EDICIÓN                    ║
+    // ╚═════════════════════════════════════════════════════╝
+    /** Rellena el formulario con los datos que existen en Firebase */
+    private fun loadExistingAd(id: String) {
+        FirebaseDatabase.getInstance().getReference("Anuncios")
+            .child(id)
+            .get()
+            .addOnSuccessListener { snap ->
+                binding.brandEditText.setText(snap.child("brand").value.toString())
+                binding.titleEditText.setText(snap.child("title").value.toString())
+                binding.priceEditText.setText(snap.child("price").value.toString())
+                binding.categoryAutoCompleteTextView.setText(
+                    snap.child("category").value.toString(), false
+                )
+                binding.conditionAutoCompleteTextView.setText(
+                    snap.child("condition").value.toString(), false
+                )
+                binding.locationAutoCompleteTextView.setText(
+                    snap.child("location").value.toString(), false
+                )
+                binding.descriptionEditText.setText(snap.child("description").value.toString())
+
+                selectedLatitude  = snap.child("latitud").getValue(Double::class.java) ?: 0.0
+                selectedLongitude = snap.child("longitud").getValue(Double::class.java) ?: 0.0
+
+                // ▸ (Opcional) cargar URLs de imágenes en el Recycler para que el
+                //   usuario pueda ver las actuales. Si quieres permitir borrado
+                //   añade un flag isFromInternet = true
+                val imagesSnap = snap.child("images")
+                imagesSnap.children.forEach { img ->
+                    val url = img.child("imageUrl").getValue(String::class.java) ?: return@forEach
+                    selectedImages.add(
+                        SelectedImageModel(img.key ?: "", null, url, true)
+                    )
+                }
+                imageAdapter.notifyDataSetChanged()
+            }
+    }
+
+    /** Actualiza los campos editables del anuncio existente */
+    private fun updateAd(id: String) {
+        val progress = ProgressDialog(this).apply {
+            setMessage(getString(R.string.publishing_ad))
+            setCancelable(false)
+            show()
+        }
+
+        val updates = mapOf(
+            "brand"      to binding.brandEditText.text.toString().trim(),
+            "title"      to binding.titleEditText.text.toString().trim(),
+            "price"      to binding.priceEditText.text.toString().trim(),
+            "category"   to binding.categoryAutoCompleteTextView.text.toString().trim(),
+            "condition"  to binding.conditionAutoCompleteTextView.text.toString().trim(),
+            "location"   to binding.locationAutoCompleteTextView.text.toString().trim(),
+            "description" to binding.descriptionEditText.text.toString().trim(),
+            "latitud"    to selectedLatitude,
+            "longitud"   to selectedLongitude,
+            "timestamp"  to System.currentTimeMillis()
+        )
+
+        val adRef = FirebaseDatabase.getInstance().getReference("Anuncios").child(id)
+
+        adRef.updateChildren(updates)
+            .addOnSuccessListener {
+                // Subir / reemplazar imágenes nuevas si el usuario añadió más
+                if (selectedImages.any { !it.isFromInternet }) {
+                    uploadImagesToStorage(id, progress)   // usa el mismo método
+                } else {
+                    progress.dismiss()
+                    Toast.makeText(this, "Anuncio actualizado", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+            }
+            .addOnFailureListener { e ->
+                progress.dismiss()
+                Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    /** Alias del create original: NO toques tu lógica previa */
+    private fun createAd() = uploadAdToFirebase()
+
 
     private fun setupDropdowns() {
         val categoryAdapter = ArrayAdapter(this, R.layout.item_category, CATEGORIES)
@@ -236,23 +338,36 @@ class EditAd : AppCompatActivity() {
     private fun uploadImagesToStorage(adId: String, progressDialog: ProgressDialog) {
         val storageReference = FirebaseStorage.getInstance().reference.child("AdImages")
         var uploadedCount = 0
+        var totalToUpload = selectedImages.count { !it.isFromInternet && it.imageUri != null }
+
+        // ⚠️ si no hay nada que subir salimos y cerramos el dialog
+        if (totalToUpload == 0) {
+            progressDialog.dismiss()
+            Toast.makeText(this, if (mode=="edit") "Anuncio actualizado" else "Anuncio subido", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
 
         for (image in selectedImages) {
+            if (image.isFromInternet || image.imageUri == null) continue   // ①
+
             val imageRef = storageReference.child("$adId/${image.id}.jpg")
             imageRef.putFile(image.imageUri!!)
                 .addOnSuccessListener {
                     imageRef.downloadUrl.addOnSuccessListener { uri ->
-                        val imageUrl = uri.toString()
-                        val imageData = mapOf("imageUrl" to imageUrl)
+                        val imageData = mapOf("imageUrl" to uri.toString())
 
                         FirebaseDatabase.getInstance().getReference("Anuncios")
                             .child(adId).child("images").child(image.id)
                             .setValue(imageData)
                             .addOnCompleteListener {
                                 uploadedCount++
-                                if (uploadedCount == selectedImages.size) {
+                                if (uploadedCount == totalToUpload) {     // ②
                                     progressDialog.dismiss()
-                                    Toast.makeText(this, "Anuncio subido exitosamente", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this,
+                                        if (mode=="edit") "Anuncio actualizado"
+                                        else "Anuncio subido exitosamente",
+                                        Toast.LENGTH_SHORT).show()
                                     finish()
                                 }
                             }
@@ -264,6 +379,7 @@ class EditAd : AppCompatActivity() {
                 }
         }
     }
+
 
     private fun checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=

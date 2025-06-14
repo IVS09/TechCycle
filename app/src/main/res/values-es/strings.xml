@@ -239,6 +239,11 @@
 
     <string name="save_changes">Guardar cambios</string>
 
+    <!--  ReservationRequestAdapter adds  -->
+    <string name="reservation_date">Fecha reserva: %1$s</string>
+
+
+
 
 
 

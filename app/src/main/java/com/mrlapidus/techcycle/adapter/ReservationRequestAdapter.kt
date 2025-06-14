@@ -1,5 +1,6 @@
 package com.mrlapidus.techcycle.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +27,7 @@ class ReservationRequestAdapter(
         return ReservationViewHolder(view)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ReservationViewHolder, position: Int) {
         val reserva = reservationList[position]
 

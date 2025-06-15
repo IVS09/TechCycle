@@ -48,5 +48,3 @@ recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 googleService = { id = "com.google.gms.google-services", version.ref = "googleServicesVersion" }
-
-

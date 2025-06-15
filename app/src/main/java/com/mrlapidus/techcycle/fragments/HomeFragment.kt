@@ -92,7 +92,7 @@ class HomeFragment : Fragment() {
                     .putString("ADDRESS", userAddress)
                     .apply()
 
-                binding.locationText.text = Editable.Factory.getInstance().newEditable(userAddress)
+                _binding?.locationText?.text = Editable.Factory.getInstance().newEditable(userAddress)
                 loadAds()
             }
         }
@@ -126,8 +126,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadAds(category: String = "Todos") {
-        binding.adLoadingText.text = getString(R.string.home_loading_ads)
-        binding.adLoadingText.visibility = View.VISIBLE
+        _binding?.adLoadingText?.text = getString(R.string.home_loading_ads)
+        _binding?.adLoadingText?.visibility = View.VISIBLE
 
         firebaseDatabase.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -169,9 +169,9 @@ class HomeFragment : Fragment() {
                 }
 
                 if (newAds.isEmpty()) {
-                    binding.adLoadingText.text = getString(R.string.home_no_ads_found)
+                    _binding?.adLoadingText?.text = getString(R.string.home_no_ads_found)
                 } else {
-                    binding.adLoadingText.visibility = View.GONE
+                    _binding?.adLoadingText?.visibility = View.GONE
                 }
 
                 loadUserFavorites { userFavs ->
@@ -179,13 +179,13 @@ class HomeFragment : Fragment() {
                     originalFilteredList = adsWithFavs.toMutableList()
                     adList.clear()
                     adList.addAll(originalFilteredList)
-                    adAdapter.notifyDataSetChanged()
+                    _binding?.adRecyclerView?.adapter?.notifyDataSetChanged()
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
                 Log.e("FIREBASE_ERROR", "Error Firebase: ${error.message}")
-                binding.adLoadingText.text = getString(R.string.home_no_ads_found)
+                _binding?.adLoadingText?.text = getString(R.string.home_no_ads_found)
             }
         })
     }
@@ -254,6 +254,7 @@ class HomeFragment : Fragment() {
         _binding = null
     }
 }
+
 
 
 
